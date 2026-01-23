@@ -13,7 +13,7 @@ class Scraper {
             url.contains("royalroad.com") -> mapOf(
                 "title" to "h1",
                 "cover" to "img.thumbnail",
-                "chapter_list" to ".table-striped tbody tr a",
+                "chapter_list" to "tr.chapter-row a[href]",
                 "content" to ".chapter-inner"
             )
             url.contains("wuxiaworld.com") -> mapOf(
@@ -41,13 +41,15 @@ class Scraper {
                 .timeout(15000)
                 .get()
 
-            ScrapedBook(
-                title = doc.selectFirst(selectors["title"]!!)?.text() ?: "Unknown",
-                coverUrl = doc.selectFirst(selectors["cover"]!!)?.attr("abs:src") ?: "",
-                chapters = doc.select(selectors["chapter_list"]!!).map { 
-                    ScrapedChapter(it.text(), it.attr("abs:href"))
-                }
-            )
+            val title = doc.selectFirst(selectors["title"]!!)?.text() ?: "Unknown"
+            val coverUrl = doc.selectFirst(selectors["cover"]!!)?.attr("abs:src") ?: ""
+            val chapters = doc.select(selectors["chapter_list"]!!).map { 
+                ScrapedChapter(it.text(), it.attr("abs:href"))
+            }
+
+            if (chapters.isEmpty()) return null
+
+            ScrapedBook(title, coverUrl, chapters)
         } catch (e: Exception) {
             null
         }
