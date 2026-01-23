@@ -14,6 +14,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentLinkedQueue
 
+/**
+ * Hybrid Narrator: Prefers Microsoft Edge Neural TTS (Free, High Quality)
+ * Falls back to Gemini 2.5 TTS if local python/edge-tts fails.
+ */
 class GeminiNarrator(
     private val context: Context,
     private val apiKey: String
@@ -25,31 +29,27 @@ class GeminiNarrator(
         apiKey = apiKey,
         generationConfig = generationConfig {
             responseMimeType = "audio/mp3"
-            // Note: The SDK might not support setting response_modalities via DSL yet, 
-            // but the model defaults to audio output if text is provided to a TTS model.
-        },
-        safetySettings = listOf(
-            SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.NONE),
-            SafetySetting(HarmCategory.HATE_SPEECH, BlockThreshold.NONE),
-            SafetySetting(HarmCategory.SEXUALLY_EXPLICIT, BlockThreshold.NONE),
-            SafetySetting(HarmCategory.DANGEROUS_CONTENT, BlockThreshold.NONE)
-        )
+        }
     )
 
     private var mediaPlayer: MediaPlayer? = null
-    private val cacheDir = File(context.cacheDir, "gemini_tts_v4").apply { deleteRecursively(); mkdirs() }
+    private val cacheDir = File(context.cacheDir, "hybrid_tts_v1").apply { deleteRecursively(); mkdirs() }
     
-    private val audioQueue = ConcurrentLinkedQueue<Triple<String, File, String>>() // ID, File, Text
+    private val audioQueue = ConcurrentLinkedQueue<Triple<String, File, String>>()
     private var isPlaying = false
-    private var currentMood: String = "professional audiobook narrator, calm and steady"
+    
+    // Default to a high-quality Edge Voice
+    private var currentEdgeVoice: String = "en-US-AvaNeural"
+    private var currentMoodPrompt: String = "professional audiobook narrator"
 
     fun setMood(mood: String) {
-        this.currentMood = when(mood.lowercase()) {
-            "bedtime" -> "Whisper gently, slow pacing, soothing tone"
-            "action" -> "Fast-paced, energetic, intense tone"
-            "horror" -> "Deep, ominous, slow and scary tone"
-            else -> mood
+        this.currentEdgeVoice = when(mood.lowercase()) {
+            "bedtime" -> "en-US-EmmaNeural"
+            "action" -> "en-US-AndrewNeural"
+            "horror" -> "en-GB-RyanNeural"
+            else -> "en-US-AvaNeural"
         }
+        this.currentMoodPrompt = mood
     }
 
     fun stop() {
@@ -76,37 +76,51 @@ class GeminiNarrator(
     }
 
     private suspend fun fetchAudio(utteranceId: String, text: String): File? = withContext(Dispatchers.IO) {
-        try {
-            val prompt = """
-                Narrate the following story text.
-                Voice Style: $currentMood.
-                Pacing: Natural, with pauses for suspense.
-                
-                Text to narrate:
-                "$text"
-            """.trimIndent()
+        // TRY EDGE TTS FIRST (FREE & UNLIMITED)
+        val edgeFile = fetchEdgeAudio(utteranceId, text)
+        if (edgeFile != null) return@withContext edgeFile
 
-            val response = model.generateContent(prompt)
+        // FALLBACK TO GEMINI
+        return@withContext fetchGeminiAudio(utteranceId, text)
+    }
+
+    private fun fetchEdgeAudio(utteranceId: String, text: String): File? {
+        return try {
+            val file = File(cacheDir, "edge_$utteranceId.mp3")
+            // Use the bundled python script (Assumes python3 and edge-tts are available in the environment)
+            // In a real Android app, this would be an API call or a JNI/Python-bridge call.
+            // Since this is a Termux/CLI-managed project, we use the shell bridge.
+            val scriptPath = "/data/data/com.termux/files/home/workspace/Noveldokusha/gemini-cli/skills/tts-auditor/scripts/edge_narrator.py"
             
-            // EXTRACT LOGIC: Based on laboratory findings
-            // The response part contains inlineData with base64 encoded audio
+            val process = ProcessBuilder(
+                "python3", scriptPath,
+                text, currentEdgeVoice, file.absolutePath
+            ).start()
+            
+            val exitCode = process.waitFor()
+            if (exitCode == 0 && file.exists()) file else null
+        } catch (e: Exception) {
+            Log.e("GeminiNarrator", "Edge TTS failed, falling back", e)
+            null
+        }
+    }
+
+    private suspend fun fetchGeminiAudio(utteranceId: String, text: String): File? {
+        return try {
+            val response = model.generateContent("Narrate: $text")
             val base64Data = response.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.let { part ->
-                // Accessing the internal data structure of the part
-                // In the current SDK version, we need to handle the conversion from the Part object
-                // If it's a blob/inlineData, we get its data.
                 val partString = part.toString()
                 if (partString.contains("data=")) {
-                    // Manually extract if SDK doesn't expose it cleanly yet
                     partString.substringAfter("data=").substringBefore(",")
                 } else null
-            } ?: return@withContext null
+            } ?: return null
 
             val bytes = Base64.decode(base64Data, Base64.DEFAULT)
-            val file = File(cacheDir, "$utteranceId.mp3")
+            val file = File(cacheDir, "gemini_$utteranceId.mp3")
             FileOutputStream(file).use { it.write(bytes) }
             file
         } catch (e: Exception) {
-            Log.e("GeminiNarrator", "Failed to fetch audio for $utteranceId", e)
+            Log.e("GeminiNarrator", "Gemini Fallback failed", e)
             null
         }
     }
