@@ -53,6 +53,7 @@ jetbrainsKotlinJvm = "2.0.21"
 readability4j = "1.0.8"
 crux = "5.0"
 translate = "17.0.3"
+google-gemini = "0.9.0"
 
 # -- Testing --
 junit = "4.13.2"
@@ -151,6 +152,9 @@ androidx-preference-ktx = { module = "androidx.preference:preference-ktx", versi
 material = { module = "com.google.android.material:material", version.ref = "androidx-material" }
 translate = { module = "com.google.mlkit:translate", version.ref = "translate" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+# AI
+google-gemini = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "google-gemini" }
 
 # Testing
 test-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.4.0" }
