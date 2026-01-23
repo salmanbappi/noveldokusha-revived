@@ -5,36 +5,20 @@ import json
 import time
 
 SOURCES = {
-    "BestLightNovel": {
-        "url": "https://bestlightnovel.com/book/lord_of_the_mysteries_novel",
-        "selectors": {
-            "title": "h1",
-            "cover": ".info_image img",
-            "chapters": ".chapter-list .row"
-        }
-    },
-    "BoxNovel": {
-        "url": "https://boxnovel.com/novel/the-beginning-after-the-end/",
-        "selectors": {
-            "title": ".post-title h1",
-            "cover": ".summary_image img",
-            "chapters": ".wp-manga-chapter"
-        }
-    },
     "RoyalRoad": {
         "url": "https://www.royalroad.com/fiction/21220/mother-of-learning",
         "selectors": {
             "title": "h1",
-            "cover": ".thumbnail",
-            "chapters": ".table-striped tbody tr"
+            "cover": "img.thumbnail",
+            "chapters": "#chapters tbody tr a[href]"
         }
     },
     "WuxiaWorld": {
         "url": "https://www.wuxiaworld.com/novel/against-the-gods",
         "selectors": {
             "title": "h1",
-            "cover": "img.mx-auto",
-            "chapters": ".chapter-item"
+            "cover": "img[src*=covers]",
+            "chapters": "a[href*=-chapter-]"
         }
     },
     "NovelBin": {
@@ -63,8 +47,13 @@ def audit():
             soup = BeautifulSoup(res.text, 'html.parser')
             checks = {}
             for key, sel in data['selectors'].items():
-                found = soup.select_one(sel)
-                checks[key] = "OK" if found else "MISSING"
+                found = soup.select(sel)
+                # Fallback for cover
+                if key == "cover" and not found:
+                    title = soup.select_one("h1").get_text(strip=True) if soup.select_one("h1") else ""
+                    found = soup.select(f"img[alt='{title}']")
+                
+                checks[key] = f"OK ({len(found)} found)" if found else "MISSING"
             
             report[name] = checks
         except Exception as e:

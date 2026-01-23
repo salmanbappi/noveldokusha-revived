@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string translatable="false" name="source_name_bestlightnovel">BestLightNovel</string>
-    <string translatable="false" name="source_name_box_novel">Box Novel</string>
     <string translatable="false" name="source_name_read_novel_full">Read Novel Full</string>
     <string translatable="false" name="source_name_reddit">Reddit</string>
     <string translatable="false" name="source_name_royal_road">Royal Road</string>
     <string translatable="false" name="database_name_baka_updates">Baka-Updates</string>
     <string translatable="false" name="database_name_novel_updates">Novel Updates</string>
     <string translatable="false" name="source_name_meio_novel">Meio Novel</string>
-    <string translatable="false" name="source_name_more_novel">More Novel</string>
     <string translatable="false" name="source_name_novelbin">NovelBin</string>
     <string translatable="false" name="source_name_novelku">NovelKu</string>
-    <string translatable="false" name="source_name_wb_novel">Wb Novel</string>
     
-    <string translatable="false" name="source_name_lightnovelpub">LightNovelPub</string>
     <string translatable="false" name="source_name_novelfull">NovelFull</string>
-    <string translatable="false" name="source_name_scribblehub">ScribbleHub</string>
     <string translatable="false" name="source_name_royalroad">RoyalRoad</string>
 </resources>
