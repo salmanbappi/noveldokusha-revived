@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.noveldokusha.android.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 inner class CLICustomSettings {
@@ -24,16 +25,13 @@ inner class CLICustomSettings {
 val cliCustomSettings = CLICustomSettings()
 
 android {
-
     val localPropertiesFile = rootProject.file(cliCustomSettings.localPropertiesFilePath)
-    println("localPropertiesFilePath: ${cliCustomSettings.localPropertiesFilePath}")
-
+    
     val defaultSigningConfigData = Properties().apply {
         if (localPropertiesFile.exists())
             load(localPropertiesFile.inputStream())
     }
     val hasDefaultSigningConfigData = defaultSigningConfigData.hasProperty("storeFile")
-    println("hasDefaultSigningConfigData: $hasDefaultSigningConfigData")
 
     if (cliCustomSettings.splitByAbi) splits {
         abi {
@@ -44,8 +42,8 @@ android {
 
     defaultConfig {
         applicationId = "my.noveldokusha"
-        versionCode = 18
-        versionName = "2.2.0"
+        versionCode = 19 // Bumped version code
+        versionName = "2.3.0" // Bumped version name
         setProperty("archivesBaseName", "NovelDokusha_v$versionName")
     }
 
@@ -59,7 +57,6 @@ android {
     }
 
     buildTypes {
-
         signingConfigs.asMap["default"]?.let {
             all {
                 signingConfig = it
@@ -198,19 +195,23 @@ dependencies {
     implementation(libs.jsoup)
 
     // Jetpack compose
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.androidx.activity)
     implementation(libs.compose.androidx.animation)
     implementation(libs.compose.androidx.runtime.livedata)
     implementation(libs.compose.androidx.lifecycle.viewmodel)
     implementation(libs.compose.androidx.constraintlayout)
     implementation(libs.compose.androidx.material.icons.extended)
-    implementation(libs.compose.material3.android)
+    implementation(libs.compose.androidx.material3)
+    
+    // Migration from Accompanist
     implementation(libs.compose.accompanist.systemuicontroller)
     implementation(libs.compose.accompanist.swiperefresh)
     implementation(libs.compose.accompanist.insets)
     implementation(libs.compose.accompanist.pager)
     implementation(libs.compose.accompanist.pager.indicators)
-    implementation(libs.compose.landscapist.glide)
+    
+    implementation(libs.compose.landscapist.glide) // Note: might need update
     implementation(libs.compose.coil)
     implementation(libs.compose.lazyColumnScrollbar)
 
@@ -227,4 +228,3 @@ dependencies {
 hilt {
     enableAggregatingTask = true
 }
-
