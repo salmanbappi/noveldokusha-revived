@@ -2,14 +2,15 @@ package my.noveldokusha.scraper
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import my.noveldokusha.networking.FlareSolverrClient
 
 /**
- * Universal Scraper with Laboratory-Verified Selectors (Jan 2026)
- * Supports 15+ Verified Sources including Cloudflare-protected ones.
+ * Universal Scraper with Multi-Tier Cloudflare Bypass (FlareSolverr + Worker)
  */
 class Scraper {
     
     private var workerUrl: String = "https://your-worker.workers.dev/?url="
+    private val flareSolverr = FlareSolverrClient()
 
     fun getSelectors(url: String): Map<String, String>? {
         return when {
@@ -28,7 +29,6 @@ class Scraper {
             url.contains("meionovel.id") || url.contains("novelku.id") -> mapOf(
                 "title" to "h1.entry-title", "cover" to ".thumb img", "chapter_list" to ".eplister li a", "content" to ".entry-content"
             )
-            // Madara (Multi-site theme)
             url.contains("1stkissnovel.love") || url.contains("boxnovel.com") || url.contains("indowebnovel.id") || 
             url.contains("sakuranovel.id") || url.contains("allnovelupdates.com") -> mapOf(
                 "title" to ".post-title h1", "cover" to ".summary_image img", "chapter_list" to ".wp-manga-chapter a", "content" to ".reading-content"
@@ -55,10 +55,19 @@ class Scraper {
     suspend fun scrapeBook(url: String): ScrapedBook? {
         val selectors = getSelectors(url) ?: return null
         
+        // Strategy: 1. Try Direct
         var doc = tryFetch(url)
         
-        // If Direct Fetch fails or hits Cloudflare, use Worker Bypass
-        if (doc == null || doc.text().contains("Cloudflare") || doc.text().contains("Just a moment") || doc.title().contains("Access Denied")) {
+        // 2. If blocked, Try FlareSolverr (Local Proxy)
+        if (isBlocked(doc)) {
+            val html = flareSolverr.fetch(url)
+            if (html != null) {
+                doc = Jsoup.parse(html, url)
+            }
+        }
+
+        // 3. If still blocked, Try Worker Bypass (Remote Proxy)
+        if (isBlocked(doc)) {
             doc = tryFetch(workerUrl + url)
         }
 
@@ -81,6 +90,13 @@ class Scraper {
 
             ScrapedBook(title, coverUrl, chapters)
         }
+    }
+
+    private fun isBlocked(doc: Document?): Boolean {
+        if (doc == null) return true
+        val text = doc.text().lowercase()
+        return text.contains("cloudflare") || text.contains("just a moment") || 
+               doc.title().lowercase().contains("access denied") || doc.title().lowercase().contains("attention required")
     }
 
     private fun tryFetch(url: String): Document? {
