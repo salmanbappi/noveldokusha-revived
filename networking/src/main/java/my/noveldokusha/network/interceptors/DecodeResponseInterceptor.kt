@@ -24,7 +24,7 @@ internal class DecodeResponseInterceptor : Interceptor {
             return response
         }
 
-        val body = response.body
+        val body = response.body ?: return response
         val contentEncoding = response.header("Content-Encoding")?.lowercase()
             ?: return response
 
