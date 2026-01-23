@@ -199,12 +199,4 @@
     <string name="tried_but_failed_to_bypass_cloudfare_firewall">Tried but failed to bypass cloudfare firewall</string>
 	<string name="features_reader_full_screen">Full screen</string>
     
-    <string name="source_name_lightnovelpub">LightNovelPub</string>
-    <string name="source_name_novelfull">NovelFull</string>
-    <string name="source_name_scribblehub">ScribbleHub</string>
-    <string name="source_name_royalroad">RoyalRoad</string>
-    <string name="source_name_wuxiaworld">WuxiaWorld</string>
-    <string name="source_name_bestlightnovel">BestLightNovel</string>
-    <string name="source_name_box_novel">BoxNovel</string>
-    <string name="source_name_indo_webnovel">IndoWebnovel</string>
 </resources>
