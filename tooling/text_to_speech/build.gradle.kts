@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.noveldokusha.android.library)
+    alias(libs.plugins.noveldokusha.android.compose)
 }
 
 android {
@@ -7,6 +8,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core)
     implementation(projects.tooling.algorithms)
     implementation(libs.androidx.core.ktx)
     implementation(libs.google.gemini)
