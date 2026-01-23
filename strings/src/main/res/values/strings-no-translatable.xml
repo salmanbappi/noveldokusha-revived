@@ -28,5 +28,10 @@
     <string translatable="false" name="source_name_novelbin">NovelBin</string>
     <string translatable="false" name="source_name_novelku">NovelKu</string>
     <string translatable="false" name="source_name_wb_novel">Wb Novel</string>
-
+    
+    <string translatable="false" name="source_name_lightnovelpub">LightNovelPub</string>
+    <string translatable="false" name="source_name_novelfull">NovelFull</string>
+    <string translatable="false" name="source_name_scribblehub">ScribbleHub</string>
+    <string translatable="false" name="source_name_royalroad">RoyalRoad</string>
+    <string translatable="false" name="source_name_wuxiaworld">WuxiaWorld</string>
 </resources>
