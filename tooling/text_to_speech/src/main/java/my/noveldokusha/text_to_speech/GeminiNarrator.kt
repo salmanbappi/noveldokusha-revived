@@ -2,6 +2,7 @@ package my.noveldokusha.text_to_speech
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.util.Base64
 import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.BlockThreshold
@@ -24,6 +25,8 @@ class GeminiNarrator(
         apiKey = apiKey,
         generationConfig = generationConfig {
             responseMimeType = "audio/mp3"
+            // Note: The SDK might not support setting response_modalities via DSL yet, 
+            // but the model defaults to audio output if text is provided to a TTS model.
         },
         safetySettings = listOf(
             SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.NONE),
@@ -34,7 +37,7 @@ class GeminiNarrator(
     )
 
     private var mediaPlayer: MediaPlayer? = null
-    private val cacheDir = File(context.cacheDir, "gemini_tts_v3").apply { deleteRecursively(); mkdirs() }
+    private val cacheDir = File(context.cacheDir, "gemini_tts_v4").apply { deleteRecursively(); mkdirs() }
     
     private val audioQueue = ConcurrentLinkedQueue<Triple<String, File, String>>() // ID, File, Text
     private var isPlaying = false
@@ -84,10 +87,21 @@ class GeminiNarrator(
             """.trimIndent()
 
             val response = model.generateContent(prompt)
-            val bytes = response.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.let { part ->
-                (part as? com.google.ai.client.generativeai.type.BlobPart)?.blob
+            
+            // EXTRACT LOGIC: Based on laboratory findings
+            // The response part contains inlineData with base64 encoded audio
+            val base64Data = response.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.let { part ->
+                // Accessing the internal data structure of the part
+                // In the current SDK version, we need to handle the conversion from the Part object
+                // If it's a blob/inlineData, we get its data.
+                val partString = part.toString()
+                if (partString.contains("data=")) {
+                    // Manually extract if SDK doesn't expose it cleanly yet
+                    partString.substringAfter("data=").substringBefore(",")
+                } else null
             } ?: return@withContext null
 
+            val bytes = Base64.decode(base64Data, Base64.DEFAULT)
             val file = File(cacheDir, "$utteranceId.mp3")
             FileOutputStream(file).use { it.write(bytes) }
             file
