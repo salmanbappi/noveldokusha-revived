@@ -149,7 +149,7 @@ class Saikai(
                 )
                 .toString()
 
-            val json = networkClient.get(url).body.string()
+            val json = networkClient.get(url).body?.string() ?: ""
 
             JsonParser
                 .parseString(json)

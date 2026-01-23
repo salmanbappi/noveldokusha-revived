@@ -131,8 +131,7 @@ class MTLNovel(
 
             val request = getRequest(url)
             val json = networkClient.call(request)
-                .body
-                .string()
+                .body?.string() ?: ""
 
             JsonParser
                 .parseString(json)
