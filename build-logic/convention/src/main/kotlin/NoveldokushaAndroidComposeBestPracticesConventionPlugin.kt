@@ -1,3 +1,4 @@
+
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import my.noveldoksuha.convention.plugin.implementation
@@ -21,9 +22,10 @@ class NoveldokushaAndroidComposeBestPracticesConventionPlugin : Plugin<Project> 
                     compose = true
                 }
 
-                // composeOptions block removed for Kotlin 2.0
-
                 dependencies {
+                    val bom = libs.findLibrary("compose-bom").get()
+                    add("implementation", platform(bom))
+                    
                     implementation(libs.findLibrary("compose-androidx-ui").get())
                     implementation(libs.findLibrary("compose-androidx-ui-tooling").get())
                 }
