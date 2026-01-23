@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
 
     implementation(libs.compose.androidx.activity)
+    implementation(libs.compose.androidx.material)
     implementation(libs.compose.material3.android)
     implementation(libs.compose.androidx.lifecycle.viewmodel)
     implementation(libs.compose.androidx.constraintlayout)

@@ -77,6 +77,7 @@ compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-
 compose-androidx-ui = { module = "androidx.compose.ui:ui" }
 compose-androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-androidx-material = { module = "androidx.compose.material:material" }
 compose-androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 compose-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "compose-material3Android" }
 compose-androidx-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-ktx" }
