@@ -167,7 +167,7 @@ internal fun VoiceReaderSettingDialog(
                         ),
                     )
                     AssistChip(
-                        label = { Text(text = stringResource(id = R.string.voices)) },
+                        label = { Text(text = "AI Narrator Moods") },
                         onClick = { openVoicesDialog = !openVoicesDialog },
                         leadingIcon = { Icon(Icons.Filled.RecordVoiceOver, null) },
                         colors = AssistChipDefaults.assistChipColors(

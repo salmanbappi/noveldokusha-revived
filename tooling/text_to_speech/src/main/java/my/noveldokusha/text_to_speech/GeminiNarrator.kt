@@ -34,7 +34,7 @@ class GeminiNarrator(
     )
 
     private var mediaPlayer: MediaPlayer? = null
-    private val cacheDir = File(context.cacheDir, "gemini_tts_v2").apply { deleteRecursively(); mkdirs() }
+    private val cacheDir = File(context.cacheDir, "gemini_tts_v3").apply { deleteRecursively(); mkdirs() }
     
     private val audioQueue = ConcurrentLinkedQueue<Triple<String, File, String>>() // ID, File, Text
     private var isPlaying = false
@@ -50,7 +50,7 @@ class GeminiNarrator(
     }
 
     fun stop() {
-        isPlaying = false
+        this@GeminiNarrator.isPlaying = false
         mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = null
@@ -64,7 +64,7 @@ class GeminiNarrator(
             val audioFile = fetchAudio(utteranceId, text) ?: return@launch
             audioQueue.add(Triple(utteranceId, audioFile, text))
             
-            if (!isPlaying) {
+            if (!this@GeminiNarrator.isPlaying) {
                 withContext(Dispatchers.Main) {
                     playNext(onStarted, onFinished)
                 }
@@ -84,9 +84,7 @@ class GeminiNarrator(
             """.trimIndent()
 
             val response = model.generateContent(prompt)
-            // Extract the audio blob from the response parts
             val bytes = response.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.let { part ->
-                // The SDK handles Blob parts which contain the raw bytes for audio/mp3
                 (part as? com.google.ai.client.generativeai.type.BlobPart)?.blob
             } ?: return@withContext null
 
@@ -100,15 +98,15 @@ class GeminiNarrator(
     }
 
     private fun playNext(onStarted: (String) -> Unit, onFinished: (String) -> Unit) {
-        if (!isPlaying && audioQueue.isEmpty()) return
+        if (!this@GeminiNarrator.isPlaying && audioQueue.isEmpty()) return
 
         val next = audioQueue.poll() ?: run {
-            isPlaying = false
+            this@GeminiNarrator.isPlaying = false
             return
         }
         
         val (utteranceId, file, _) = next
-        isPlaying = true
+        this@GeminiNarrator.isPlaying = true
         
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
@@ -118,12 +116,12 @@ class GeminiNarrator(
                 onStarted(utteranceId)
             }
             setOnCompletionListener {
-                isPlaying = false
+                this@GeminiNarrator.isPlaying = false
                 onFinished(utteranceId)
                 playNext(onStarted, onFinished)
             }
             setOnErrorListener { _, _, _ ->
-                isPlaying = false
+                this@GeminiNarrator.isPlaying = false
                 onFinished(utteranceId)
                 playNext(onStarted, onFinished)
                 true
