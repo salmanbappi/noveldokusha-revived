@@ -8,6 +8,7 @@ import my.noveldokusha.network.interceptors.CloudFareVerificationInterceptor
 import my.noveldokusha.network.interceptors.DecodeResponseInterceptor
 import my.noveldokusha.network.interceptors.UserAgentInterceptor
 import okhttp3.Cache
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -41,6 +42,25 @@ class ScraperNetworkClient @Inject constructor(
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    /**
+     * Interceptor to add Referer header based on the URL host.
+     * Many light novel sites block image requests without a valid Referer.
+     */
+    private val refererInterceptor = Interceptor { chain ->
+        val request = chain.request()
+        val url = request.url
+        val host = url.host
+        
+        val newRequest = if (request.header("Referer") == null) {
+            request.newBuilder()
+                .addHeader("Referer", "https://$host/")
+                .build()
+        } else {
+            request
+        }
+        chain.proceed(newRequest)
+    }
+
     val client = OkHttpClient.Builder()
         .let {
             if (appInternalState.isDebugMode) {
@@ -48,6 +68,7 @@ class ScraperNetworkClient @Inject constructor(
             } else it
         }
         .addInterceptor(UserAgentInterceptor())
+        .addInterceptor(refererInterceptor)
         .addInterceptor(DecodeResponseInterceptor())
         .addInterceptor(CloudFareVerificationInterceptor(appContext))
         .cookieJar(cookieJar)

@@ -9,21 +9,22 @@ import my.noveldokusha.scraper.sources.BestLightNovel
 import my.noveldokusha.scraper.sources.BoxNovel
 import my.noveldokusha.scraper.sources.IndoWebnovel
 import my.noveldokusha.scraper.sources.KoreanNovelsMTL
+import my.noveldokusha.scraper.sources.LightNovelPub
 import my.noveldokusha.scraper.sources.LightNovelWorld
 import my.noveldokusha.scraper.sources.LightNovelsTranslations
 import my.noveldokusha.scraper.sources.LocalSource
-import my.noveldokusha.scraper.sources.MTLNovel
 import my.noveldokusha.scraper.sources.MeioNovel
 import my.noveldokusha.scraper.sources.MoreNovel
 import my.noveldokusha.scraper.sources.NovelBin
+import my.noveldokusha.scraper.sources.NovelFull
 import my.noveldokusha.scraper.sources.NovelHall
 import my.noveldokusha.scraper.sources.Novelku
 import my.noveldokusha.scraper.sources.ReadLightNovel
 import my.noveldokusha.scraper.sources.ReadNovelFull
 import my.noveldokusha.scraper.sources.Reddit
 import my.noveldokusha.scraper.sources.RoyalRoad
-import my.noveldokusha.scraper.sources.Saikai
 import my.noveldokusha.scraper.sources.SakuraNovel
+import my.noveldokusha.scraper.sources.ScribbleHub
 import my.noveldokusha.scraper.sources.Sousetsuka
 import my.noveldokusha.scraper.sources.WbNovel
 import my.noveldokusha.scraper.sources.Wuxia
@@ -55,11 +56,9 @@ class Scraper @Inject constructor(
         BestLightNovel(networkClient),
         _1stKissNovel(networkClient),
         Sousetsuka(),
-        Saikai(networkClient),
         BoxNovel(networkClient),
         LightNovelWorld(networkClient),
         NovelHall(networkClient),
-        MTLNovel(networkClient),
         WuxiaWorld(networkClient),
         KoreanNovelsMTL(networkClient),
         IndoWebnovel(networkClient),
@@ -70,6 +69,9 @@ class Scraper @Inject constructor(
         Novelku(networkClient),
         WbNovel(networkClient),
         NovelBin(networkClient),
+        LightNovelPub(networkClient),
+        NovelFull(networkClient),
+        ScribbleHub(networkClient),
     )
 
     val sourcesCatalogsList = sourcesList.filterIsInstance<SourceInterface.Catalog>()
