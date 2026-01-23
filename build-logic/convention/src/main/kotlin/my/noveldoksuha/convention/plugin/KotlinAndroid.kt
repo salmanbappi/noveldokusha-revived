@@ -1,12 +1,24 @@
 package my.noveldoksuha.convention.plugin
 
+import com.android.build.api.dsl.AndroidResources
+import com.android.build.api.dsl.BuildFeatures
+import com.android.build.api.dsl.BuildType
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.DefaultConfig
+import com.android.build.api.dsl.ProductFlavor
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.configureAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *>
+    commonExtension: CommonExtension<
+        out BuildFeatures,
+        out BuildType,
+        out DefaultConfig,
+        out ProductFlavor,
+        out AndroidResources,
+        *> // Installation or whatever the last one is, we don't access it so * is fine?
+           // Wait, if I use * for the last one, it might be okay.
 ) {
     commonExtension.apply {
         compileSdk = appConfig.COMPILE_SDK
@@ -42,15 +54,11 @@ internal fun Project.configureAndroid(
 }
 
 private fun Project.configureKotlin() {
-    // Use withType to workaround https://youtrack.jetbrains.com/issue/KT-55947
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            // Set JVM target to 17
-            jvmTarget = appConfig.JAVA_VERSION_STRING
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-Xjvm-default=all-compatibility",
-            )
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs.add("-Xjvm-default=all-compatibility")
         }
     }
 }

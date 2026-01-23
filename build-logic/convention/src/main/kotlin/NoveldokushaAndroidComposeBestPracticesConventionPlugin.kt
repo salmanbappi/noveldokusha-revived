@@ -1,4 +1,3 @@
-
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import my.noveldoksuha.convention.plugin.implementation
@@ -12,6 +11,8 @@ import org.gradle.kotlin.dsl.getByType
 class NoveldokushaAndroidComposeBestPracticesConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+
             val extension = extensions.findByType<ApplicationExtension>()
                 ?: extensions.getByType<LibraryExtension>()
 
@@ -20,10 +21,7 @@ class NoveldokushaAndroidComposeBestPracticesConventionPlugin : Plugin<Project> 
                     compose = true
                 }
 
-                composeOptions {
-                    kotlinCompilerExtensionVersion =
-                        libs.findVersion("kotlin-compose-compilerVersion").get().toString()
-                }
+                // composeOptions block removed for Kotlin 2.0
 
                 dependencies {
                     implementation(libs.findLibrary("compose-androidx-ui").get())
