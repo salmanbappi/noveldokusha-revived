@@ -29,6 +29,7 @@ compose-lazyColumnScrollbar = "2.2.0"
 compose-material-icons-extended = "1.7.5"
 compose-constraintlayout = "1.1.0"
 compose-animation = "1.7.5"
+compose-landscapist-glide = "2.4.4"
 # Note: Accompanist is largely deprecated, but keeping specific versions for migration if needed
 compose-accompanist = "0.36.0" 
 
@@ -86,6 +87,7 @@ compose-androidx-constraintlayout = { module = "androidx.constraintlayout:constr
 
 compose-coil = { module = "io.coil-kt:coil-compose", version.ref = "compose-coil" }
 compose-lazyColumnScrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "compose-lazyColumnScrollbar" }
+compose-landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "compose-landscapist-glide" }
 
 # Accompanist (Legacy/Migration)
 compose-accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "compose-accompanist" }
