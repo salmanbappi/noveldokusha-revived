@@ -21,7 +21,7 @@ import my.noveldokusha.features.reader.domain.ChapterIndex
 import my.noveldokusha.features.reader.domain.ChapterLoaded
 import my.noveldokusha.features.reader.domain.ReaderItem
 import my.noveldokusha.features.reader.domain.indexOfReaderItem
-import my.noveldokusha.text_to_speech.TextToSpeechManager
+import my.noveldokusha.text_to_speech.GeminiTextToSpeechManager
 import my.noveldokusha.text_to_speech.Utterance
 import my.noveldokusha.text_to_speech.VoiceData
 
@@ -76,7 +76,7 @@ internal class ReaderTextToSpeech(
 ) {
     private val halfBuffer = 2
     private var updateJob: Job? = null
-    private val manager = TextToSpeechManager(
+    private val manager = GeminiTextToSpeechManager(
         context = context,
         initialItemState = TextSynthesis(
             itemPos = ReaderItem.Title(
@@ -182,7 +182,7 @@ internal class ReaderTextToSpeech(
 
     fun onClose() {
         stop()
-        manager.service.shutdown()
+        manager.shutdown()
     }
 
     suspend fun readChapterStartingFromStart(
