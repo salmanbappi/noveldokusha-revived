@@ -81,6 +81,10 @@ class AppNavigationRoutes @Inject constructor() : NavigationRoutes {
         return WebViewActivity.IntentData(context, url = url)
     }
 
+    override fun debugLogs(context: Context): Intent {
+        return Intent(context, my.noveldokusha.settings.debug.DebugLogsActivity::class.java)
+    }
+
 }
 
 //@Singleton

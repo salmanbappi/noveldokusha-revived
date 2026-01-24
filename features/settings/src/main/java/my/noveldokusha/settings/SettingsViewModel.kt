@@ -25,6 +25,7 @@ import my.noveldokusha.core.Toasty
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.core.utils.asMutableStateOf
 import my.noveldokusha.text_translator.domain.TranslationManager
+import my.noveldokusha.navigation.NavigationRoutes
 import java.io.File
 import javax.inject.Inject
 
@@ -39,6 +40,7 @@ internal class SettingsViewModel @Inject constructor(
     private val appFileResolver: AppFileResolver,
     private val appRemoteRepository: AppRemoteRepository,
     private val toasty: Toasty,
+    private val navigationRoutes: NavigationRoutes,
 ) : BaseViewModel() {
 
     private val themeId by appPreferences.THEME_ID.state(viewModelScope)
@@ -142,6 +144,10 @@ internal class SettingsViewModel @Inject constructor(
                 }
             state.updateAppSetting.checkingForNewVersion.value = false
         }
+    }
+
+    fun onDebugLogs(context: Context) {
+        context.startActivity(navigationRoutes.debugLogs(context))
     }
 }
 

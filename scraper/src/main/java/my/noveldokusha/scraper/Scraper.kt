@@ -59,14 +59,16 @@ class Scraper @Inject constructor(
     fun getCompatibleSourceCatalog(url: String): SourceInterface.Catalog? {
         val normalizedUrl = normalizeUrl(url)
         return sourcesCatalogsList.firstOrNull { 
-            normalizedUrl.startsWith(normalizeUrl(it.baseUrl)) 
+            val normalizedBase = normalizeUrl(it.baseUrl)
+            normalizedUrl.contains(normalizedBase)
         }
     }
 
     fun getCompatibleSource(url: String): SourceInterface? {
         val normalizedUrl = normalizeUrl(url)
         return sourcesCatalogsList.firstOrNull { 
-            normalizedUrl.startsWith(normalizeUrl(it.baseUrl)) 
+            val normalizedBase = normalizeUrl(it.baseUrl)
+            normalizedUrl.contains(normalizedBase)
         }
     }
 

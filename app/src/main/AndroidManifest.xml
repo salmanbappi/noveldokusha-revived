@@ -57,6 +57,11 @@
 			</intent-filter>
 		</activity>
 
+        <activity
+            android:name="my.noveldokusha.settings.debug.DebugLogsActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.Light" />
+
 	</application>
 
 </manifest>

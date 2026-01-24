@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import my.noveldoksuha.coreui.components.CollapsibleDivider
@@ -22,6 +23,7 @@ import my.noveldokusha.tooling.backup_restore.onBackupRestore
 @Composable
 fun SettingsScreen() {
     val viewModel: SettingsViewModel = viewModel()
+    val context = LocalContext.current
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         snapAnimationSpec = null,
@@ -60,6 +62,7 @@ fun SettingsScreen() {
                 onDownloadTranslationModel = viewModel::downloadTranslationModel,
                 onRemoveTranslationModel = viewModel::removeTranslationModel,
                 onCheckForUpdatesManual = viewModel::onCheckForUpdatesManual,
+                onDebugLogs = { viewModel.onDebugLogs(context) },
                 modifier = Modifier.padding(innerPadding),
             )
         }

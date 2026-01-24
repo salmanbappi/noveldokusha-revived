@@ -1,5 +1,6 @@
 package my.noveldokusha.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +47,7 @@ internal fun SettingsScreenBody(
     onDownloadTranslationModel: (lang: String) -> Unit,
     onRemoveTranslationModel: (lang: String) -> Unit,
     onCheckForUpdatesManual: () -> Unit,
+    onDebugLogs: () -> Unit,
 ) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
@@ -82,6 +84,11 @@ internal fun SettingsScreenBody(
         AppUpdates(
             state = state.updateAppSetting,
             onCheckForUpdatesManual = onCheckForUpdatesManual
+        )
+        HorizontalDivider()
+        androidx.compose.material3.ListItem(
+            headlineContent = { Text("Debug Logs") },
+            modifier = Modifier.clickable(onClick = onDebugLogs)
         )
         Spacer(modifier = Modifier.height(500.dp))
         Text(

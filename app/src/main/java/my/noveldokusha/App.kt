@@ -15,6 +15,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
+import my.noveldokusha.core.logging.DebugLogRepository
+import my.noveldokusha.core.logging.DebugLogTree
+
 @HiltAndroidApp
 class App : Application(), ImageLoaderFactory, Configuration.Provider {
 
@@ -24,11 +27,15 @@ class App : Application(), ImageLoaderFactory, Configuration.Provider {
     @Inject
     lateinit var periodicWorkersInitializer: PeriodicWorkersInitializer
 
+    @Inject
+    lateinit var debugLogRepository: DebugLogRepository
+
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+        Timber.plant(DebugLogTree(debugLogRepository))
         periodicWorkersInitializer.init()
     }
 
