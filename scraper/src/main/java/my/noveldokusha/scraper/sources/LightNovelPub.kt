@@ -22,7 +22,7 @@ class LightNovelPub(
     override val id = "lightnovelpub"
     override val nameStrId = R.string.source_name_lightnovelpub
     override val baseUrl = "https://lightnovelpub.me"
-    override val catalogUrl = "https://lightnovelpub.me/browse/all/popular/all"
+    override val catalogUrl = "https://lightnovelpub.me/novel-list"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -60,13 +60,13 @@ class LightNovelPub(
     override suspend fun getCatalogList(index: Int): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = "$catalogUrl/$page"
+            val url = "$catalogUrl?page=$page"
             val doc = networkClient.get(url).toDocument()
             doc.select(".novel-item")
                 .mapNotNull {
-                    val link = it.selectFirst("a") ?: return@mapNotNull null
+                    val link = it.selectFirst(".novel-title a") ?: return@mapNotNull null
                     BookResult(
-                        title = it.selectFirst(".novel-title")?.text() ?: "",
+                        title = link.text(),
                         url = link.attr("abs:href"),
                         coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
                     )
@@ -82,9 +82,9 @@ class LightNovelPub(
             val doc = networkClient.get(url).toDocument()
             doc.select(".novel-item")
                 .mapNotNull {
-                    val link = it.selectFirst("a") ?: return@mapNotNull null
+                    val link = it.selectFirst(".novel-title a") ?: return@mapNotNull null
                     BookResult(
-                        title = it.selectFirst(".novel-title")?.text() ?: "",
+                        title = link.text(),
                         url = link.attr("abs:href"),
                         coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
                     )

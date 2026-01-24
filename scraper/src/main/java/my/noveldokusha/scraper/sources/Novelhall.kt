@@ -18,8 +18,8 @@ import org.jsoup.nodes.Document
 class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Catalog {
     override val id = "novelhall"
     override val nameStrId = R.string.source_name_novelhall
-    override val baseUrl = "https://novelhall.com"
-    override val catalogUrl = "https://novelhall.com/all/ranking.html"
+    override val baseUrl = "https://www.novelhall.com"
+    override val catalogUrl = "https://www.novelhall.com/all.html"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -54,16 +54,17 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
     }
 
     override suspend fun getCatalogList(index: Int): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
-        if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
         tryConnect {
+            val page = index + 1
+            // Novelhall all.html doesn't seem to have standard paging, trying to parse the list
             val doc = networkClient.get(catalogUrl).toDocument()
-            doc.select(".book-ranking .ranking-item")
+            doc.select("table.table tr").drop(1) // Drop header
                 .mapNotNull {
-                    val link = it.selectFirst(".book-info h3 a") ?: return@mapNotNull null
+                    val link = it.selectFirst("td.novel a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
-                        coverImageUrl = it.selectFirst(".book-img img")?.attr("abs:src") ?: ""
+                        coverImageUrl = "" // Table doesn't have covers, but details page does
                     )
                 }
                 .let { PagedList(it, index, true) }
@@ -73,9 +74,9 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
         tryConnect {
-            val url = "https://novelhall.com/index.php?s=main/search&q=$input"
+            val url = "https://www.novelhall.com/index.php?s=main/search&q=$input"
             val doc = networkClient.get(url).toDocument()
-            doc.select(".book-list .row")
+            doc.select(".list-novel .row")
                 .mapNotNull {
                     val link = it.selectFirst("h3 a") ?: return@mapNotNull null
                     BookResult(

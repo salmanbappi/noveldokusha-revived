@@ -44,16 +44,27 @@ class NovelFull(
 
     override suspend fun getChapterList(bookUrl: String): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            // NovelFull often requires fetching the novel ID to get the chapter list via AJAX
-            // But for simplicity, we'll try to parse the initial list if available
-            networkClient.get(bookUrl).toDocument()
-                .select(".list-chapter li a")
-                .map {
-                    ChapterResult(
-                        title = it.text(),
-                        url = it.attr("abs:href")
-                    )
-                }
+            val doc = networkClient.get(bookUrl).toDocument()
+            val novelId = doc.selectFirst("#rating")?.attr("data-novel-id")
+            if (novelId != null) {
+                val ajaxUrl = "https://novelfull.com/ajax/chapter-archive?novelId=$novelId"
+                networkClient.get(ajaxUrl).toDocument()
+                    .select("ul.list-chapter li a")
+                    .map {
+                        ChapterResult(
+                            title = it.text(),
+                            url = it.attr("abs:href")
+                        )
+                    }
+            } else {
+                doc.select(".list-chapter li a")
+                    .map {
+                        ChapterResult(
+                            title = it.text(),
+                            url = it.attr("abs:href")
+                        )
+                    }
+            }
         }
     }
 
@@ -64,7 +75,7 @@ class NovelFull(
             val doc = networkClient.get(url).toDocument()
             doc.select(".list-novel .row")
                 .mapNotNull {
-                    val link = it.selectFirst("h3 a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
@@ -82,7 +93,7 @@ class NovelFull(
             val doc = networkClient.get(url).toDocument()
             doc.select(".list-novel .row")
                 .mapNotNull {
-                    val link = it.selectFirst("h3 a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),

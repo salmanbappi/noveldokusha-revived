@@ -30,11 +30,9 @@ class ReadNovelFull(
 ) : SourceInterface.Catalog {
     override val id = "read_novel_full"
     override val nameStrId = R.string.source_name_read_novel_full
-    override val baseUrl = "https://readnovelfull.com/"
+    override val baseUrl = "https://readnovelfull.com"
     override val catalogUrl = "https://readnovelfull.com/novel-list/most-popular-novel"
     override val language = LanguageCode.ENGLISH
-
-    override suspend fun getChapterTitle(doc: Document): String? = null
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
         doc.selectFirst("#chapter-content")?.let { TextExtractor.get(it) }
@@ -47,9 +45,7 @@ class ReadNovelFull(
     ): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst(".book")
-                ?.select("img[src]")
-                ?.attr("src")
+                .selectFirst(".book img")?.attr("abs:src")
         }
     }
 
@@ -67,21 +63,26 @@ class ReadNovelFull(
     ): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val doc = networkClient.get(bookUrl).toDocument()
-            val id = doc.selectFirst("#rating")!!.attr("data-novel-id")
-            val url = "https://readnovelfull.com/ajax/chapter-archive"
-                .toUrlBuilderSafe()
-                .add("novelId", id)
-                .toString()
-
-            networkClient.get(url)
-                .toDocument()
-                .select("a[href]")
-                .map {
-                    ChapterResult(
-                        title = it.text(),
-                        url = baseUrl + it.attr("href").removePrefix("/")
-                    )
-                }
+            val id = doc.selectFirst("#rating")?.attr("data-novel-id")
+            if (id != null) {
+                val url = "https://readnovelfull.com/ajax/chapter-archive?novelId=$id"
+                networkClient.get(url).toDocument()
+                    .select("a[href]")
+                    .map {
+                        ChapterResult(
+                            title = it.text(),
+                            url = it.attr("abs:href")
+                        )
+                    }
+            } else {
+                doc.select(".list-chapter li a")
+                    .map {
+                        ChapterResult(
+                            title = it.text(),
+                            url = it.attr("abs:href")
+                        )
+                    }
+            }
         }
     }
 
@@ -90,11 +91,7 @@ class ReadNovelFull(
     ): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryFlatConnect {
             val page = index + 1
-            val url = catalogUrl
-                .toUrlBuilderSafe()
-                .apply {
-                    if (page > 1) add("page", page)
-                }
+            val url = "$catalogUrl?page=$page"
             val doc = networkClient.get(url).toDocument()
             parseToBooks(doc, index)
         }
@@ -109,14 +106,7 @@ class ReadNovelFull(
                 return@tryFlatConnect Response.Success(PagedList.createEmpty(index = index))
 
             val page = index + 1
-            val url = baseUrl
-                .toUrlBuilderSafe()
-                .addPath("novel-list", "search")
-                .apply {
-                    add("keyword", input)
-                    if (page > 1) add("page", page)
-                }.toString()
-
+            val url = "https://readnovelfull.com/search?keyword=$input&page=$page"
             val doc = networkClient.get(url).toDocument()
             parseToBooks(doc, index)
         }
@@ -127,25 +117,20 @@ class ReadNovelFull(
         index: Int
     ): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            doc.selectFirst(".col-novel-main.archive")!!
-                .select(".row")
+            doc.select(".list-novel .row")
                 .mapNotNull {
-                    val link = it.selectFirst("a[href]") ?: return@mapNotNull null
-                    val bookCover = it.selectFirst("img[src]")?.attr("src") ?: ""
+                    val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
-                        url = baseUrl + link.attr("href").removePrefix("/"),
-                        coverImageUrl = bookCover
+                        url = link.attr("abs:href"),
+                        coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
                     )
                 }
                 .let {
                     PagedList(
                         list = it,
                         index = index,
-                        isLastPage = when (val nav = doc.selectFirst("ul.pagination")) {
-                            null -> true
-                            else -> nav.children().last()?.`is`(".disabled") ?: true
-                        }
+                        isLastPage = doc.select("ul.pagination li.next.disabled").isNotEmpty()
                     )
                 }
         }

@@ -27,26 +27,26 @@ class NovelBin(
     override val id = "novelbin"
     override val nameStrId = R.string.source_name_novelbin
     override val baseUrl = "https://novelbin.me"
-    override val catalogUrl = "https://novelbin.me/most-popular"
+    override val catalogUrl = "https://novelbin.me/novel-list"
     override val language = LanguageCode.ENGLISH
 
     private suspend fun getPagesList(index: Int, url: String) =
         withContext(Dispatchers.Default) {
             tryConnect {
                 networkClient.get(url).toDocument().run {
-                    val isLastPage = select("ul.pagination li.next.disabled").isEmpty()
+                    val isLastPage = select("ul.pagination li.next.disabled").isNotEmpty()
                     val bookResults =
-                        select("#list-page div.list-novel .row").mapNotNull {
-                            val link = it.selectFirst("div.col-xs-7 a") ?: return@mapNotNull null
+                        select(".list-novel .row").mapNotNull {
+                            val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
                             val bookCover =
-                                it.selectFirst("div.col-xs-3 > div > img")?.attr("data-src") ?: ""
+                                it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
                             BookResult(
-                                title = link.attr("title"),
-                                url = link.attr("href"),
+                                title = link.text(),
+                                url = link.attr("abs:href"),
                                 coverImageUrl = bookCover
                             )
                         }
-                    PagedList(list = bookResults, index = index, isLastPage = !isLastPage)
+                    PagedList(list = bookResults, index = index, isLastPage = isLastPage)
                 }
             }
         }
