@@ -39,7 +39,6 @@ class Scraper @Inject constructor(
         LightNovelsTranslations(networkClient),
         Wuxia(networkClient),
         IndoWebnovel(networkClient),
-        LightNovelWorld(networkClient),
         LightNovelPub(networkClient),
         Novelhall(networkClient),
         SakuraNovel(networkClient),
@@ -53,15 +52,27 @@ class Scraper @Inject constructor(
         .sortedBy { it.iso639_1 }
 
     fun getCompatibleSourceCatalog(url: String): SourceInterface.Catalog? {
-        return sourcesCatalogsList.firstOrNull { url.startsWith(it.baseUrl) }
+        val normalizedUrl = url.replace("https://www.", "https://").replace("http://www.", "http://")
+        return sourcesCatalogsList.firstOrNull { 
+            val normalizedBase = it.baseUrl.replace("https://www.", "https://").replace("http://www.", "http://")
+            normalizedUrl.startsWith(normalizedBase) 
+        }
     }
 
     fun getCompatibleSource(url: String): SourceInterface? {
-        return sourcesCatalogsList.firstOrNull { url.startsWith(it.baseUrl) }
+        val normalizedUrl = url.replace("https://www.", "https://").replace("http://www.", "http://")
+        return sourcesCatalogsList.firstOrNull { 
+            val normalizedBase = it.baseUrl.replace("https://www.", "https://").replace("http://www.", "http://")
+            normalizedUrl.startsWith(normalizedBase) 
+        }
     }
 
     fun getCompatibleDatabase(url: String): DatabaseInterface? {
-        return databasesList.firstOrNull { url.startsWith(it.baseUrl) }
+        val normalizedUrl = url.replace("https://www.", "https://").replace("http://www.", "http://")
+        return databasesList.firstOrNull { 
+            val normalizedBase = it.baseUrl.replace("https://www.", "https://").replace("http://www.", "http://")
+            normalizedUrl.startsWith(normalizedBase) 
+        }
     }
 
     suspend fun getChapterTitle(url: String): String? {
@@ -107,10 +118,10 @@ class Scraper @Inject constructor(
     fun getSelectors(url: String): Map<String, String>? {
         return when {
             url.contains("royalroad.com") -> mapOf(
-                "title" to "h1", "cover" to "img.thumbnail", "chapter_list" to "#chapters tbody tr a[href]", "content" to ".chapter-content"
+                "title" to "h1", "cover" to "img.thumbnail", "chapter_list" to ".table tr[data-url] a[href]", "content" to ".chapter-content"
             )
             url.contains("wuxiaworld.com") -> mapOf(
-                "title" to "h1", "cover" to "img[src*=covers]", "chapter_list" to "a[href*=-chapter-]", "content" to ".chapter-content"
+                "title" to "h1", "cover" to "img.novel-cover", "chapter_list" to ".chapter-item a", "content" to "#chapter-content"
             )
             url.contains("novelbin.com") -> mapOf(
                 "title" to ".title", "cover" to ".book img", "chapter_list" to "li a", "content" to "#chr-content"
@@ -127,7 +138,7 @@ class Scraper @Inject constructor(
             url.contains("lightnovelstranslations.com") -> mapOf(
                 "title" to "h1", "cover" to "img.wp-post-image", "chapter_list" to ".chapter-item a", "content" to ".novel_text"
             )
-            url.contains("wuxia.blog") -> mapOf(
+            url.contains("wuxia.blog") || url.contains("wuxia.click") -> mapOf(
                 "title" to "h1", "cover" to "img.img-responsive", "chapter_list" to "#chapter-list a", "content" to "div.panel-body.article"
             )
             url.contains("1stkissnovel.love") || url.contains("boxnovel.com") || url.contains("indowebnovel.id") || 
@@ -147,7 +158,7 @@ class Scraper @Inject constructor(
                 "title" to ".seriestitlenwrap", "cover" to ".seriesimg img", "chapter_list" to ".chp-release", "content" to "#novelcontent"
             )
             url.contains("novelhall.com") -> mapOf(
-                "title" to "h1", "cover" to ".book-img img", "chapter_list" to ".chapter-list a", "content" to "div#htmlContent"
+                "title" to "h1", "cover" to ".book-img img", "chapter_list" to ".book-catalog ul li a", "content" to ".entry-content"
             )
             else -> null
         }

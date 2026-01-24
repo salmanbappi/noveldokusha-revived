@@ -20,7 +20,7 @@ class RoyalRoad(
 ) : SourceInterface.Catalog {
     override val id = "royalroad"
     override val nameStrId = R.string.source_name_royalroad
-    override val baseUrl = "https://www.royalroad.com"
+    override val baseUrl = "https://royalroad.com"
     override val catalogUrl = "https://www.royalroad.com/fictions/best-rated"
     override val language = LanguageCode.ENGLISH
 

@@ -24,8 +24,8 @@ class Wuxia(
 ) : SourceInterface.Catalog {
     override val id = "wuxia"
     override val nameStrId = R.string.source_name_wuxia
-    override val baseUrl = "https://www.wuxia.blog/"
-    override val catalogUrl = "https://www.wuxia.blog/listNovels"
+    override val baseUrl = "https://www.wuxia.click/"
+    override val catalogUrl = "https://www.wuxia.click/listNovels"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterTitle(doc: Document): String? = null
@@ -33,12 +33,12 @@ class Wuxia(
     override suspend fun getChapterText(
         doc: Document
     ): String = withContext(Dispatchers.Default) {
-        doc.selectFirst("div.panel-body.article")!!.also {
+        doc.selectFirst("div.panel-body.article")?.also {
             it.select(".pager").remove()
             it.select(".fa.fa-calendar").remove()
             it.select("button.btn.btn-default").remove()
             it.select("div.recently-nav.pull-right").remove()
-        }.let { TextExtractor.get(it) }
+        }?.let { TextExtractor.get(it) } ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(
@@ -48,7 +48,7 @@ class Wuxia(
             networkClient.get(bookUrl).toDocument()
                 .selectFirst(".imageCover")
                 ?.selectFirst("img[src]")
-                ?.attr("src")
+                ?.attr("abs:src")
         }
     }
 
@@ -70,27 +70,37 @@ class Wuxia(
     ): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val doc = networkClient.get(bookUrl).toDocument()
-            val id = doc.selectFirst("#more")!!.attr("data-nid")
-            val newChapters = doc.select("#chapters a[href]")
-            val res = tryFlatConnect {
-                val request =
-                    postRequest("https://wuxia.blog/temphtml/_tempChapterList_all_$id.html")
-                networkClient.call(request)
-                    .toDocument()
-                    .select("a[href]")
-                    .let { Response.Success(it) }
-            }
+            val moreBtn = doc.selectFirst("#more")
+            if (moreBtn != null) {
+                val id = moreBtn.attr("data-nid")
+                val newChapters = doc.select("#chapters a[href]")
+                val res = tryFlatConnect {
+                    val request =
+                        postRequest("https://www.wuxia.click/temphtml/_tempChapterList_all_$id.html")
+                    networkClient.call(request)
+                        .toDocument()
+                        .select("a[href]")
+                        .let { Response.Success(it) }
+                }
 
-            val oldChapters = if (res is Response.Success) res.data else listOf()
+                val oldChapters = if (res is Response.Success) res.data else listOf()
 
-            (newChapters + oldChapters)
-                .reversed()
-                .map {
+                (newChapters + oldChapters)
+                    .reversed()
+                    .map {
+                        ChapterResult(
+                            title = it.text(),
+                            url = it.attr("abs:href")
+                        )
+                    }
+            } else {
+                 doc.select("#chapters a[href]").map {
                     ChapterResult(
                         title = it.text(),
-                        url = it.attr("href")
+                        url = it.attr("abs:href")
                     )
                 }
+            }
         }
     }
 

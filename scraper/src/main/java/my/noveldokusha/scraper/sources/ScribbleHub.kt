@@ -45,7 +45,7 @@ class ScribbleHub(
     override suspend fun getChapterList(bookUrl: String): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .select("li.toc_w a")
+                .select(".toc_a, li.toc_w a")
                 .map {
                     ChapterResult(
                         title = it.text(),

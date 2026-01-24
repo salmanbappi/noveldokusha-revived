@@ -21,8 +21,8 @@ class LightNovelPub(
 ) : SourceInterface.Catalog {
     override val id = "lightnovelpub"
     override val nameStrId = R.string.source_name_lightnovelpub
-    override val baseUrl = "https://www.lightnovelpub.com"
-    override val catalogUrl = "https://www.lightnovelpub.com/browse/all/popular/all"
+    override val baseUrl = "https://lightnovelpub.me"
+    override val catalogUrl = "https://lightnovelpub.me/browse/all/popular/all"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -78,7 +78,7 @@ class LightNovelPub(
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = "https://www.lightnovelpub.com/search?keyword=$input&page=$page"
+            val url = "https://lightnovelpub.me/search?keyword=$input&page=$page"
             val doc = networkClient.get(url).toDocument()
             doc.select(".novel-item")
                 .mapNotNull {

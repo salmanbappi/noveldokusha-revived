@@ -10,14 +10,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
-import my.noveldokusha.core.SecretConfig
 
 class GeminiTextToSpeechManager<T : Utterance<T>>(
     context: Context,
     initialItemState: T,
 ) {
     private val scope = CoroutineScope(Dispatchers.Default)
-    private val narrator = GeminiNarrator(context, SecretConfig.GEMINI_API_KEY)
+    private val narrator = OnlineNarrator(context)
     
     private val _queueList = mutableMapOf<String, T>()
     private val _currentTextSpeakFlow = MutableSharedFlow<T>()
@@ -37,12 +36,8 @@ class GeminiTextToSpeechManager<T : Utterance<T>>(
     val currentActiveItemState = mutableStateOf(initialItemState)
 
     init {
-        // AI Voices for Moods
         availableVoices.addAll(listOf(
-            VoiceData("calm", "AI: Calm Narrator", true, 1000),
-            VoiceData("bedtime", "AI: Bedtime Whispers", true, 1000),
-            VoiceData("action", "AI: Action Energy", true, 1000),
-            VoiceData("horror", "AI: Horror Ominous", true, 1000)
+            VoiceData("default", "Online: Default", true, 1000)
         ))
         activeVoice.value = availableVoices.first()
         scope.launch { serviceLoadedFlow.emit(Unit) }
@@ -96,5 +91,6 @@ class GeminiTextToSpeechManager<T : Utterance<T>>(
     
     fun shutdown() {
         stop()
+        narrator.shutdown()
     }
 }
