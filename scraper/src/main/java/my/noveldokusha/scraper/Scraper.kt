@@ -1,22 +1,69 @@
 package my.noveldokusha.scraper
 
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import my.noveldokusha.core.LanguageCode
+import my.noveldokusha.network.NetworkClient
+import my.noveldokusha.scraper.databases.BakaUpdates
+import my.noveldokusha.scraper.databases.NovelUpdates
+import my.noveldokusha.scraper.sources.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import my.noveldokusha.networking.FlareSolverrClient
+import javax.inject.Inject
+import javax.inject.Singleton
 
-/**
- * Universal Scraper with Multi-Tier Cloudflare Bypass (FlareSolverr + Worker)
- * Supports 20+ Verified Sources (Jan 2026)
- */
-class Scraper {
+@Singleton
+class Scraper @Inject constructor(
+    private val networkClient: NetworkClient,
+    @ApplicationContext private val context: Context
+) {
     
     private var workerUrl: String = "https://your-worker.workers.dev/?url="
     private val flareSolverr = FlareSolverrClient()
 
+    val databasesList = arrayOf(
+        BakaUpdates(networkClient),
+        NovelUpdates(networkClient)
+    )
+
+    val sourcesCatalogsList = arrayOf(
+        RoyalRoad(networkClient),
+        WuxiaWorld(networkClient),
+        NovelBin(networkClient),
+        NovelFull(networkClient),
+        ReadNovelFull(networkClient),
+        MeioNovel(networkClient),
+        Novelku(networkClient),
+        KoreanNovelsMTL(networkClient),
+        LightNovelsTranslations(networkClient),
+        Wuxia(networkClient),
+        IndoWebnovel(networkClient),
+        LightNovelWorld(networkClient),
+        LightNovelPub(networkClient),
+        NovelHall(networkClient),
+        SakuraNovel(networkClient),
+        ScribbleHub(networkClient),
+        WbNovel(networkClient)
+    )
+
+    val sourcesCatalogsLanguagesList = sourcesCatalogsList
+        .mapNotNull { it.language }
+        .distinct()
+        .sortedBy { it.iso639_1 }
+
+    fun getCompatibleSourceCatalog(url: String): SourceInterface.Catalog? {
+        return sourcesCatalogsList.firstOrNull { url.startsWith(it.baseUrl) }
+    }
+
+    fun getCompatibleSource(url: String): SourceInterface? {
+        return sourcesCatalogsList.firstOrNull { url.startsWith(it.baseUrl) }
+    }
+
     fun getSelectors(url: String): Map<String, String>? {
         return when {
             url.contains("royalroad.com") -> mapOf(
-                "title" to "h1", "cover" to "img.thumbnail", "chapter_list" to "#chapters tbody tr a[href]", "content" to ".chapter-inner"
+                "title" to "h1", "cover" to "img.thumbnail", "chapter_list" to "#chapters tbody tr a[href]", "content" to ".chapter-content"
             )
             url.contains("wuxiaworld.com") -> mapOf(
                 "title" to "h1", "cover" to "img[src*=covers]", "chapter_list" to "a[href*=-chapter-]", "content" to ".chapter-content"
@@ -34,15 +81,14 @@ class Scraper {
                 "title" to "h1", "cover" to "img[src*=covers]", "chapter_list" to ".chapter-list a", "content" to ".entry-content"
             )
             url.contains("lightnovelstranslations.com") -> mapOf(
-                "title" to "h1", "cover" to "img.wp-post-image", "chapter_list" to ".entry-content a[href*=-chapter-]", "content" to ".entry-content"
+                "title" to "h1", "cover" to "img.wp-post-image", "chapter_list" to ".chapter-item a", "content" to ".novel_text"
             )
             url.contains("wuxia.blog") -> mapOf(
-                "title" to "h1", "cover" to "img.img-responsive", "chapter_list" to "#chapter-list a", "content" to ".content-area"
+                "title" to "h1", "cover" to "img.img-responsive", "chapter_list" to "#chapter-list a", "content" to "div.panel-body.article"
             )
-            // Madara Theme Sources
             url.contains("1stkissnovel.love") || url.contains("boxnovel.com") || url.contains("indowebnovel.id") || 
             url.contains("sakuranovel.id") || url.contains("allnovelupdates.com") || url.contains("wbnovel.com") -> mapOf(
-                "title" to ".post-title h1", "cover" to ".summary_image img", "chapter_list" to ".wp-manga-chapter a", "content" to ".reading-content"
+                "title" to ".post-title h1", "cover" to ".summary_image img", "chapter_list" to "li[class=wp-manga-chapter] a", "content" to ".read-container"
             )
             url.contains("lightnovelworld.com") || url.contains("lightnovelpub.com") -> mapOf(
                 "title" to "h1.novel-title", "cover" to ".fixed-img img", "chapter_list" to "li.chapter-item a", "content" to "#chapter-container"
@@ -57,7 +103,7 @@ class Scraper {
                 "title" to ".seriestitlenwrap", "cover" to ".seriesimg img", "chapter_list" to ".chp-release", "content" to "#novelcontent"
             )
             url.contains("novelhall.com") -> mapOf(
-                "title" to "h1", "cover" to ".book-img img", "chapter_list" to ".chapter-list a", "content" to ".entry-content"
+                "title" to "h1", "cover" to ".book-img img", "chapter_list" to ".chapter-list a", "content" to "div#htmlContent"
             )
             else -> null
         }
@@ -65,40 +111,26 @@ class Scraper {
 
     suspend fun scrapeBook(url: String): ScrapedBook? {
         val selectors = getSelectors(url) ?: return null
-        
         var doc = tryFetch(url)
-        
-        // Strategy: 1. Try Direct
         if (isBlocked(doc)) {
-            // 2. If blocked, Try FlareSolverr (Local Proxy)
             val html = flareSolverr.fetch(url)
-            if (html != null) {
-                doc = Jsoup.parse(html, url)
-            }
+            if (html != null) doc = Jsoup.parse(html, url)
         }
-
         if (isBlocked(doc)) {
-            // 3. If still blocked, Try Worker Bypass (Remote Proxy)
             doc = tryFetch(workerUrl + url)
         }
-
         return doc?.let { d ->
             val title = d.selectFirst(selectors["title"]!!)?.text() ?: "Unknown"
-            
             var coverUrl = d.selectFirst(selectors["cover"]!!)?.let {
                 it.attr("abs:src").takeIf { s -> s.isNotEmpty() } ?: it.attr("abs:data-src")
             } ?: ""
-            
             if (coverUrl.isEmpty()) {
                 coverUrl = d.selectFirst("img[alt*='${title.take(10)}']")?.attr("abs:src") ?: ""
             }
-
             val chapters = d.select(selectors["chapter_list"]!!).map { 
                 ScrapedChapter(it.text(), it.attr("abs:href"))
             }.filter { it.name.isNotEmpty() && it.url.isNotEmpty() }
-
             if (chapters.isEmpty() && !url.contains("wuxiaworld.com")) return null
-
             ScrapedBook(title, coverUrl, chapters)
         }
     }
