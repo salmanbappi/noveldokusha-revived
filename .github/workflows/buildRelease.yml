@@ -24,6 +24,7 @@ jobs:
       - name: Setup APK signing
         run: |
           echo -n "${{ secrets.SIGNING_KEY }}" | base64 -d > app/storeFile.jsk
+          keytool -list -keystore app/storeFile.jsk -storepass "${{ secrets.KEY_STORE_PASSWORD }}"
           echo "storeFile=storeFile.jsk" > custom.properties
           echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> custom.properties
           echo "keyAlias=${{ secrets.ALIAS }}" >> custom.properties
