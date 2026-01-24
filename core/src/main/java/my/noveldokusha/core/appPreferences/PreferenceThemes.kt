@@ -1,3 +1,3 @@
 package my.noveldokusha.core.appPreferences
 
-enum class PreferenceThemes { Light, Dark, Black }
+enum class PreferenceThemes { Light, Dark, Black, Midnight, Lava }

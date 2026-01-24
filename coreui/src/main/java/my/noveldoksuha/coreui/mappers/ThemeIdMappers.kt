@@ -8,6 +8,8 @@ val PreferenceThemes.toTheme
         PreferenceThemes.Light -> Themes.LIGHT
         PreferenceThemes.Dark -> Themes.DARK
         PreferenceThemes.Black -> Themes.BLACK
+        PreferenceThemes.Midnight -> Themes.MIDNIGHT
+        PreferenceThemes.Lava -> Themes.LAVA
     }
 
 val Themes.toPreferenceTheme
@@ -15,4 +17,6 @@ val Themes.toPreferenceTheme
         Themes.LIGHT -> PreferenceThemes.Light
         Themes.DARK -> PreferenceThemes.Dark
         Themes.BLACK -> PreferenceThemes.Black
+        Themes.MIDNIGHT -> PreferenceThemes.Midnight
+        Themes.LAVA -> PreferenceThemes.Lava
     }
