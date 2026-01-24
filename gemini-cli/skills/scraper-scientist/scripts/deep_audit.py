@@ -6,11 +6,14 @@ import time
 import socket
 
 SOURCES = {
-    "1stKissNovel": "https://1stkissnovel.love/", # Updated URL
-    "BacaLightnovel": "https://bacalightnovel.id/", # Updated URL
+    "1stKissNovel": "https://1stkissnovel.love/",
+    "AT": "https://a-t.nu/",
+    "BacaLightnovel": "https://bacalightnovel.id/",
     "BestLightNovel": "https://bestlightnovel.com/",
     "BoxNovel": "https://boxnovel.com/",
     "IndoWebnovel": "https://indowebnovel.id/",
+    "KoreanNovelsMTL": "https://www.koreanmtl.online/",
+    "LightNovelsTranslations": "https://lightnovelstranslations.com/",
     "LightNovelWorld": "https://www.lightnovelworld.com/",
     "LightNovelPub": "https://www.lightnovelpub.com/",
     "MeioNovel": "https://meionovel.id/",
@@ -28,6 +31,8 @@ SOURCES = {
     "SakuraNovel": "https://sakuranovel.id/",
     "ScribbleHub": "https://www.scribblehub.com/",
     "Sousetsuka": "https://sousetsuka.com/",
+    "WbNovel": "https://wbnovel.com/",
+    "Wuxia": "https://www.wuxia.blog/",
     "WuxiaWorld": "https://www.wuxiaworld.com/"
 }
 
@@ -49,6 +54,7 @@ def deep_audit():
         # 1. DNS Check
         if not check_dns(url):
             status["dns"] = "FAILED (Domain might be dead)"
+            status["status"] = "❌ DEAD"
             report[name] = status
             continue
         else:
@@ -69,6 +75,8 @@ def deep_audit():
                 status["status"] = "✅ ALIVE"
             elif res.status_code == 403:
                 status["status"] = "🛡️ PROTECTED (CF Strong)"
+            elif res.status_code == 410:
+                status["status"] = "❌ DISCONTINUED (410)"
             else:
                 status["status"] = f"⚠️ UNCERTAIN ({res.status_code})"
         except Exception as e:
