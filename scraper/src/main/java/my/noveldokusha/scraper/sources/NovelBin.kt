@@ -21,11 +21,13 @@ import my.noveldokusha.scraper.domain.ChapterResult
 import okhttp3.Headers
 import org.jsoup.nodes.Document
 
-class NovelBin(private val networkClient: NetworkClient) : SourceInterface.Catalog {
-    override val id = "Novelbin"
+class NovelBin(
+    private val networkClient: NetworkClient
+) : SourceInterface.Catalog {
+    override val id = "novelbin"
     override val nameStrId = R.string.source_name_novelbin
-    override val baseUrl = "https://novelbin.me/"
-    override val catalogUrl = "https://novelbin.me/sort/novelbin-daily-update"
+    override val baseUrl = "https://novelbin.me"
+    override val catalogUrl = "https://novelbin.me/most-popular"
     override val language = LanguageCode.ENGLISH
 
     private suspend fun getPagesList(index: Int, url: String) =
@@ -53,7 +55,7 @@ class NovelBin(private val networkClient: NetworkClient) : SourceInterface.Catal
         doc.selectFirst("h2 > .title-chapter")?.text() ?: ""
 
     override suspend fun getChapterText(doc: Document): String =
-        doc.selectFirst(".container .adsads")?.let { TextExtractor.get(it) } ?: ""
+        doc.selectFirst("#chr-content")?.let { TextExtractor.get(it) } ?: ""
 
     override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> =
         withContext(Dispatchers.Default) {
