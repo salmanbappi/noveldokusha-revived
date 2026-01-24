@@ -67,7 +67,7 @@ class ScraperNetworkClient @Inject constructor(
                 it.addInterceptor(okhttpLoggingInterceptor)
             } else it
         }
-        .addInterceptor(UserAgentInterceptor())
+        .addInterceptor(UserAgentInterceptor("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"))
         .addInterceptor(refererInterceptor)
         .addInterceptor(DecodeResponseInterceptor())
         .addInterceptor(CloudFareVerificationInterceptor(appContext))

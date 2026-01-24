@@ -24,26 +24,28 @@ class CloudFareVerificationInterceptor @Inject constructor(
 
     private val handler = Handler(Looper.getMainLooper())
     private val cookieManager = CookieManager.getInstance()
+    private val standardUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val response = chain.proceed(request)
 
-        // Check if blocked by Cloudflare (403 or 503)
-        if (response.code == 403 || response.code == 503) {
-            val body = response.peekBody(1024 * 10).string() // Peak to avoid consuming
-            if (body.contains("cloudflare") || body.contains("cf-challenge") || body.contains("just a moment")) {
-                response.close()
-                
-                // Trigger WebView bypass
-                val bypassResult = resolveChallenge(request.url.toString())
-                if (bypassResult != null) {
-                    val newRequest = request.newBuilder()
-                        .header("Cookie", bypassResult.cookies)
-                        .header("User-Agent", bypassResult.userAgent)
-                        .build()
-                    return chain.proceed(newRequest)
-                }
+        // Check if blocked by Cloudflare (403, 503 OR 200 with challenge)
+        val body = response.peekBody(1024 * 10).string().lowercase()
+        val isChallenge = response.code == 403 || response.code == 503 || 
+            (response.code == 200 && (body.contains("cf-challenge") || body.contains("just a moment") || body.contains("verify you are human") || body.contains("verification required")))
+
+        if (isChallenge && body.contains("cloudflare")) {
+            response.close()
+            
+            // Trigger WebView bypass
+            val bypassResult = resolveChallenge(request.url.toString())
+            if (bypassResult != null) {
+                val newRequest = request.newBuilder()
+                    .header("Cookie", bypassResult.cookies)
+                    .header("User-Agent", bypassResult.userAgent)
+                    .build()
+                return chain.proceed(newRequest)
             }
         }
 
@@ -60,9 +62,10 @@ class CloudFareVerificationInterceptor @Inject constructor(
                 webView.settings.apply {
                     javaScriptEnabled = true
                     domStorageEnabled = true
+                    databaseEnabled = true
                     useWideViewPort = true
                     loadWithOverviewMode = true
-                    userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                    userAgentString = standardUserAgent
                 }
                 
                 cookieManager.setAcceptCookie(true)
@@ -71,11 +74,12 @@ class CloudFareVerificationInterceptor @Inject constructor(
                 webView.webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         val cookies = cookieManager.getCookie(url)
+                        val title = view?.title?.lowercase() ?: ""
                         // Check for clearance cookie or if we passed the challenge
-                        if (cookies != null && (cookies.contains("cf_clearance") || !view?.title?.lowercase()?.contains("just a moment")!!)) {
-                            result = BypassResult(cookies, view?.settings?.userAgentString ?: "")
+                        if (cookies != null && (cookies.contains("cf_clearance") || (!title.contains("just a moment") && !title.contains("verify")))) {
+                            result = BypassResult(cookies, view?.settings?.userAgentString ?: standardUserAgent)
                             latch.countDown()
-                            // Don't destroy immediately to ensure cookies persist? No, manager handles it.
+                            webView.destroy()
                         }
                     }
                 }
@@ -86,7 +90,7 @@ class CloudFareVerificationInterceptor @Inject constructor(
         }
 
         try {
-            latch.await(20, TimeUnit.SECONDS)
+            latch.await(30, TimeUnit.SECONDS)
         } catch (e: InterruptedException) {
             // Timed out
         }

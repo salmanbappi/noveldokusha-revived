@@ -19,26 +19,40 @@ import my.noveldokusha.scraper.domain.BookResult
 import my.noveldokusha.scraper.domain.ChapterResult
 import org.jsoup.nodes.Document
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import my.noveldokusha.core.LanguageCode
+import my.noveldokusha.core.PagedList
+import my.noveldokusha.core.Response
+import my.noveldokusha.network.NetworkClient
+import my.noveldokusha.network.toDocument
+import my.noveldokusha.network.tryConnect
+import my.noveldokusha.scraper.R
+import my.noveldokusha.scraper.SourceInterface
+import my.noveldokusha.scraper.TextExtractor
+import my.noveldokusha.scraper.domain.BookResult
+import my.noveldokusha.scraper.domain.ChapterResult
+import org.jsoup.nodes.Document
+
 class Wuxia(
     private val networkClient: NetworkClient
 ) : SourceInterface.Catalog {
     override val id = "wuxia"
     override val nameStrId = R.string.source_name_wuxia
-    override val baseUrl = "https://www.wuxia.click/"
-    override val catalogUrl = "https://www.wuxia.click/listNovels"
+    override val baseUrl = "https://wuxia.click"
+    override val catalogUrl = "https://wuxia.click"
     override val language = LanguageCode.ENGLISH
+
+    private val gson = Gson()
 
     override suspend fun getChapterTitle(doc: Document): String? = null
 
     override suspend fun getChapterText(
         doc: Document
     ): String = withContext(Dispatchers.Default) {
-        doc.selectFirst("div.panel-body.article")?.also {
-            it.select(".pager").remove()
-            it.select(".fa.fa-calendar").remove()
-            it.select("button.btn.btn-default").remove()
-            it.select("div.recently-nav.pull-right").remove()
-        }?.let { TextExtractor.get(it) } ?: ""
+        doc.selectFirst("div.panel-body.article")?.let { TextExtractor.get(it) } ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(
@@ -58,10 +72,7 @@ class Wuxia(
         tryConnect {
             networkClient.get(bookUrl).toDocument()
                 .selectFirst("div[itemprop=description]")
-                ?.let {
-                    it.select("h4").remove()
-                    TextExtractor.get(it)
-                }
+                ?.let { TextExtractor.get(it) }
         }
     }
 
@@ -70,36 +81,11 @@ class Wuxia(
     ): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val doc = networkClient.get(bookUrl).toDocument()
-            val moreBtn = doc.selectFirst("#more")
-            if (moreBtn != null) {
-                val id = moreBtn.attr("data-nid")
-                val newChapters = doc.select("#chapters a[href]")
-                val res = tryFlatConnect {
-                    val request =
-                        postRequest("https://www.wuxia.click/temphtml/_tempChapterList_all_$id.html")
-                    networkClient.call(request)
-                        .toDocument()
-                        .select("a[href]")
-                        .let { Response.Success(it) }
-                }
-
-                val oldChapters = if (res is Response.Success) res.data else listOf()
-
-                (newChapters + oldChapters)
-                    .reversed()
-                    .map {
-                        ChapterResult(
-                            title = it.text(),
-                            url = it.attr("abs:href")
-                        )
-                    }
-            } else {
-                 doc.select("#chapters a[href]").map {
-                    ChapterResult(
-                        title = it.text(),
-                        url = it.attr("abs:href")
-                    )
-                }
+            doc.select("#chapters a[href]").map {
+                ChapterResult(
+                    title = it.text(),
+                    url = it.attr("abs:href")
+                )
             }
         }
     }
@@ -111,16 +97,38 @@ class Wuxia(
             return@withContext Response.Success(PagedList.createEmpty(index = index))
 
         tryConnect {
-            networkClient.get(catalogUrl)
-                .toDocument()
-                .select("td.novel a[href]")
-                .map {
-                    BookResult(
-                        title = it.text(),
-                        url = baseUrl + it.attr("href")
-                    )
+            val doc = networkClient.get(catalogUrl).toDocument()
+            val scriptData = doc.select("#__NEXT_DATA__").firstOrNull()?.html()
+            if (scriptData != null) {
+                val json = gson.fromJson(scriptData, JsonObject::class.java)
+                val queries = json.getAsJsonObject("props")
+                    ?.getAsJsonObject("pageProps")
+                    ?.getAsJsonObject("dehydratedState")
+                    ?.getAsJsonArray("queries")
+                
+                queries?.forEach { query ->
+                    val data = query.asJsonObject.getAsJsonObject("state")?.getAsJsonArray("data")
+                    if (data != null) {
+                        val books = mutableListOf<BookResult>()
+                        data.forEach { category ->
+                            category.asJsonObject.getAsJsonArray("novels")?.forEach { novel ->
+                                val n = novel.asJsonObject
+                                books.add(
+                                    BookResult(
+                                        title = n.get("name").asString,
+                                        url = baseUrl + "/novel/" + n.get("slug").asString,
+                                        coverImageUrl = n.get("image")?.takeIf { !it.isJsonNull }?.asString ?: ""
+                                    )
+                                )
+                            }
+                        }
+                        if (books.isNotEmpty()) return@tryConnect PagedList(books, index, true)
+                    }
                 }
-                .let { PagedList(list = it, index = index, isLastPage = true) }
+            }
+            
+            // Fallback
+            PagedList.createEmpty(index)
         }
     }
 
@@ -128,29 +136,39 @@ class Wuxia(
         index: Int,
         input: String
     ): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
-        tryConnect {
-            if (input.isBlank() || index > 0)
-                return@tryConnect PagedList.createEmpty(index = index)
+        if (input.isBlank() || index > 0)
+            return@withContext Response.Success(PagedList.createEmpty(index = index))
 
-            val url = baseUrl.toUrlBuilderSafe().apply {
-                add("search", input)
-            }
-            networkClient.get(url)
-                .toDocument()
-                .selectFirst("#table")!!
-                .children()
-                .first()!!
-                .children()
-                .mapNotNull {
-                    val link = it.selectFirst(".xxxx > a[href]") ?: return@mapNotNull null
-                    val bookCover = it.selectFirst("img[src]")?.attr("src") ?: ""
-                    BookResult(
-                        title = link.text(),
-                        url = link.attr("href"),
-                        coverImageUrl = bookCover
-                    )
+        tryConnect {
+            val url = "$baseUrl/search?q=$input"
+            val doc = networkClient.get(url).toDocument()
+            val scriptData = doc.select("#__NEXT_DATA__").firstOrNull()?.html()
+            if (scriptData != null) {
+                val json = gson.fromJson(scriptData, JsonObject::class.java)
+                val queries = json.getAsJsonObject("props")
+                    ?.getAsJsonObject("pageProps")
+                    ?.getAsJsonObject("dehydratedState")
+                    ?.getAsJsonArray("queries")
+                
+                queries?.forEach { query ->
+                    val data = query.asJsonObject.getAsJsonObject("state")?.getAsJsonArray("data")
+                    if (data != null) {
+                        val books = mutableListOf<BookResult>()
+                        data.forEach { novel ->
+                            val n = novel.asJsonObject
+                            books.add(
+                                BookResult(
+                                    title = n.get("name").asString,
+                                    url = baseUrl + "/novel/" + n.get("slug").asString,
+                                    coverImageUrl = n.get("image")?.takeIf { !it.isJsonNull }?.asString ?: ""
+                                )
+                            )
+                        }
+                        if (books.isNotEmpty()) return@tryConnect PagedList(books, index, true)
+                    }
                 }
-                .let { PagedList(list = it, index = index, isLastPage = true) }
+            }
+            PagedList.createEmpty(index)
         }
     }
 }

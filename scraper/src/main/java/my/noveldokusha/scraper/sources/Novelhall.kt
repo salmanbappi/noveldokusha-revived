@@ -19,7 +19,7 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
     override val id = "novelhall"
     override val nameStrId = R.string.source_name_novelhall
     override val baseUrl = "https://www.novelhall.com"
-    override val catalogUrl = "https://www.novelhall.com/all.html"
+    override val catalogUrl = "https://www.novelhall.com/ranking/"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -54,17 +54,17 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
     }
 
     override suspend fun getCatalogList(index: Int): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
+        if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
         tryConnect {
-            val page = index + 1
-            // Novelhall all.html doesn't seem to have standard paging, trying to parse the list
             val doc = networkClient.get(catalogUrl).toDocument()
-            doc.select("table.table tr").drop(1) // Drop header
+            doc.select(".ranking-item, tr").drop(1)
                 .mapNotNull {
-                    val link = it.selectFirst("td.novel a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3 a, td.novel a") ?: return@mapNotNull null
+                    val bookCover = it.selectFirst("img")?.attr("abs:src") ?: ""
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
-                        coverImageUrl = "" // Table doesn't have covers, but details page does
+                        coverImageUrl = bookCover
                     )
                 }
                 .let { PagedList(it, index, true) }
@@ -76,13 +76,14 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
         tryConnect {
             val url = "https://www.novelhall.com/index.php?s=main/search&q=$input"
             val doc = networkClient.get(url).toDocument()
-            doc.select(".list-novel .row")
+            doc.select(".list-novel .row, .book-list .row")
                 .mapNotNull {
                     val link = it.selectFirst("h3 a") ?: return@mapNotNull null
+                    val bookCover = it.selectFirst("img")?.attr("abs:src") ?: ""
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
-                        coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
+                        coverImageUrl = bookCover
                     )
                 }
                 .let { PagedList(it, index, true) }

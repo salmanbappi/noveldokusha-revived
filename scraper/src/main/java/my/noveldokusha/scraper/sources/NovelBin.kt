@@ -27,7 +27,7 @@ class NovelBin(
     override val id = "novelbin"
     override val nameStrId = R.string.source_name_novelbin
     override val baseUrl = "https://novelbin.me"
-    override val catalogUrl = "https://novelbin.me/novel-list"
+    override val catalogUrl = "https://novelbin.me/sort/novelbin-popular"
     override val language = LanguageCode.ENGLISH
 
     private suspend fun getPagesList(index: Int, url: String) =
@@ -39,7 +39,9 @@ class NovelBin(
                         select(".list-novel .row").mapNotNull {
                             val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
                             val bookCover =
-                                it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
+                                it.selectFirst("img")?.attr("abs:src") 
+                                    ?: it.selectFirst("img")?.attr("abs:data-src") 
+                                    ?: ""
                             BookResult(
                                 title = link.text(),
                                 url = link.attr("abs:href"),

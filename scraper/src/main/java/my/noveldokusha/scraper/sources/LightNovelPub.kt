@@ -22,7 +22,7 @@ class LightNovelPub(
     override val id = "lightnovelpub"
     override val nameStrId = R.string.source_name_lightnovelpub
     override val baseUrl = "https://lightnovelpub.me"
-    override val catalogUrl = "https://lightnovelpub.me/novel-list"
+    override val catalogUrl = "https://lightnovelpub.me/list/most-popular-novels"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -65,10 +65,11 @@ class LightNovelPub(
             doc.select(".novel-item")
                 .mapNotNull {
                     val link = it.selectFirst(".novel-title a") ?: return@mapNotNull null
+                    val bookCover = it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
-                        coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
+                        coverImageUrl = bookCover
                     )
                 }
                 .let { PagedList(it, index, it.isEmpty()) }
@@ -83,10 +84,11 @@ class LightNovelPub(
             doc.select(".novel-item")
                 .mapNotNull {
                     val link = it.selectFirst(".novel-title a") ?: return@mapNotNull null
+                    val bookCover = it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
-                        coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
+                        coverImageUrl = bookCover
                     )
                 }
                 .let { PagedList(it, index, it.isEmpty()) }
