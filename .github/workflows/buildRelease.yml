@@ -24,11 +24,15 @@ jobs:
       - name: Setup APK signing
         run: |
           # Generate a temporary keystore for release if secrets are missing or invalid
-          keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempStorePass -keypass tempKeyPass -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
+          keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempStorePass -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
+          # Actually, the previous command used tempKeyPass for keypass. Let's make them same to be safe.
+          # Re-running with identical passwords:
+          rm app/storeFile.jsk
+          keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempPassword -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
           echo "storeFile=storeFile.jsk" > custom.properties
-          echo "storePassword=tempStorePass" >> custom.properties
+          echo "storePassword=tempPassword" >> custom.properties
           echo "keyAlias=tempAlias" >> custom.properties
-          echo "keyPassword=tempKeyPass" >> custom.properties
+          echo "keyPassword=tempPassword" >> custom.properties
 
       - name: Build app
         run: ./gradlew assembleRelease -PlocalPropertiesFilePath=custom.properties --stacktrace
