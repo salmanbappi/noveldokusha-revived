@@ -23,5 +23,15 @@ enum class Themes(
         isLight = false,
         nameId = R.string.theme_name_black,
         themeId = R.style.AppTheme_BaseDark_Black,
+    ),
+    MIDNIGHT(
+        isLight = false,
+        nameId = R.string.theme_name_midnight,
+        themeId = R.style.AppTheme_BaseDark_Black,
+    ),
+    LAVA(
+        isLight = false,
+        nameId = R.string.theme_name_lava,
+        themeId = R.style.AppTheme_BaseDark_Black,
     );
 }

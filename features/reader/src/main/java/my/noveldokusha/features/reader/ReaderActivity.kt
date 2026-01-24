@@ -282,6 +282,18 @@ class ReaderActivity : BaseActivity() {
                             navigationRoutes.webView(this, url = url).let(::startActivity)
                         }
                     },
+                    onProgressChange = { progress ->
+                        val chapterUrl = viewModel.state.readerInfo.chapterUrl.value
+                        val chapterItems = viewModel.items.filter { it.chapterUrl == chapterUrl && it is ReaderItem.Position }
+                        if (chapterItems.isNotEmpty()) {
+                            val indexInChapter = ((progress / 100f) * (chapterItems.size - 1)).toInt()
+                            val item = chapterItems[indexInChapter] as ReaderItem.Position
+                            scrollToReadingPositionImmediately(
+                                chapterIndex = item.chapterIndex,
+                                chapterItemPosition = item.chapterItemPosition
+                            )
+                        }
+                    },
                     readerContent = {
                         AndroidView(factory = { viewBind.root })
                     },
@@ -340,7 +352,20 @@ class ReaderActivity : BaseActivity() {
             fadeInTextLiveData.postValue(true)
         }
 
-
+        // Auto Scroll Logic
+        lifecycleScope.launch {
+            while (true) {
+                val speed = viewModel.state.settings.autoScrollSpeed.value
+                if (speed > 0 && !listIsScrolling) {
+                    // Scroll 'speed' pixels every 50ms
+                    // smoothScrollBy(distance, duration)
+                    viewBind.listView.smoothScrollBy(speed, 50)
+                    delay(50)
+                } else {
+                    delay(200)
+                }
+            }
+        }
 
         when {
             // Use case: user opens app from media control intent

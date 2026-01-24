@@ -80,6 +80,7 @@ internal fun ReaderScreen(
     onTextSizeChanged: (Float) -> Unit,
     onPressBack: () -> Unit,
     onOpenChapterInWeb: () -> Unit,
+    onProgressChange: (Float) -> Unit,
     readerContent: @Composable (paddingValues: PaddingValues) -> Unit,
 ) {
     // Capture back action when viewing info
@@ -152,13 +153,23 @@ internal fun ReaderScreen(
                                 ),
                                 style = MaterialTheme.typography.labelMedium,
                             )
+                            androidx.compose.material3.Slider(
+                                value = state.readerInfo.chapterPercentageProgress.value,
+                                onValueChange = onProgressChange,
+                                valueRange = 0f..100f,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                         HorizontalDivider()
                     }
                 }
             }
         },
-        content = readerContent,
+        content = { padding ->
+            ReaderGesturesOverlay(isEnabled = !state.showReaderInfo.value) {
+                readerContent(padding)
+            }
+        },
         bottomBar = {
 
             val toggleOrSet = { type: Type ->
@@ -172,9 +183,14 @@ internal fun ReaderScreen(
                 enter = expandVertically(initialHeight = { 0 }) + fadeIn(),
                 exit = shrinkVertically(targetHeight = { 0 }) + fadeOut(),
             ) {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     ReaderScreenBottomBarDialogs(
-                        settings = state.settings,
+                        state = state,
                         onTextFontChanged = onTextFontChanged,
                         onTextSizeChanged = onTextSizeChanged,
                         onSelectableTextChange = onSelectableTextChange,
@@ -182,42 +198,49 @@ internal fun ReaderScreen(
                         onThemeSelected = onThemeSelected,
                         onKeepScreenOn = onKeepScreenOn,
                         onFullScreen = onFullScreen,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(bottom = 12.dp)
                     )
-                    BottomAppBar(
+                    Surface(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                             .animateContentSize(),
-                        containerColor = MaterialTheme.colorApp.tintedSurface,
+                        shape = RoundedCornerShape(32.dp),
+                        color = MaterialTheme.colorApp.tintedSurface,
+                        tonalElevation = 8.dp,
+                        shadowElevation = 8.dp
                     ) {
-                        if (state.settings.liveTranslation.isAvailable) SettingIconItem(
-                            currentType = state.settings.selectedSetting.value,
-                            settingType = Type.LiveTranslation,
-                            onClick = toggleOrSet,
-                            icon = Icons.Outlined.Translate,
-                            textId = R.string.translator,
-                        )
-                        SettingIconItem(
-                            currentType = state.settings.selectedSetting.value,
-                            settingType = Type.TextToSpeech,
-                            onClick = toggleOrSet,
-                            icon = Icons.Filled.RecordVoiceOver,
-                            textId = R.string.voice_reader,
-                        )
-                        SettingIconItem(
-                            currentType = state.settings.selectedSetting.value,
-                            settingType = Type.Style,
-                            onClick = toggleOrSet,
-                            icon = Icons.Outlined.ColorLens,
-                            textId = R.string.style,
-                        )
-                        SettingIconItem(
-                            currentType = state.settings.selectedSetting.value,
-                            settingType = Type.More,
-                            onClick = toggleOrSet,
-                            icon = Icons.Outlined.MoreHoriz,
-                            textId = R.string.more,
-                        )
+                        androidx.compose.foundation.layout.Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (state.settings.liveTranslation.isAvailable) SettingIconItem(
+                                currentType = state.settings.selectedSetting.value,
+                                settingType = Type.LiveTranslation,
+                                onClick = toggleOrSet,
+                                icon = Icons.Outlined.Translate,
+                                textId = R.string.translator,
+                            )
+                            SettingIconItem(
+                                currentType = state.settings.selectedSetting.value,
+                                settingType = Type.TextToSpeech,
+                                onClick = toggleOrSet,
+                                icon = Icons.Filled.RecordVoiceOver,
+                                textId = R.string.voice_reader,
+                            )
+                            SettingIconItem(
+                                currentType = state.settings.selectedSetting.value,
+                                settingType = Type.Style,
+                                onClick = toggleOrSet,
+                                icon = Icons.Outlined.ColorLens,
+                                textId = R.string.style,
+                            )
+                            SettingIconItem(
+                                currentType = state.settings.selectedSetting.value,
+                                settingType = Type.More,
+                                onClick = toggleOrSet,
+                                icon = Icons.Outlined.MoreHoriz,
+                                textId = R.string.more,
+                            )
+                        }
                     }
                 }
             }
@@ -359,6 +382,7 @@ private fun ViewsPreview(
                 onThemeSelected = {},
                 onPressBack = {},
                 onOpenChapterInWeb = {},
+                onProgressChange = {},
                 readerContent = {},
                 onKeepScreenOn = {},
                 onFullScreen = {},

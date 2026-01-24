@@ -44,8 +44,11 @@ internal class ReaderViewModel @Inject constructor(
     private val readingPosStats = readerSession.readingStats
     private val themeId = appPreferences.THEME_ID.state(viewModelScope)
 
+    private val _readingTimer = mutableStateOf("00:00")
+
     val state = ReaderScreenState(
         showReaderInfo = mutableStateOf(false),
+        readingTimer = _readingTimer,
         readerInfo = ReaderScreenState.CurrentInfo(
             chapterTitle = derivedStateOf {
                 readingPosStats.value?.chapterTitle ?: ""
@@ -64,6 +67,7 @@ internal class ReaderViewModel @Inject constructor(
             textToSpeech = readerSession.readerTextToSpeech.state,
             liveTranslation = readerSession.readerLiveTranslation.state,
             fullScreen = appPreferences.READER_FULL_SCREEN.state(viewModelScope),
+            autoScrollSpeed = mutableStateOf(0),
             style = ReaderScreenState.Settings.StyleSettingsData(
                 followSystem = appPreferences.THEME_FOLLOW_SYSTEM.state(viewModelScope),
                 currentTheme = derivedStateOf { themeId.value.toTheme },
@@ -75,6 +79,16 @@ internal class ReaderViewModel @Inject constructor(
     )
 
     init {
+        viewModelScope.launch {
+            var seconds = 0
+            while (true) {
+                kotlinx.coroutines.delay(1000)
+                seconds++
+                val mins = seconds / 60
+                val secs = seconds % 60
+                _readingTimer.value = String.format("%02d:%02d", mins, secs)
+            }
+        }
         readerViewHandlersActions.showInvalidChapterDialog = {
             withContext(Dispatchers.Main) {
                 state.showInvalidChapterDialog.value = true

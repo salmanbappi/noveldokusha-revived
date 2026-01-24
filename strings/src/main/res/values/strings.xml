@@ -144,6 +144,8 @@
     <string name="theme_name_dark">Dark</string>
     <string name="theme_name_grey">Grey</string>
     <string name="theme_name_black">Black</string>
+    <string name="theme_name_midnight">Midnight</string>
+    <string name="theme_name_lava">Lava</string>
     <string name="translator">Translator</string>
     <string name="voice_reader">Voice reader</string>
     <string name="more">More</string>

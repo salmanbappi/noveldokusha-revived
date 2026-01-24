@@ -64,3 +64,17 @@ val Info700 = Color(0xFF76840F)
 val Info800 = Color(0xFF5F6D0C)
 val Info900 = Color(0xFF48550A)
 val Info1000 = Color(0xFF333E07)
+
+// Midnight Theme
+val Slate900 = Color(0xFF0F172A)
+val Slate800 = Color(0xFF1E293B)
+val Slate700 = Color(0xFF334155)
+val Sky400 = Color(0xFF38BDF8)
+val Slate100 = Color(0xFFF1F5F9)
+
+// Lava Theme
+val Zinc900 = Color(0xFF18181B)
+val Zinc800 = Color(0xFF27272A)
+val Zinc700 = Color(0xFF3F3F46)
+val Red500 = Color(0xFFEF4444)
+val Zinc100 = Color(0xFFF4F4F5)

@@ -17,7 +17,7 @@ import my.noveldokusha.features.reader.ui.settingDialogs.VoiceReaderSettingDialo
 
 @Composable
 internal fun ReaderScreenBottomBarDialogs(
-    settings: ReaderScreenState.Settings,
+    state: ReaderScreenState,
     onTextFontChanged: (String) -> Unit,
     onTextSizeChanged: (Float) -> Unit,
     onSelectableTextChange: (Boolean) -> Unit,
@@ -27,6 +27,7 @@ internal fun ReaderScreenBottomBarDialogs(
     onFullScreen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val settings = state.settings
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.fillMaxWidth()
@@ -50,12 +51,15 @@ internal fun ReaderScreenBottomBarDialogs(
                         )
                     }
                     ReaderScreenState.Settings.Type.More -> MoreSettingDialog(
+                        readingTimer = state.readingTimer.value,
                         allowTextSelection = settings.isTextSelectable.value,
                         onAllowTextSelectionChange = onSelectableTextChange,
                         keepScreenOn = settings.keepScreenOn.value,
                         onKeepScreenOn = onKeepScreenOn,
                         fullScreen = settings.fullScreen.value,
                         onFullScreen = onFullScreen,
+                        autoScrollSpeed = settings.autoScrollSpeed.value,
+                        onAutoScrollChange = { settings.autoScrollSpeed.value = it }
                     )
                     ReaderScreenState.Settings.Type.None -> Unit
                 }

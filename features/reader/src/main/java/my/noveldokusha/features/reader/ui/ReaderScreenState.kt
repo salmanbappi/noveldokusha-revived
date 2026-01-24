@@ -10,7 +10,8 @@ internal data class ReaderScreenState(
     val showReaderInfo: MutableState<Boolean>,
     val readerInfo: CurrentInfo,
     val settings: Settings,
-    val showInvalidChapterDialog: MutableState<Boolean>
+    val showInvalidChapterDialog: MutableState<Boolean>,
+    val readingTimer: State<String> = mutableStateOf("00:00")
 ) {
     data class CurrentInfo(
         val chapterTitle: State<String>,
@@ -28,6 +29,7 @@ internal data class ReaderScreenState(
         val liveTranslation: LiveTranslationSettingData,
         val style: StyleSettingsData,
         val selectedSetting: MutableState<Type>,
+        val autoScrollSpeed: MutableState<Int> = mutableStateOf(0), // 0 = Off
     ) {
         data class StyleSettingsData(
             val followSystem: State<Boolean>,

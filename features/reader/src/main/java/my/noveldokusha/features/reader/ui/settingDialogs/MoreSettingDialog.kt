@@ -22,16 +22,67 @@ import my.noveldokusha.reader.R
 
 @Composable
 internal fun MoreSettingDialog(
+    readingTimer: String,
     allowTextSelection: Boolean,
     onAllowTextSelectionChange: (Boolean) -> Unit,
     keepScreenOn: Boolean,
     onKeepScreenOn: (Boolean) -> Unit,
     fullScreen: Boolean,
     onFullScreen: (Boolean) -> Unit,
+    autoScrollSpeed: Int,
+    onAutoScrollChange: (Int) -> Unit,
 ) {
     ElevatedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 12.dp)
     ) {
+        // Reading Timer
+        ListItem(
+            headlineContent = {
+                Text(text = "Reading Time")
+            },
+            leadingContent = {
+                Icon(
+                    androidx.compose.material.icons.Icons.Outlined.Timer,
+                    null,
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            },
+            trailingContent = {
+                Text(
+                    text = readingTimer,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        )
+
+        // Auto Scroll
+        ListItem(
+            modifier = Modifier
+                .clickable { onAutoScrollChange(if (autoScrollSpeed > 0) 0 else 5) },
+            headlineContent = {
+                Text(text = "Auto Scroll")
+            },
+            leadingContent = {
+                Icon(
+                    androidx.compose.material.icons.Icons.Default.ArrowDownward,
+                    null,
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            },
+            trailingContent = {
+                Switch(
+                    checked = autoScrollSpeed > 0,
+                    onCheckedChange = { onAutoScrollChange(if (it) 5 else 0) },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = ColorAccent,
+                        checkedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                        uncheckedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                    )
+                )
+            }
+        )
+
         // Allow text selection
         ListItem(
             modifier = Modifier
