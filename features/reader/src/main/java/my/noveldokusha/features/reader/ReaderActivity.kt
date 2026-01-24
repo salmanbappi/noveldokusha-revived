@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
@@ -283,8 +284,8 @@ class ReaderActivity : BaseActivity() {
                         }
                     },
                     onProgressChange = { progress ->
-                        val chapterUrl = viewModel.state.readerInfo.chapterUrl.value
-                        val chapterItems = viewModel.items.filter { it.chapterUrl == chapterUrl && it is ReaderItem.Position }
+                        val targetChapterUrl = viewModel.state.readerInfo.chapterUrl.value
+                        val chapterItems = viewModel.items.filter { it.chapterUrl == targetChapterUrl && it is ReaderItem.Position }
                         if (chapterItems.isNotEmpty()) {
                             val indexInChapter = ((progress / 100f) * (chapterItems.size - 1)).toInt()
                             val item = chapterItems[indexInChapter] as ReaderItem.Position
