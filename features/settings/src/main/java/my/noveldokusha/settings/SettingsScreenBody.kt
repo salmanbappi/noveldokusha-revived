@@ -145,6 +145,7 @@ private fun Preview() {
                 onDownloadTranslationModel = { },
                 onRemoveTranslationModel = { },
                 onCheckForUpdatesManual = { },
+                onDebugLogs = { },
             )
         }
     }
