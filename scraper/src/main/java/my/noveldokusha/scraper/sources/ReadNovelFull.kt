@@ -37,8 +37,9 @@ class ReadNovelFull(
     override suspend fun getChapterTitle(doc: Document): String? = null
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
-        doc.selectFirst("#chr-content")!!
-            .let { TextExtractor.get(it) }
+        doc.selectFirst("#chapter-content")?.let { TextExtractor.get(it) }
+            ?: doc.selectFirst("#chr-content")?.let { TextExtractor.get(it) }
+            ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(

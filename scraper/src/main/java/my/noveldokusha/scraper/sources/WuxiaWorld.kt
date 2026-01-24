@@ -31,7 +31,7 @@ class WuxiaWorld(
     override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst(".novel-cover img")?.attr("abs:src")
+                .selectFirst("img.novel-cover")?.attr("abs:src")
         }
     }
 

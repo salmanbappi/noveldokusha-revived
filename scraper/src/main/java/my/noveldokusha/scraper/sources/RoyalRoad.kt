@@ -45,11 +45,11 @@ class RoyalRoad(
     override suspend fun getChapterList(bookUrl: String): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .select("#chapters tbody tr[data-url]")
+                .select(".table tr[data-url] a[href]")
                 .map {
                     ChapterResult(
-                        title = it.selectFirst("a")?.text() ?: "",
-                        url = it.selectFirst("a")?.attr("abs:href") ?: ""
+                        title = it.text().trim(),
+                        url = it.attr("abs:href")
                     )
                 }
         }
