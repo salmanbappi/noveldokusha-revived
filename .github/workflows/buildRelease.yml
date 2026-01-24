@@ -45,6 +45,13 @@ jobs:
       - name: Create apk env info entries, move APK
         run: python .github/build_scripts/extract_info.py
 
+      - name: Upload APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apks
+          path: |
+            *.apk
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
