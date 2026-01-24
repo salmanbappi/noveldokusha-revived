@@ -14,7 +14,7 @@ import my.noveldokusha.core.Toasty
 import javax.inject.Inject
 
 @AndroidEntryPoint
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
     val appPreferences: AppPreferences by lazy { AppPreferences(applicationContext) }
 
