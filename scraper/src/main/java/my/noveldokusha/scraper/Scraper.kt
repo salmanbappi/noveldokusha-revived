@@ -22,12 +22,12 @@ class Scraper @Inject constructor(
     private var workerUrl: String = "https://your-worker.workers.dev/?url="
     private val flareSolverr = FlareSolverrClient()
 
-    val databasesList = arrayOf(
+    val databasesList: Array<DatabaseInterface> = arrayOf(
         BakaUpdates(networkClient),
         NovelUpdates(networkClient)
     )
 
-    val sourcesCatalogsList = arrayOf(
+    val sourcesCatalogsList: Array<SourceInterface.Catalog> = arrayOf(
         RoyalRoad(networkClient),
         WuxiaWorld(networkClient),
         NovelBin(networkClient),
@@ -41,13 +41,13 @@ class Scraper @Inject constructor(
         IndoWebnovel(networkClient),
         LightNovelWorld(networkClient),
         LightNovelPub(networkClient),
-        NovelHall(networkClient),
+        Novelhall(networkClient),
         SakuraNovel(networkClient),
         ScribbleHub(networkClient),
         WbNovel(networkClient)
     )
 
-    val sourcesCatalogsLanguagesList = sourcesCatalogsList
+    val sourcesCatalogsLanguagesList: List<LanguageCode> = sourcesCatalogsList
         .mapNotNull { it.language }
         .distinct()
         .sortedBy { it.iso639_1 }
@@ -58,6 +58,50 @@ class Scraper @Inject constructor(
 
     fun getCompatibleSource(url: String): SourceInterface? {
         return sourcesCatalogsList.firstOrNull { url.startsWith(it.baseUrl) }
+    }
+
+    fun getCompatibleDatabase(url: String): DatabaseInterface? {
+        return databasesList.firstOrNull { url.startsWith(it.baseUrl) }
+    }
+
+    suspend fun getChapterTitle(url: String): String? {
+        val selectors = getSelectors(url) ?: return null
+        val doc = tryFetch(url) ?: return null
+        return getChapterTitle(doc)
+    }
+
+    fun getChapterTitle(doc: Document): String? {
+        val url = doc.location()
+        val selectors = getSelectors(url) ?: return null
+        return doc.selectFirst(selectors["title"] ?: "")?.text()
+    }
+
+    suspend fun getChapterTitleResponse(url: String): my.noveldokusha.core.Response<String?> {
+        return try {
+            my.noveldokusha.core.Response.Success(getChapterTitle(url))
+        } catch (e: Exception) {
+            my.noveldokusha.core.Response.Error(e.message ?: "Unknown error", e)
+        }
+    }
+
+    suspend fun getChapterText(url: String): String? {
+        val selectors = getSelectors(url) ?: return null
+        val doc = tryFetch(url) ?: return null
+        return getChapterText(doc)
+    }
+
+    fun getChapterText(doc: Document): String? {
+        val url = doc.location()
+        val selectors = getSelectors(url) ?: return null
+        return doc.selectFirst(selectors["content"] ?: "")?.html()
+    }
+
+    suspend fun getChapterTextResponse(url: String): my.noveldokusha.core.Response<String?> {
+        return try {
+            my.noveldokusha.core.Response.Success(getChapterText(url))
+        } catch (e: Exception) {
+            my.noveldokusha.core.Response.Error(e.message ?: "Unknown error", e)
+        }
     }
 
     fun getSelectors(url: String): Map<String, String>? {
