@@ -285,7 +285,7 @@ class ReaderActivity : BaseActivity() {
                     },
                     onProgressChange = { progress ->
                         val targetChapterUrl = viewModel.state.readerInfo.chapterUrl.value
-                        val chapterItems = viewModel.items.filter { it.chapterUrl == targetChapterUrl && it is ReaderItem.Position }
+                        val chapterItems = viewModel.items.filter { it is ReaderItem.Position && it.chapterUrl == targetChapterUrl }
                         if (chapterItems.isNotEmpty()) {
                             val indexInChapter = ((progress / 100f) * (chapterItems.size - 1)).toInt()
                             val item = chapterItems[indexInChapter] as ReaderItem.Position
