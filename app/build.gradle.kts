@@ -49,7 +49,7 @@ android {
         setProperty("archivesBaseName", "NovelDokusha_v$versionName")
 
         testInstrumentationRunner = "my.noveldokusha.HiltTestRunner"
-
+    }
 
     signingConfigs {
         if (hasDefaultSigningConfigData) create("default") {
