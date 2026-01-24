@@ -26,7 +26,6 @@ class NovelBin(private val networkClient: NetworkClient) : SourceInterface.Catal
     override val nameStrId = R.string.source_name_novelbin
     override val baseUrl = "https://novelbin.me/"
     override val catalogUrl = "https://novelbin.me/sort/novelbin-daily-update"
-    override val iconUrl = "https://novelbin.me/img/logo.png"
     override val language = LanguageCode.ENGLISH
 
     private suspend fun getPagesList(index: Int, url: String) =
@@ -51,12 +50,10 @@ class NovelBin(private val networkClient: NetworkClient) : SourceInterface.Catal
         }
 
     override suspend fun getChapterTitle(doc: Document): String =
-        withContext(Dispatchers.Default) { doc.selectFirst("h2 > .title-chapter")?.text() ?: "" }
+        doc.selectFirst("h2 > .title-chapter")?.text() ?: ""
 
     override suspend fun getChapterText(doc: Document): String =
-        withContext(Dispatchers.Default) {
-            doc.selectFirst(".container .adsads")!!.let { TextExtractor.get(it) }
-        }
+        doc.selectFirst(".container .adsads")?.let { TextExtractor.get(it) } ?: ""
 
     override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> =
         withContext(Dispatchers.Default) {
