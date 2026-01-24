@@ -2,8 +2,10 @@ package my.noveldokusha.features.reader.ui.settingDialogs
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.TouchApp
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
