@@ -11,6 +11,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import javax.inject.Inject
 import javax.inject.Singleton
+import my.noveldokusha.network.toDocument
 
 @Singleton
 class Scraper @Inject constructor(
@@ -181,13 +182,9 @@ class Scraper @Inject constructor(
         }
     }
 
-    private fun tryFetch(url: String): Document? {
+    private suspend fun tryFetch(url: String): Document? {
         return try {
-            Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-                .header("Referer", url)
-                .timeout(30000)
-                .get()
+            networkClient.get(url).toDocument()
         } catch (e: Exception) {
             null
         }

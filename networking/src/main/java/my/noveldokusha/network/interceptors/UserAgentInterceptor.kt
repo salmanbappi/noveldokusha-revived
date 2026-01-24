@@ -7,7 +7,7 @@ import okhttp3.Response
 internal class UserAgentInterceptor : Interceptor {
 
     companion object {
-        const val DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; WOW64)"
+        const val DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
