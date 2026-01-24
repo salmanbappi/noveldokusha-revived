@@ -17,7 +17,7 @@ dependencies {
     implementation(projects.tooling.localDatabase)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
+    api(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.livedata.ktx)
 
