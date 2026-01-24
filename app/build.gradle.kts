@@ -42,10 +42,14 @@ android {
 
     defaultConfig {
         applicationId = "my.noveldokusha"
-        versionCode = 19 // Bumped version code
-        versionName = "2.3.0" // Bumped version name
+        minSdk = 26
+        targetSdk = 34
+        versionCode = 46
+        versionName = "2.3.1" // Bumped version name
         setProperty("archivesBaseName", "NovelDokusha_v$versionName")
-    }
+
+        testInstrumentationRunner = "my.noveldokusha.HiltTestRunner"
+
 
     signingConfigs {
         if (hasDefaultSigningConfigData) create("default") {
