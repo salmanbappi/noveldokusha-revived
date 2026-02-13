@@ -1,47 +1,43 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.kts.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep original source file and line numbers for better crash reports
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Hilt/Dagger rules
+-keep class dagger.hilt.android.internal.managers.** { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$ComponentManager { *; }
+-keep class * implements dagger.hilt.internal.GeneratedComponent { *; }
+-keep class * implements dagger.hilt.internal.UnsafeCasts { *; }
+-keep @dagger.hilt.InstallIn class *
+-keep @dagger.Module class *
+-keep @dagger.hilt.android.lifecycle.HiltViewModel class *
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
-
+# Keep ViewModel subclasses
 -keep public class * extends androidx.lifecycle.ViewModel { *; }
 
+# Jsoup
+-keep class org.jsoup.** { *; }
 
+# Scraper Sources - Keep all scraper sources from being obfuscated/removed
+-keep class my.noveldokusha.scraper.sources.** { *; }
+-keep class my.noveldokusha.scraper.SourceInterface* { *; }
+-keep class my.noveldokusha.scraper.domain.** { *; }
 
-
-#### Kotlin Serialization
-# Keep `Companion` object fields of serializable classes.
-# This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
+# Kotlin Serialization
+-keepattributes RuntimeVisibleAnnotations,AnnotationDefault
 -if @kotlinx.serialization.Serializable class **
 -keepclassmembers class <1> {
     static <1>$Companion Companion;
 }
-
-# Keep `serializer()` on companion objects (both default and named) of serializable classes.
 -if @kotlinx.serialization.Serializable class ** {
     static **$* *;
 }
 -keepclassmembers class <2>$<3> {
     kotlinx.serialization.KSerializer serializer(...);
 }
-
-# Keep `INSTANCE.serializer()` of serializable objects.
 -if @kotlinx.serialization.Serializable class ** {
     public static ** INSTANCE;
 }
@@ -50,20 +46,45 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
-# @Serializable and @Polymorphic are used at runtime for polymorphic serialization.
--keepattributes RuntimeVisibleAnnotations,AnnotationDefault
-
--dontwarn org.slf4j.impl.StaticLoggerBinder
-
--assumenosideeffects class android.util.Log {
-    public static boolean isLoggable(java.lang.String, int);
-    public static int d(...);
-    public static int v(...);
-    public static int i(...);
+# Retrofit / OkHttp
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepclassmembers,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
 }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
 
+# Gson
+-keepattributes Signature
+-keep class com.google.gson.** { *; }
+-keep class my.noveldokusha.scraper.domain.** { *; }
+
+# AndroidX Navigation
+-keep class * extends androidx.navigation.NavArgs { *; }
+
+# WorkManager
+-keep class * extends androidx.work.ListenableWorker { *; }
+
+# Timber
 -assumenosideeffects class timber.log.Timber* {
     public static *** d(...);
     public static *** v(...);
     public static *** i(...);
+}
+
+# General stability
+-ignorewarnings
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(...);
 }
