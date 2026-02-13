@@ -4,7 +4,9 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 
-internal class UserAgentInterceptor : Interceptor {
+internal class UserAgentInterceptor(
+    private val userAgent: String = DEFAULT_USER_AGENT
+) : Interceptor {
 
     companion object {
         const val DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
@@ -17,7 +19,7 @@ internal class UserAgentInterceptor : Interceptor {
             originalRequest
                 .newBuilder()
                 .removeHeader("User-Agent")
-                .addHeader("User-Agent", DEFAULT_USER_AGENT)
+                .addHeader("User-Agent", userAgent)
                 .build()
         } else originalRequest
         return chain.proceed(modifiedRequest)
