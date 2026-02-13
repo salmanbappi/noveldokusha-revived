@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Alive & Accessible -->
-    <string translatable="false" name="source_name_1stkissnovel">1stKissNovel</string>
-    <string translatable="false" name="source_name_bestlightnovel">BestLightNovel</string>
     <string translatable="false" name="source_name_box_novel">Box Novel</string>
-    <string translatable="false" name="source_name_korean_novels_mtl">Korean Novels MTL</string>
     <string translatable="false" name="source_name_light_novel_translations">Light Novel Translations</string>
     <string translatable="false" name="source_name_meio_novel">Meio Novel</string>
     <string translatable="false" name="source_name_novelbin">NovelBin</string>

@@ -74,7 +74,7 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
         tryConnect {
-            val url = "https://www.novelhall.com/index.php?s=main/search&q=$input"
+            val url = "https://www.novelhall.com/index.php?s=so&module=book&keyword=$input"
             val doc = networkClient.get(url).toDocument()
             doc.select(".list-novel .row, .book-list .row")
                 .mapNotNull {

@@ -106,7 +106,7 @@ class ReadNovelFull(
                 return@tryFlatConnect Response.Success(PagedList.createEmpty(index = index))
 
             val page = index + 1
-            val url = "https://readnovelfull.com/search?keyword=$input&page=$page"
+            val url = "https://readnovelfull.com/novel-list/search?keyword=$input&page=$page"
             val doc = networkClient.get(url).toDocument()
             parseToBooks(doc, index)
         }

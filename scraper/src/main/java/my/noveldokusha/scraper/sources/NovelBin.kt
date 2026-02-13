@@ -26,8 +26,8 @@ class NovelBin(
 ) : SourceInterface.Catalog {
     override val id = "novelbin"
     override val nameStrId = R.string.source_name_novelbin
-    override val baseUrl = "https://novelbin.me"
-    override val catalogUrl = "https://novelbin.me/sort/novelbin-popular"
+    override val baseUrl = "https://novelbin.com"
+    override val catalogUrl = "https://novelbin.com/sort/novelbin-popular"
     override val language = LanguageCode.ENGLISH
 
     private suspend fun getPagesList(index: Int, url: String) =

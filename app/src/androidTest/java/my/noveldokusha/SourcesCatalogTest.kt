@@ -33,28 +33,13 @@ class SourcesCatalogTest {
     }
 
     @Test
-    fun source__1stkissnovel() {
-        checkSourceCanBeOpened("1stKissNovel")
-    }
-
-    @Test
     fun source__royalroad() {
         checkSourceCanBeOpened("Royal Road")
     }
 
     @Test
-    fun source__bestlightnovel() {
-        checkSourceCanBeOpened("BestLightNovel")
-    }
-
-    @Test
     fun source__box_novel() {
         checkSourceCanBeOpened("Box Novel")
-    }
-
-    @Test
-    fun source__korean_novels_mtl() {
-        checkSourceCanBeOpened("Korean Novels MTL")
     }
 
     @Test

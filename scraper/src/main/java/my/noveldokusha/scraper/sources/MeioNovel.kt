@@ -26,7 +26,7 @@ class MeioNovel(
     override val id = "meionovel"
     override val nameStrId = R.string.source_name_meionovel
     override val baseUrl = "https://meionovels.com"
-    override val catalogUrl = "https://meionovels.com/novel-list"
+    override val catalogUrl = "https://meionovels.com/novel/"
     override val language = LanguageCode.INDONESIAN
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -63,7 +63,7 @@ class MeioNovel(
     override suspend fun getCatalogList(index: Int): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = "$catalogUrl?page=$page"
+            val url = if (page == 1) catalogUrl else "${catalogUrl}page/$page/"
             val doc = networkClient.get(url).toDocument()
             doc.select(".list-novel .row, .listupd .bs")
                 .mapNotNull {
@@ -81,7 +81,7 @@ class MeioNovel(
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = "https://meionovels.com/?s=$input&page=$page"
+            val url = if (page == 1) "$baseUrl?s=$input" else "$baseUrl/page/$page/?s=$input"
             val doc = networkClient.get(url).toDocument()
             doc.select(".listupd .bs")
                 .mapNotNull {

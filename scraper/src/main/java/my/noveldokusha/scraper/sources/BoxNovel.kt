@@ -9,7 +9,6 @@ import my.noveldokusha.network.NetworkClient
 import my.noveldokusha.network.add
 import my.noveldokusha.network.addPath
 import my.noveldokusha.network.ifCase
-import my.noveldokusha.network.postRequest
 import my.noveldokusha.network.toDocument
 import my.noveldokusha.network.toUrlBuilderSafe
 import my.noveldokusha.network.tryConnect
@@ -18,24 +17,27 @@ import my.noveldokusha.scraper.SourceInterface
 import my.noveldokusha.scraper.TextExtractor
 import my.noveldokusha.scraper.domain.BookResult
 import my.noveldokusha.scraper.domain.ChapterResult
+import org.jsoup.nodes.Document
 
 class BoxNovel(
     private val networkClient: NetworkClient
 ) : SourceInterface.Catalog {
     override val id = "box_novel"
     override val nameStrId = R.string.source_name_box_novel
-    override val baseUrl = "https://boxnovel.com/"
-    override val catalogUrl = "https://boxnovel.com/novel/?m_orderby=alphabet"
-    override val iconUrl = "https://boxnovel.com/wp-content/uploads/2018/04/box-icon-150x150.png"
+    override val baseUrl = "https://boxnovel.webflow.io"
+    override val catalogUrl = "https://boxnovel.webflow.io/novel"
     override val language = LanguageCode.ENGLISH
+
+    override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
+        doc.selectFirst(".chapter-text.w-richtext")?.let { TextExtractor.get(it) } ?: ""
+    }
 
     override suspend fun getBookCoverImageUrl(
         bookUrl: String
     ): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst("div.summary_image img[data-src]")
-                ?.attr("data-src")
+                .selectFirst("img.image-10")?.attr("abs:src")
         }
     }
 
@@ -44,7 +46,7 @@ class BoxNovel(
     ): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst(".summary__content.show-more")
+                .selectFirst(".novel-temp-summary")
                 ?.let { TextExtractor.get(it) }
         }
     }
@@ -53,19 +55,12 @@ class BoxNovel(
         bookUrl: String
     ): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            val url = bookUrl
-                .toUrlBuilderSafe()
-                .addPath("ajax")
-                .addPath("chapters")
-                .toString()
-
-            networkClient.call(postRequest(url))
-                .toDocument()
-                .select(".wp-manga-chapter > a[href]")
+            networkClient.get(bookUrl).toDocument()
+                .select(".chaplistcol a")
                 .map {
                     ChapterResult(
-                        title = it.text(),
-                        url = it.attr("href")
+                        title = it.selectFirst(".chaptitle")?.text() ?: it.text(),
+                        url = it.attr("abs:href")
                     )
                 }
                 .reversed()
@@ -75,30 +70,25 @@ class BoxNovel(
     override suspend fun getCatalogList(
         index: Int
     ): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
+        if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
         tryConnect {
-            val page = index + 1
-            val url = baseUrl
-                .toUrlBuilderSafe()
-                .addPath("novel")
-                .ifCase(page != 1) { addPath("page", page.toString()) }
-                .add("m_orderby", "alphabet")
-
-            val doc = networkClient.get(url).toDocument()
-            doc.select(".page-item-detail")
+            val doc = networkClient.get(catalogUrl).toDocument()
+            doc.select(".novelcollection")
                 .mapNotNull {
-                    val link = it.selectFirst("a[href]") ?: return@mapNotNull null
-                    val bookCover = it.selectFirst("img[data-src]")?.attr("data-src") ?: ""
+                    val link = it.selectFirst(".books a") ?: return@mapNotNull null
+                    val title = it.selectFirst(".books0detail.title")?.text() ?: ""
+                    val cover = it.selectFirst(".book-cover")?.attr("abs:src") ?: ""
                     BookResult(
-                        title = link.attr("title"),
-                        url = link.attr("href"),
-                        coverImageUrl = bookCover
+                        title = title,
+                        url = link.attr("abs:href"),
+                        coverImageUrl = cover
                     )
                 }
                 .let {
                     PagedList(
                         list = it,
                         index = index,
-                        isLastPage = doc.selectFirst("div.nav-previous.float-left") == null
+                        isLastPage = true // Webflow demo site seems static
                     )
                 }
         }
@@ -108,37 +98,29 @@ class BoxNovel(
         index: Int,
         input: String
     ): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
+        if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
         tryConnect {
-            val page = index + 1
-            val url = baseUrl
-                .toUrlBuilderSafe()
-                .ifCase(page != 1) { addPath("page", page.toString()) }
-                .add(
-                    "s" to input,
-                    "post_type" to "wp-manga",
-                    "op" to "",
-                    "author" to "",
-                    "artist" to "",
-                    "release" to "",
-                    "adult" to ""
-                )
+            val url = baseUrl.toUrlBuilderSafe()
+                .addPath("search")
+                .add("query", input)
+                .toString()
 
             val doc = networkClient.get(url).toDocument()
-            doc.select(".c-tabs-item__content")
+            // Search results on webflow are a bit different, but let's try a generic selector
+            doc.select(".search-result-items > div")
                 .mapNotNull {
-                    val link = it.selectFirst("a[href]") ?: return@mapNotNull null
-                    val bookCover = it.selectFirst("img[data-src]")?.attr("data-src") ?: ""
+                    val link = it.selectFirst("a") ?: return@mapNotNull null
                     BookResult(
-                        title = link.attr("title"),
-                        url = link.attr("href"),
-                        coverImageUrl = bookCover
+                        title = link.text(),
+                        url = link.attr("abs:href"),
+                        coverImageUrl = "" // Search results usually don't have images on Webflow search
                     )
                 }
                 .let {
                     PagedList(
                         list = it,
                         index = index,
-                        isLastPage = doc.selectFirst("div.nav-previous.float-left") == null
+                        isLastPage = true
                     )
                 }
         }

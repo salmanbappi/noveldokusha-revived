@@ -39,7 +39,9 @@ class Scraper @Inject constructor(
         Novelhall(networkClient),
         SakuraNovel(networkClient),
         ScribbleHub(networkClient),
-        WbNovel(networkClient)
+        WbNovel(networkClient),
+        BoxNovel(networkClient),
+        LightNovelWorld(networkClient)
     )
 
     val sourcesCatalogsLanguagesList: List<LanguageCode> = sourcesCatalogsList
@@ -142,7 +144,7 @@ class Scraper @Inject constructor(
             url.contains("wuxia.blog") || url.contains("wuxia.click") -> mapOf(
                 "title" to "h1", "cover" to "img.img-responsive", "chapter_list" to "#chapter-list a", "content" to "div.panel-body.article"
             )
-            url.contains("1stkissnovel.love") || url.contains("boxnovel.com") || url.contains("indowebnovel.id") || 
+            url.contains("boxnovel.com") || url.contains("boxnovel.webflow.io") || url.contains("indowebnovel.id") || 
             url.contains("sakuranovel.id") || url.contains("allnovelupdates.com") || url.contains("wbnovel.com") -> mapOf(
                 "title" to ".post-title h1", "cover" to ".summary_image img", "chapter_list" to "li[class=wp-manga-chapter] a", "content" to ".read-container"
             )
@@ -151,9 +153,6 @@ class Scraper @Inject constructor(
             )
             url.contains("scribblehub.com") -> mapOf(
                 "title" to ".fic_title", "cover" to ".fic_image img", "chapter_list" to ".toc_a", "content" to "#chp_raw"
-            )
-            url.contains("bestlightnovel.com") -> mapOf(
-                "title" to "h1", "cover" to ".info_image img", "chapter_list" to ".chapter-list a", "content" to "#vung_doc"
             )
             url.contains("novelupdates.com") -> mapOf(
                 "title" to ".seriestitlenwrap", "cover" to ".seriesimg img", "chapter_list" to ".chp-release", "content" to "#novelcontent"

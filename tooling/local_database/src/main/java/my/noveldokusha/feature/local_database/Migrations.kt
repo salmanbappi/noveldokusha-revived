@@ -3,7 +3,6 @@ package my.noveldokusha.feature.local_database
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import my.noveldokusha.feature.local_database.migrations.MigrationsList
-import my.noveldokusha.feature.local_database.migrations._1stKissNovelDomainChange_1_org
 import my.noveldokusha.feature.local_database.migrations.readLightNovelDomainChange_1_today
 import my.noveldokusha.feature.local_database.migrations.readLightNovelDomainChange_2_meme
 
@@ -24,7 +23,6 @@ internal fun databaseMigrations() = arrayOf(
     },
     migration(5, MigrationsList::readLightNovelDomainChange_1_today),
     migration(6, MigrationsList::readLightNovelDomainChange_2_meme),
-    migration(7, MigrationsList::_1stKissNovelDomainChange_1_org),
 )
 
 internal fun migration(vi: Int, migrate: (SupportSQLiteDatabase) -> Unit) =
