@@ -35,9 +35,7 @@ class ReadNovelFull(
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
-        doc.selectFirst("#chapter-content")?.let { TextExtractor.get(it) }
-            ?: doc.selectFirst("#chr-content")?.let { TextExtractor.get(it) }
-            ?: ""
+        doc.selectFirst("#chapter-content, #chr-content, .chapter-c, .chr-c")?.let { TextExtractor.get(it) } ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(
@@ -117,9 +115,9 @@ class ReadNovelFull(
         index: Int
     ): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            doc.select(".list-novel .row")
+            doc.select(".list-novel .row, .list-truyen .row")
                 .mapNotNull {
-                    val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.novel-title a, h3.truyen-title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
@@ -130,7 +128,7 @@ class ReadNovelFull(
                     PagedList(
                         list = it,
                         index = index,
-                        isLastPage = doc.select("ul.pagination li.next.disabled").isNotEmpty()
+                        isLastPage = it.isEmpty() || doc.select("ul.pagination li.next.disabled").isNotEmpty()
                     )
                 }
         }

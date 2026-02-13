@@ -25,7 +25,7 @@ class NovelFull(
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
-        doc.selectFirst("#chapter-content")?.let { TextExtractor.get(it) } ?: ""
+        doc.selectFirst("#chapter-content, #chr-content, .chapter-c, .chr-c")?.let { TextExtractor.get(it) } ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
@@ -91,9 +91,9 @@ class NovelFull(
             val page = index + 1
             val url = "https://novelfull.com/search?keyword=$input&page=$page"
             val doc = networkClient.get(url).toDocument()
-            doc.select(".list-novel .row")
+            doc.select(".list-truyen .row")
                 .mapNotNull {
-                    val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.truyen-title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),

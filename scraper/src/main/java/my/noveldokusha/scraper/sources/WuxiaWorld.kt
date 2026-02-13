@@ -1,6 +1,6 @@
 package my.noveldokusha.scraper.sources
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class WuxiaWorld(
     override val catalogUrl = "https://www.wuxiaworld.com/novels"
     override val language = LanguageCode.ENGLISH
 
-    private val gson = Gson()
+    private val gson = GsonBuilder().setLenient().create()
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
         doc.selectFirst("#chapter-content")?.let { TextExtractor.get(it) } 

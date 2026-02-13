@@ -110,16 +110,17 @@ class LightNovelWorld(
     }
 
     private fun parseToBooks(doc: Document, index: Int): PagedList<BookResult> {
-        val books = doc.select(".recommendation-card")
+        val books = doc.select(".recommendation-card, .novel-item")
             .mapNotNull {
-                val title = it.selectFirst(".card-title")?.text() ?: ""
-                val url = it.selectFirst("a.card-cover-link")?.attr("abs:href") ?: ""
-                val cover = it.selectFirst(".card-cover img")?.attr("abs:src") ?: ""
+                val title = it.selectFirst(".card-title, .novel-title, a[title]")?.text() ?: ""
+                val link = it.selectFirst("a.card-cover-link, a[href*='/novel/']")
+                val url = link?.attr("abs:href") ?: ""
+                val cover = it.selectFirst(".card-cover img, .novel-cover img, img")?.attr("abs:src") ?: ""
                 if (url.isEmpty()) return@mapNotNull null
                 BookResult(title, url, cover)
             }
         
-        val isLastPage = doc.select("#pageSelect option").last()?.attr("value") == (index + 1).toString()
+        val isLastPage = doc.select("#pageSelect option, ul.pagination li").last()?.`is`(".active, [selected]") ?: true
         
         return PagedList(books, index, isLastPage)
     }

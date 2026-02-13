@@ -56,6 +56,8 @@ class Scraper @Inject constructor(
             .replace("http://", "")
             .replace("www.", "")
             .removeSuffix("/")
+            .substringBefore("/") // Only keep the domain part for matching
+            .substringBeforeLast(".") // Remove .com, .org, .id etc
     }
 
     fun getCompatibleSourceCatalog(url: String): SourceInterface.Catalog? {

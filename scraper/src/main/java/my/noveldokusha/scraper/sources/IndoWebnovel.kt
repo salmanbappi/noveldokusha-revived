@@ -35,13 +35,15 @@ class IndoWebnovel(private val networkClient: NetworkClient) : SourceInterface.C
         withContext(Dispatchers.Default) {
             tryConnect {
                 val doc = networkClient.get(url).toDocument()
-                doc.select(".flexbox2-item > .flexbox2-content")
+                doc.select(".flexbox2-item > .flexbox2-content, .listupd .bs")
                     .mapNotNull {
                         val link = it.selectFirst("a") ?: return@mapNotNull null
-                        val bookCover = it.selectFirst(".flexbox2-thumb > img")?.attr("src") ?: ""
+                        val bookCover = it.selectFirst(".flexbox2-thumb > img, .thumb img")?.let { img ->
+                            img.attr("abs:src").takeIf { s -> s.isNotEmpty() } ?: img.attr("abs:data-src")
+                        } ?: ""
                         BookResult(
-                            title = link.attr("title"),
-                            url = link.attr("href"),
+                            title = link.attr("title").takeIf { s -> s.isNotEmpty() } ?: it.selectFirst(".tt")?.text() ?: "",
+                            url = link.attr("abs:href"),
                             coverImageUrl = bookCover,
                         )
                     }
@@ -49,7 +51,7 @@ class IndoWebnovel(private val networkClient: NetworkClient) : SourceInterface.C
                         PagedList(
                             list = it,
                             index = index,
-                            isLastPage = doc.selectFirst("div.pagination .next") == null,
+                            isLastPage = doc.selectFirst("div.pagination .next, .next.page-numbers") == null,
                         )
                     }
             }
