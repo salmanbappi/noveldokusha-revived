@@ -23,17 +23,8 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew assembleFullDebug --stacktrace
-
-    - name: Upload Full Debug APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-full-debug
-        path: app/build/outputs/apk/full/debug/*.apk
-
-    - name: Build Foss Debug
-      run: ./gradlew assembleFossDebug --stacktrace
+    - name: Build Debug APKs
+      run: ./gradlew assembleFullDebug assembleFossDebug --parallel --stacktrace
 
     - name: Upload Foss Debug APK
       uses: actions/upload-artifact@v4

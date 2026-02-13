@@ -68,12 +68,8 @@ android {
         }
 
         named("debug") {
-            postprocessing {
-                isRemoveUnusedCode = false
-                isObfuscate = false
-                isOptimizeCode = false
-                isRemoveUnusedResources = false
-            }
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
 
         named("release") {
