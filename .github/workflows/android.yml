@@ -23,43 +23,17 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Setup APK signing
-      run: |
-        keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempPassword -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
-        echo "storeFile=storeFile.jsk" > custom.properties
-        echo "storePassword=tempPassword" >> custom.properties
-        echo "keyAlias=tempAlias" >> custom.properties
-        echo "keyPassword=tempPassword" >> custom.properties
+    - name: Build Debug APKs
+      run: ./gradlew assembleFullDebug assembleFossDebug --parallel --stacktrace
 
-    - name: Build Release APKs
-      run: ./gradlew assembleFullRelease assembleFossRelease -PlocalPropertiesFilePath=custom.properties --parallel --stacktrace
-
-    - name: Upload Full Release APK
+    - name: Upload Full Debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-full-release
-        path: app/build/outputs/apk/full/release/*.apk
+        name: app-full-debug
+        path: app/build/outputs/apk/full/debug/*.apk
 
-    - name: Upload Foss Release APK
+    - name: Upload Foss Debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-foss-release
-        path: app/build/outputs/apk/foss/release/*.apk
-
-    - name: Get Version Name
-      run: |
-        VERSION_NAME=$(grep "versionName =" app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
-        echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
-        echo "RELEASE_TAG=v$VERSION_NAME-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        name: NovelDokusha v${{ env.VERSION_NAME }} (Auto-Build)
-        tag_name: ${{ env.RELEASE_TAG }}
-        prerelease: true
-        files: |
-          app/build/outputs/apk/full/release/*.apk
-          app/build/outputs/apk/foss/release/*.apk
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: app-foss-debug
+        path: app/build/outputs/apk/foss/debug/*.apk

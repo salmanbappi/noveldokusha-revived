@@ -38,7 +38,7 @@ jobs:
           echo "keyPassword=tempPassword" >> custom.properties
 
       - name: Build app
-        run: ./gradlew assembleRelease -PlocalPropertiesFilePath=custom.properties --stacktrace
+        run: ./gradlew assembleFullRelease assembleFossRelease -PlocalPropertiesFilePath=custom.properties --parallel --stacktrace
 
       - name: Setup Python
         uses: actions/setup-python@v5
