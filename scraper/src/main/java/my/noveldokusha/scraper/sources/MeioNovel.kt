@@ -24,7 +24,7 @@ class MeioNovel(
     private val networkClient: NetworkClient
 ) : SourceInterface.Catalog {
     override val id = "meionovel"
-    override val nameStrId = R.string.source_name_meionovel
+    override val nameStrId = R.string.source_name_meio_novel
     override val baseUrl = "https://meionovels.com"
     override val catalogUrl = "https://meionovels.com/novel/"
     override val language = LanguageCode.INDONESIAN
