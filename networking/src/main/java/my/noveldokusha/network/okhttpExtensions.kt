@@ -33,7 +33,7 @@ private suspend fun Call.await(): Response = withContext(Dispatchers.IO) {
 suspend fun OkHttpClient.call(builder: Request.Builder) = newCall(builder.build()).await()
 
 fun Response.toDocument(): Document {
-    return Jsoup.parse(body?.string() ?: "")
+    return Jsoup.parse(body?.string() ?: "", request.url.toString())
 }
 
 fun Response.toJson(): JsonElement {

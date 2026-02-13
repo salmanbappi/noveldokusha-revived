@@ -104,7 +104,8 @@ class ReadNovelFull(
                 return@tryFlatConnect Response.Success(PagedList.createEmpty(index = index))
 
             val page = index + 1
-            val url = "https://readnovelfull.com/novel-list/search?keyword=$input&page=$page"
+            // Use standard search path
+            val url = "https://readnovelfull.com/search?keyword=$input&page=$page"
             val doc = networkClient.get(url).toDocument()
             parseToBooks(doc, index)
         }
@@ -117,7 +118,7 @@ class ReadNovelFull(
         tryConnect {
             doc.select(".list-novel .row, .list-truyen .row")
                 .mapNotNull {
-                    val link = it.selectFirst("h3.novel-title a, h3.truyen-title a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.novel-title a, h3.truyen-title a, h3.title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),

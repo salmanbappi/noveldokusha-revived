@@ -72,21 +72,24 @@ class Wuxia(
                     ?.getAsJsonArray("queries")
                 
                 queries?.forEach { query ->
-                    val data = query.asJsonObject.getAsJsonObject("state")?.getAsJsonObject("data")
-                    if (data != null && data.has("item")) {
-                        val item = data.getAsJsonObject("item")
-                        val slug = item.get("slug").asString
-                        val chapters = mutableListOf<ChapterResult>()
-                        item.getAsJsonArray("chapterList")?.forEach { chapter ->
-                            val c = chapter.asJsonObject
-                            chapters.add(
-                                ChapterResult(
-                                    title = c.get("name").asString,
-                                    url = baseUrl + "/novel/" + slug + "/" + c.get("slug").asString
+                    val state = query.asJsonObject.getAsJsonObject("state")
+                    val data = state?.getAsJsonObject("data")
+                    if (data != null) {
+                        val item = if (data.has("item")) data.getAsJsonObject("item") else data
+                        if (item.has("chapterList")) {
+                            val slug = item.get("slug").asString
+                            val chapters = mutableListOf<ChapterResult>()
+                            item.getAsJsonArray("chapterList").forEach { chapter ->
+                                val c = chapter.asJsonObject
+                                chapters.add(
+                                    ChapterResult(
+                                        title = c.get("name").asString,
+                                        url = baseUrl + "/novel/" + slug + "/" + c.get("slug").asString
+                                    )
                                 )
-                            )
+                            }
+                            if (chapters.isNotEmpty()) return@tryConnect chapters
                         }
-                        if (chapters.isNotEmpty()) return@tryConnect chapters
                     }
                 }
             }

@@ -112,11 +112,18 @@ class LightNovelWorld(
     private fun parseToBooks(doc: Document, index: Int): PagedList<BookResult> {
         val books = doc.select(".recommendation-card, .novel-item")
             .mapNotNull {
-                val title = it.selectFirst(".card-title, .novel-title, a[title]")?.text() ?: ""
                 val link = it.selectFirst("a.card-cover-link, a[href*='/novel/']")
-                val url = link?.attr("abs:href") ?: ""
+                var url = link?.attr("abs:href") ?: ""
+                if (url.isEmpty()) {
+                    val href = link?.attr("href") ?: return@mapNotNull null
+                    url = if (href.startsWith("http")) href else baseUrl + (if (href.startsWith("/")) "" else "/") + href
+                }
+                
+                val title = it.selectFirst(".card-title, .novel-title, a[title]")?.text()
+                    ?: it.selectFirst("img")?.attr("alt")
+                    ?: ""
+                
                 val cover = it.selectFirst(".card-cover img, .novel-cover img, img")?.attr("abs:src") ?: ""
-                if (url.isEmpty()) return@mapNotNull null
                 BookResult(title, url, cover)
             }
         

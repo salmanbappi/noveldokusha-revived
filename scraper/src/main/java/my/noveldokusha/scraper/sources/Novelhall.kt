@@ -76,9 +76,9 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
         tryConnect {
             val url = "https://www.novelhall.com/index.php?s=so&module=book&keyword=$input"
             val doc = networkClient.get(url).toDocument()
-            doc.select(".list-novel .row, .book-list .row")
+            val books = doc.select(".ranking-item, tr, .row").drop(1)
                 .mapNotNull {
-                    val link = it.selectFirst("h3 a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3 a, td.novel a, .novel a, a[href*='/novel/']") ?: return@mapNotNull null
                     val bookCover = it.selectFirst("img")?.attr("abs:src") ?: ""
                     BookResult(
                         title = link.text(),
@@ -86,7 +86,18 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
                         coverImageUrl = bookCover
                     )
                 }
-                .let { PagedList(it, index, true) }
+            
+            if (books.isEmpty()) {
+                // Try alternate search
+                val url2 = "https://www.novelhall.com/search.php?q=$input"
+                val doc2 = networkClient.get(url2).toDocument()
+                val books2 = doc2.select("tr, .row").mapNotNull {
+                     val link = it.selectFirst("a[href*='/novel/']") ?: return@mapNotNull null
+                     BookResult(link.text(), link.attr("abs:href"), it.selectFirst("img")?.attr("abs:src") ?: "")
+                }
+                return@tryConnect PagedList(books2, index, true)
+            }
+            PagedList(books, index, true)
         }
     }
 }
