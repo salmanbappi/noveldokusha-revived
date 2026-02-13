@@ -23,11 +23,25 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build Debug APKs
-      run: ./gradlew assembleFullDebug assembleFossDebug --parallel --stacktrace
+    - name: Setup APK signing
+      run: |
+        keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempPassword -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
+        echo "storeFile=storeFile.jsk" > custom.properties
+        echo "storePassword=tempPassword" >> custom.properties
+        echo "keyAlias=tempAlias" >> custom.properties
+        echo "keyPassword=tempPassword" >> custom.properties
 
-    - name: Upload Foss Debug APK
+    - name: Build Release APKs
+      run: ./gradlew assembleFullRelease assembleFossRelease -PlocalPropertiesFilePath=custom.properties --parallel --stacktrace
+
+    - name: Upload Full Release APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-foss-debug
-        path: app/build/outputs/apk/foss/debug/*.apk
+        name: app-full-release
+        path: app/build/outputs/apk/full/release/*.apk
+
+    - name: Upload Foss Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-foss-release
+        path: app/build/outputs/apk/foss/release/*.apk
