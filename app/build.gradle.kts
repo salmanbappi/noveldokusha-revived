@@ -73,13 +73,11 @@ android {
         }
 
         named("release") {
-            postprocessing {
-                proguardFile("proguard-rules.pro")
-                isRemoveUnusedCode = true
-                isObfuscate = false
-                isOptimizeCode = true
-                isRemoveUnusedResources = true
-            }
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFile("proguard-rules.pro")
+            // Use postprocessing for more granular release control if needed, 
+            // but standard isMinifyEnabled handles shrinking/obfuscation/optimization.
         }
     }
 

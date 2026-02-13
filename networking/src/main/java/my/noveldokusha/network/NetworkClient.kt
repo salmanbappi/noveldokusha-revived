@@ -23,6 +23,7 @@ interface NetworkClient {
     suspend fun call(request: Request.Builder, followRedirects: Boolean = false): Response
     suspend fun get(url: String): Response
     suspend fun get(url: Uri.Builder): Response
+    suspend fun post(url: String, params: Map<String, String>): Response
 }
 
 @Singleton
@@ -89,4 +90,11 @@ class ScraperNetworkClient @Inject constructor(
 
     override suspend fun get(url: String) = call(getRequest(url))
     override suspend fun get(url: Uri.Builder) = call(getRequest(url.toString()))
+
+    override suspend fun post(url: String, params: Map<String, String>): Response {
+        val body = okhttp3.FormBody.Builder().apply {
+            params.forEach { (key, value) -> add(key, value) }
+        }.build()
+        return call(getRequest(url).post(body))
+    }
 }
