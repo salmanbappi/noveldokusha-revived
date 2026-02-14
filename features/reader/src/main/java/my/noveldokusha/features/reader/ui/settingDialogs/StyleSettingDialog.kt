@@ -31,7 +31,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -70,7 +69,7 @@ import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.tools.FontsLoader
 import my.noveldokusha.features.reader.ui.ReaderScreenState
-import my.noveldokusha.strings.R
+import my.noveldokusha.strings.R as StringsR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -100,7 +99,7 @@ internal fun StyleSettingDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.style),
+                    text = stringResource(StringsR.string.style),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = (-0.5).sp
@@ -150,7 +149,6 @@ internal fun StyleSettingDialog(
                         colors = ListItemDefaults.colors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                         ),
-                        shape = RoundedCornerShape(16.dp)
                     )
                     DropdownMenu(
                         expanded = showFontsDropdown,
@@ -189,7 +187,7 @@ internal fun StyleSettingDialog(
                         currentTextSize = it
                         onTextSizeChange(currentTextSize)
                     },
-                    text = stringResource(R.string.text_size) + ": %.1f".format(currentTextSize),
+                    text = stringResource(StringsR.string.text_size) + ": %.1f".format(currentTextSize),
                 )
             }
 
@@ -215,7 +213,7 @@ internal fun StyleSettingDialog(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
                             Text(
-                                text = stringResource(id = R.string.follow_system),
+                                text = stringResource(id = StringsR.string.follow_system),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -346,20 +344,22 @@ private fun CustomThemeEditor(appPreferences: AppPreferences) {
             )
         }
         
-        Surface(
-            color = Color(bgValue),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth().height(60.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        // Replaced Surface with Box + Modifier to avoid 'shape' parameter issue if Surface overload is ambiguous
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(bgValue))
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = "The quick brown fox jumps over the lazy dog.",
-                    color = Color(textValue),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
+            Text(
+                text = "The quick brown fox jumps over the lazy dog.",
+                color = Color(textValue),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
@@ -387,13 +387,16 @@ private fun ColorPickerItem(
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(text = label, style = MaterialTheme.typography.labelSmall)
         Box {
-            Surface(
-                onClick = { expanded = true },
-                color = currentColor,
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth().height(40.dp),
-                border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
-            ) {}
+            // Replaced Surface with Box + Modifier
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(currentColor)
+                    .border(BorderStroke(2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)), RoundedCornerShape(12.dp))
+                    .clickable { expanded = true }
+            )
             
             DropdownMenu(
                 expanded = expanded,
