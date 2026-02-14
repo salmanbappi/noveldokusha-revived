@@ -131,6 +131,12 @@
     <string name="media_control_next">next</string>
     <string name="delete">Delete</string>
     <string name="english">English</string>
+    <string name="language_english">English</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_french">French</string>
+    <string name="language_indonesian">Indonesian</string>
+    <string name="language_chinese">Chinese</string>
     <string name="filter_title">Title</string>
     <string name="filter_genres">Genres</string>
     <string name="clear_filters">Clear</string>
