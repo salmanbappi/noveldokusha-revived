@@ -287,9 +287,13 @@ class ReaderActivity : BaseActivity() {
                         val targetChapterUrl = viewModel.state.readerInfo.chapterUrl.value
                         if (targetChapterUrl.isBlank()) return@ReaderScreen
                         
-                        // Use a local copy of items to avoid ConcurrentModificationException
-                        val currentItems = viewModel.items.toList()
-                        val chapterItems = currentItems.filter { it is ReaderItem.Position && it.chapterUrl == targetChapterUrl }
+                        // Use a synchronized block or copy to avoid ConcurrentModificationException
+                        val chapterItems = try {
+                            ArrayList(viewModel.items).filter { it is ReaderItem.Position && it.chapterUrl == targetChapterUrl }
+                        } catch (e: Exception) {
+                            emptyList()
+                        }
+                        
                         if (chapterItems.isNotEmpty()) {
                             val safeProgress = if (progress.isNaN() || progress.isInfinite()) 0f else progress.coerceIn(0f, 100f)
                             val indexInChapter = ((safeProgress / 100f) * (chapterItems.size - 1)).toInt()

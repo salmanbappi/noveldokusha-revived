@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "my.noveldokusha.networking"
+    namespace = "my.noveldokusha.network"
 }
 
 dependencies {
