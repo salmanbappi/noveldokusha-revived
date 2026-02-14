@@ -29,45 +29,54 @@ class LightNovelPub(
         doc.selectFirst("#chapter-container")?.let { TextExtractor.get(it) } 
             ?: doc.selectFirst("#chapter-content")?.let { TextExtractor.get(it) }
             ?: doc.selectFirst(".chapter-content")?.let { TextExtractor.get(it) }
+            ?: doc.selectFirst(".chr-c")?.let { TextExtractor.get(it) }
             ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst(".fixed-img img")?.attr("abs:src")
+                .selectFirst(".fixed-img img, .book-img img")?.attr("abs:src")
         }
     }
 
     override suspend fun getBookDescription(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst(".summary .content")?.let { TextExtractor.get(it) }
+                .selectFirst(".summary .content, .description .content, #panel-des")?.let { TextExtractor.get(it) }
         }
     }
 
     override suspend fun getChapterList(bookUrl: String): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            val doc = networkClient.get(bookUrl).toDocument()
-            val chapters = doc.select(".ul-list5 a, .chapter-list a")
-                .map {
+            val chapters = mutableListOf<ChapterResult>()
+            
+            // Try fetching from the main page first
+            val mainDoc = networkClient.get(bookUrl).toDocument()
+            mainDoc.select(".ul-list5 a, .chapter-list a, .list-chapter a").forEach {
+                chapters.add(
                     ChapterResult(
-                        title = it.selectFirst(".chapter-title")?.text() ?: it.text(),
+                        title = it.selectFirst(".chapter-title, .title")?.text() ?: it.text(),
                         url = it.attr("abs:href")
                     )
-                }
+                )
+            }
             
+            // If empty, try the /chapters subpage
             if (chapters.isEmpty()) {
-                val url = if (bookUrl.endsWith("/")) "${bookUrl}chapters" else "$bookUrl/chapters"
-                networkClient.get(url).toDocument()
-                    .select(".chapter-list a, .ul-list5 a")
-                    .map {
+                val chaptersUrl = if (bookUrl.endsWith("/")) "${bookUrl}chapters" else "$bookUrl/chapters"
+                val chapDoc = networkClient.get(chaptersUrl).toDocument()
+                chapDoc.select(".ul-list5 a, .chapter-list a, .list-chapter a").forEach {
+                    chapters.add(
                         ChapterResult(
-                            title = it.selectFirst(".chapter-title")?.text() ?: it.text(),
+                            title = it.selectFirst(".chapter-title, .title")?.text() ?: it.text(),
                             url = it.attr("abs:href")
                         )
-                    }
-            } else chapters
+                    )
+                }
+            }
+            
+            chapters.distinctBy { it.url }
         }
     }
 

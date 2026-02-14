@@ -62,17 +62,39 @@ class Wuxia(
         bookUrl: String
     ): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            val doc = networkClient.get(bookUrl).toDocument()
             val slug = bookUrl.substringAfterLast("/")
-            
-            // Try to fetch from API directly
+            val chapters = mutableListOf<ChapterResult>()
+
+            // Try to fetch novel detail from API first
+            try {
+                val detailUrl = "https://wuxia.click/api/novels/$slug/"
+                val detailResponse = networkClient.get(detailUrl)
+                val detailBody = detailResponse.body?.string()
+                if (detailBody != null) {
+                    val detailJson = gson.fromJson(detailBody, JsonObject::class.java)
+                    val chapterList = detailJson.getAsJsonArray("chapterList")
+                    chapterList?.forEach { chapter ->
+                        val c = chapter.asJsonObject
+                        chapters.add(
+                            ChapterResult(
+                                title = c.get("name").asString,
+                                url = baseUrl + "/novel/" + slug + "/" + c.get("slug").asString
+                            )
+                        )
+                    }
+                    if (chapters.isNotEmpty()) return@tryConnect chapters
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
+
+            // Fallback to Chapters API
             try {
                 val apiUrl = "https://wuxia.click/api/novels/$slug/chapters?page=1"
                 val response = networkClient.get(apiUrl)
                 val responseBody = response.body?.string()
-                if (responseBody != null) {
+                if (responseBody != null && responseBody.trim().startsWith("{")) {
                     val apiJson = gson.fromJson(responseBody, JsonObject::class.java)
-                    val chapters = mutableListOf<ChapterResult>()
                     apiJson.getAsJsonArray("items")?.forEach { chapter ->
                         val c = chapter.asJsonObject
                         chapters.add(
@@ -85,9 +107,10 @@ class Wuxia(
                     if (chapters.isNotEmpty()) return@tryConnect chapters
                 }
             } catch (e: Exception) {
-                // Ignore and try other methods
+                // Ignore
             }
 
+            val doc = networkClient.get(bookUrl).toDocument()
             val scriptData = doc.select("#__NEXT_DATA__").firstOrNull()?.html()
             if (scriptData != null) {
                 val json = gson.fromJson(scriptData, JsonObject::class.java)
@@ -101,24 +124,22 @@ class Wuxia(
                     val data = state?.getAsJsonObject("data")
                     if (data != null) {
                         val item = if (data.has("item")) data.getAsJsonObject("item") else data
-                        if (item.has("chapterList")) {
-                            val chapters = mutableListOf<ChapterResult>()
-                            item.getAsJsonArray("chapterList").forEach { chapter ->
-                                val c = chapter.asJsonObject
-                                chapters.add(
-                                    ChapterResult(
-                                        title = c.get("name").asString,
-                                        url = baseUrl + "/novel/" + slug + "/" + c.get("slug").asString
-                                    )
+                        val chapterList = if (item.has("chapterList")) item.getAsJsonArray("chapterList") else null
+                        chapterList?.forEach { chapter ->
+                            val c = chapter.asJsonObject
+                            chapters.add(
+                                ChapterResult(
+                                    title = c.get("name").asString,
+                                    url = baseUrl + "/novel/" + slug + "/" + c.get("slug").asString
                                 )
-                            }
-                            if (chapters.isNotEmpty()) return@tryConnect chapters
+                            )
                         }
                     }
                 }
+                if (chapters.isNotEmpty()) return@tryConnect chapters.distinctBy { it.url }
             }
             
-            doc.select(".list-chapter a, #list-chapter a, #chapters a, #chapter-list a").map {
+            doc.select(".list-chapter a, #list-chapter a, #chapters a, #chapter-list a, .list-truyen a").map {
                 ChapterResult(
                     title = it.text(),
                     url = it.attr("abs:href")

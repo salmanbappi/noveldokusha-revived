@@ -35,7 +35,13 @@ class WuxiaWorld(
         val eqIdx = scriptData.indexOf("=", startIdx)
         if (eqIdx == -1) return null
         
-        val jsonStart = scriptData.indexOfAny(charArrayOf('{', '['), eqIdx)
+        var jsonStart = -1
+        for (i in eqIdx until scriptData.length) {
+            if (scriptData[i] == '{' || scriptData[i] == '[') {
+                jsonStart = i
+                break
+            }
+        }
         if (jsonStart == -1) return null
         
         var braceCount = 0
@@ -55,13 +61,6 @@ class WuxiaWorld(
             val jsonStr = scriptData.substring(jsonStart, jsonEnd)
             gson.fromJson(jsonStr, JsonObject::class.java)
         } else null
-    }
-
-    private fun String.indexOfAny(chars: CharArray, startIndex: Int): Int {
-        for (i in startIndex until length) {
-            if (this[i] in chars) return i
-        }
-        return -1
     }
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -98,10 +97,12 @@ class WuxiaWorld(
                     for (query in queries) {
                         val state = query.asJsonObject.getAsJsonObject("state")
                         val data = state?.getAsJsonObject("data")
-                        if (data != null && data.has("item")) {
-                            val item = data.getAsJsonObject("item")
-                            novelId = item.get("id").asInt
-                            novelSlug = item.get("slug").asString
+                        if (data != null) {
+                            val item = if (data.has("item")) data.getAsJsonObject("item") else null
+                            if (item != null) {
+                                novelId = item.get("id").asInt
+                                novelSlug = item.get("slug").asString
+                            }
                         }
                     }
 

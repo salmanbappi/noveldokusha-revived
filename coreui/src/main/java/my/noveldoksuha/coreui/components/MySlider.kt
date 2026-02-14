@@ -94,8 +94,11 @@ private fun MySliderBase(
          */
         val offsetPx by remember {
             derivedStateOf {
-                val normalizedValue =
-                    (currentValue - range.start) / (range.endInclusive - range.start)
+                val rangeWidth = range.endInclusive - range.start
+                val safeValue = if (value.isNaN()) range.start else value.coerceIn(range.start, range.endInclusive)
+                val normalizedValue = if (rangeWidth > 0f) {
+                    (safeValue - range.start) / rangeWidth
+                } else 0f
                 val sliderSizePx = constraints.maxWidth.toFloat() - heightPx
                 normalizedValue * sliderSizePx + heightPx
             }
