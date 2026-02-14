@@ -12,9 +12,12 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -23,7 +26,6 @@ import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Translate
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,7 +47,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -91,7 +92,6 @@ internal fun ReaderScreen(
 
     Scaffold(
         topBar = {
-            val fullScreen by rememberUpdatedState(state.showReaderInfo.value)
             AnimatedVisibility(
                 visible = state.showReaderInfo.value,
                 enter = expandVertically(initialHeight = { 0 }, expandFrom = Alignment.Top)
@@ -103,17 +103,14 @@ internal fun ReaderScreen(
                     color = MaterialTheme.colorApp.tintedSurface,
                     modifier = Modifier.animateContentSize(),
                 ) {
-                    Column(
-                        modifier = when (fullScreen) {
-                            true -> Modifier.displayCutoutPadding()
-                            false -> Modifier
-                        }
-                    ) {
+                    Column {
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
                                 containerColor = MaterialTheme.colorApp.tintedSurface,
                                 scrolledContainerColor = MaterialTheme.colorApp.tintedSurface,
                             ),
+                            // Safe window insets handling
+                            windowInsets = TopAppBarDefaults.windowInsets,
                             title = {
                                 Text(
                                     text = state.readerInfo.chapterTitle.value,
