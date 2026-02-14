@@ -31,6 +31,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -92,7 +93,7 @@ internal fun StyleSettingDialog(
             modifier = Modifier.padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Header with more expressive typography
+            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,7 +118,7 @@ internal fun StyleSettingDialog(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 LabelText("Typography")
                 
-                // Font Selector - Modernized
+                // Font Selector
                 Box(modifier = Modifier.clip(RoundedCornerShape(16.dp))) {
                     var showFontsDropdown by rememberSaveable { mutableStateOf(false) }
                     val fontLoader = remember { FontsLoader() }
@@ -203,11 +204,11 @@ internal fun StyleSettingDialog(
                 ) {
                     LabelText("Appearance")
                     
-                    // Follow System Toggle - Modernized
+                    // Follow System Toggle
                     Surface(
+                        onClick = { onFollowSystemChange(!state.followSystem.value) },
                         color = if (state.followSystem.value) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.clickable { onFollowSystemChange(!state.followSystem.value) }
+                        shape = RoundedCornerShape(20.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -233,7 +234,6 @@ internal fun StyleSettingDialog(
                 }
 
                 if (!state.followSystem.value) {
-                    // Theme Grid - More than 16 themes now
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         FlowRow(
                             modifier = Modifier.fillMaxWidth(),
@@ -250,7 +250,6 @@ internal fun StyleSettingDialog(
                             }
                         }
 
-                        // Custom Theme Section
                         AnimatedVisibility(visible = state.currentTheme.value == Themes.CUSTOM) {
                             CustomThemeEditor(appPreferences)
                         }
@@ -349,7 +348,6 @@ private fun CustomThemeEditor(appPreferences: AppPreferences) {
             )
         }
         
-        // Preview Box
         Surface(
             color = Color(bgValue),
             shape = RoundedCornerShape(12.dp),
@@ -376,12 +374,12 @@ private fun ColorPickerItem(
     modifier: Modifier = Modifier
 ) {
     val colors = listOf(
-        Color(0xFFFDF6E3), Color(0xFFEEE8D5), Color(0xFFF4ECD8), // Light/Sepia
-        Color(0xFFE6D5B8), Color(0xFFF9F7F3), Color(0xFFFFF5F7), // Sand/Paper/Sakura
-        Color(0xFFE5E9E0), Color(0xFFCDD6F4), Color(0xFFD8DEE9), // Matcha/Catppuccin/Nord
-        Color(0xFF657B83), Color(0xFF5B4636), Color(0xFF4A4031), // Text Colors
-        Color(0xFF002B36), Color(0xFF073642), Color(0xFF282828), // Dark
-        Color(0xFF1E1E2E), Color(0xFF2E3440), Color(0xFF18181B), // Darkest
+        Color(0xFFFDF6E3), Color(0xFFEEE8D5), Color(0xFFF4ECD8),
+        Color(0xFFE6D5B8), Color(0xFFF9F7F3), Color(0xFFFFF5F7),
+        Color(0xFFE5E9E0), Color(0xFFCDD6F4), Color(0xFFD8DEE9),
+        Color(0xFF657B83), Color(0xFF5B4636), Color(0xFF4A4031),
+        Color(0xFF002B36), Color(0xFF073642), Color(0xFF282828),
+        Color(0xFF1E1E2E), Color(0xFF2E3440), Color(0xFF18181B),
         Color(0xFF000000), Color(0xFFFFFFFF)
     )
 
@@ -405,7 +403,6 @@ private fun ColorPickerItem(
             ) {
                 Box(modifier = Modifier.padding(8.dp)) {
                     FlowRow(
-                        maxItemsInEachRow = 5,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {

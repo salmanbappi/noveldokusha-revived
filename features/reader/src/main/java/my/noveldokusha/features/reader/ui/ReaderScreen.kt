@@ -342,7 +342,6 @@ private fun ViewsPreview(
         playNextItem = {},
         playNextChapter = {},
         setVoiceId = {},
-        playFirstVisibleItem = {},
         scrollToActiveItem = {},
         setVoiceSpeed = {},
         setVoicePitch = {},
