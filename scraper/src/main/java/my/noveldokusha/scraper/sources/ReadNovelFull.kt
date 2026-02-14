@@ -81,7 +81,7 @@ class ReadNovelFull(
             }
             
             if (chapters.isEmpty()) {
-                doc.select("#list-chapter li a, .list-chapter li a")
+                doc.select("#list-chapter li a, .list-chapter li a, .list-chapter a")
                     .mapTo(chapters) {
                         ChapterResult(
                             title = it.text(),

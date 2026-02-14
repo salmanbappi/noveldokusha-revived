@@ -32,7 +32,12 @@ class WuxiaWorld(
         val pattern = Regex("""(?:window\.)?$key\s*=\s*(\{.*\}|\[.*\])""", RegexOption.DOT_MATCHES_ALL)
         val match = pattern.find(scriptData)
         if (match != null) {
-            val jsonStart = match.groups[1]?.range?.first ?: return null
+            // Find the start of the actual JSON content (the first { or [ in the matched string)
+            val capturedStr = match.groupValues[1]
+            val jsonStartInCaptured = capturedStr.indexOfAny(charArrayOf('{', '['))
+            if (jsonStartInCaptured == -1) return null
+            
+            val jsonStart = match.groups[1]!!.range.first + jsonStartInCaptured
             var braceCount = 0
             var jsonEnd = -1
             for (i in jsonStart until scriptData.length) {
@@ -159,14 +164,14 @@ class WuxiaWorld(
                 val json = extractJson(scriptData, "__REACT_QUERY_STATE__")
                 if (json != null) {
                     val queries = json.getAsJsonArray("queries")
-                    for (query in queries) {
+                    queries?.forEach { query ->
                         val state = query.asJsonObject.getAsJsonObject("state")
                         val data = state?.getAsJsonObject("data")
                         if (data != null && data.has("pages")) {
                             val pages = data.getAsJsonArray("pages")
                             val books = mutableListOf<BookResult>()
                             pages.forEach { page ->
-                                page.asJsonObject.getAsJsonArray("items").forEach { item ->
+                                page.asJsonObject.getAsJsonArray("items")?.forEach { item ->
                                     val b = item.asJsonObject
                                     books.add(
                                         BookResult(

@@ -26,7 +26,10 @@ class LightNovelPub(
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
-        doc.selectFirst("#chapter-container")?.let { TextExtractor.get(it) } ?: ""
+        doc.selectFirst("#chapter-container")?.let { TextExtractor.get(it) } 
+            ?: doc.selectFirst("#chapter-content")?.let { TextExtractor.get(it) }
+            ?: doc.selectFirst(".chapter-content")?.let { TextExtractor.get(it) }
+            ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
