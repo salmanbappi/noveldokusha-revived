@@ -202,4 +202,9 @@
     
     <string name="voice_reader_settings">Voice Reader Settings</string>
     <string name="saved">Saved</string>
+    <string name="configuration">Configuration</string>
+    <string name="close">Close</string>
+    <string name="delete_voice">Delete Voice</string>
+    <string name="cancel">Cancel</string>
+    <string name="save_voice">Save Voice</string>
 </resources>
