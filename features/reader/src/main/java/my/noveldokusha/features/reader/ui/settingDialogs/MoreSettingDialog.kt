@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import my.noveldoksuha.coreui.theme.ColorAccent
 import my.noveldoksuha.coreui.theme.colorApp
-import my.noveldokusha.reader.R
+import my.noveldokusha.strings.R
 
 @Composable
 internal fun MoreSettingDialog(

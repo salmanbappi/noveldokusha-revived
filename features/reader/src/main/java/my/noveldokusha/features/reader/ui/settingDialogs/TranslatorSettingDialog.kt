@@ -54,7 +54,13 @@ import my.noveldoksuha.coreui.theme.clickableWithUnboundedIndicator
 import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldoksuha.coreui.theme.ifCase
 import my.noveldokusha.features.reader.features.LiveTranslationSettingData
-import my.noveldokusha.reader.R
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
+import my.noveldoksuha.coreui.theme.InternalTheme
+import my.noveldokusha.features.reader.ui.ReaderScreenState
+import my.noveldokusha.strings.R
+import my.noveldokusha.tooling.texttranslator.domain.TranslationModel
 
 @Composable
 internal fun TranslatorSettingDialog(

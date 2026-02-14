@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import my.noveldoksuha.coreui.theme.ColorAccent
 import my.noveldoksuha.coreui.theme.textPadding
-import my.noveldokusha.settings.R
+import my.noveldokusha.strings.R
 
 @Composable
 internal fun SettingsData(
