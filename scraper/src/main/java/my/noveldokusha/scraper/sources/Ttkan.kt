@@ -116,7 +116,7 @@ class Ttkan(
             val chapters = mutableListOf<ChapterResult>()
             
             // Simple regex-based JSON parsing for chapter data
-            val itemPattern = """chapter_name\s*:\s*\"([^\"]+)\"\s*,\s*\"chapter_id\"\s*:\s*(\d+)"""\.toRegex()
+            val itemPattern = """chapter_name\s*:\s*"([^"]+)"\s*,\s*"chapter_id"\s*:\s*(\d+)""".toRegex()
             var index = 1  // Start from 1 for chapter numbering
             itemPattern.findAll(jsonText).forEach { match ->
                 val chapterName = match.groupValues[1]

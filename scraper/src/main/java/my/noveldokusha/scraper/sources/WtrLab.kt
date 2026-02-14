@@ -37,7 +37,7 @@ class WtrLab(
             // Extract from Next.js data
             val nextData = doc.selectFirst("script#__NEXT_DATA__")?.html()
             if (nextData != null) {
-                val titleMatch = Regex("\"title\":\"([^"]+)\"").find(nextData)
+                val titleMatch = Regex("\"title\":\"([^\"]+)\"").find(nextData)
                 titleMatch?.groupValues?.get(1)
             } else {
                 doc.selectFirst("h1, .chapter-title")?.text()
@@ -97,7 +97,7 @@ class WtrLab(
             val nextData = doc.selectFirst("script#__NEXT_DATA__")?.html()
             
             if (nextData != null) {
-                val imageMatch = Regex("\"image\":\"([^"]+)\"").find(nextData)
+                val imageMatch = Regex("\"image\":\"([^\"]+)\"").find(nextData)
                 imageMatch?.groupValues?.get(1)
             } else {
                 doc.selectFirst("img[src*=\"cover\"]", ".novel-cover img")?.attr("src")
@@ -113,7 +113,7 @@ class WtrLab(
             val nextData = doc.selectFirst("script#__NEXT_DATA__")?.html()
             
             if (nextData != null) {
-                val descMatch = Regex("\"description\":\"([^"]+)\"").find(nextData)
+                val descMatch = Regex("\"description\":\"([^\"]+)\"").find(nextData)
                 descMatch?.groupValues?.get(1)
             } else {
                 doc.selectFirst(".description, .novel-synopsis")?.text()
@@ -131,7 +131,7 @@ class WtrLab(
             // Extract raw_id and chapter_count
             val rawIdMatch = Regex("\"raw_id\":(\d+)").find(nextData)
             val chapterCountMatch = Regex("\"chapter_count\":(\d+)").find(nextData)
-            val slugMatch = Regex("\"slug\":\"([^"]+)\"").find(nextData)
+            val slugMatch = Regex("\"slug\":\"([^\"]+)\"").find(nextData)
             
             if (rawIdMatch != null && chapterCountMatch != null && slugMatch != null) {
                 val rawId = rawIdMatch.groupValues[1]
