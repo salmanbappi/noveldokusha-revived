@@ -161,29 +161,33 @@ class WuxiaWorld(
                     val queries = json.getAsJsonArray("queries")
                     if (queries != null) {
                         for (query in queries) {
-                            val state = query.asJsonObject.getAsJsonObject("state")
-                            val data = state?.getAsJsonObject("data")
-                            if (data != null && data.has("pages")) {
-                                val pages = data.getAsJsonArray("pages")
-                                val books = mutableListOf<BookResult>()
-                                if (pages != null) {
-                                    for (page in pages) {
-                                        val items = page.asJsonObject.getAsJsonArray("items")
-                                        if (items != null) {
-                                            for (item in items) {
-                                                val b = item.asJsonObject
-                                                books.add(
-                                                    BookResult(
-                                                        title = b.get("name").asString,
-                                                        url = baseUrl + "/novel/" + b.get("slug").asString,
-                                                        coverImageUrl = b.getAsJsonObject("coverUrl")?.get("value")?.asString ?: ""
+                            val queryObj = query.asJsonObject
+                            val queryKey = queryObj.getAsJsonArray("queryKey")?.toString() ?: ""
+                            if (queryKey.contains("novels") && queryKey.contains("Trending")) {
+                                val state = queryObj.getAsJsonObject("state")
+                                val data = state?.getAsJsonObject("data")
+                                if (data != null && data.has("pages")) {
+                                    val pages = data.getAsJsonArray("pages")
+                                    val books = mutableListOf<BookResult>()
+                                    if (pages != null) {
+                                        for (page in pages) {
+                                            val items = page.asJsonObject.getAsJsonArray("items")
+                                            if (items != null) {
+                                                for (item in items) {
+                                                    val b = item.asJsonObject
+                                                    books.add(
+                                                        BookResult(
+                                                            title = b.get("name").asString,
+                                                            url = baseUrl + "/novel/" + b.get("slug").asString,
+                                                            coverImageUrl = b.getAsJsonObject("coverUrl")?.get("value")?.asString ?: ""
+                                                        )
                                                     )
-                                                )
+                                                }
                                             }
                                         }
                                     }
+                                    if (books.isNotEmpty()) return@tryConnect PagedList(books, index, true)
                                 }
-                                if (books.isNotEmpty()) return@tryConnect PagedList(books, index, true)
                             }
                         }
                     }

@@ -151,11 +151,11 @@ internal fun ReaderScreen(
                             Text(
                                 text = stringResource(
                                     id = R.string.progress_x_percentage,
-                                    if (progressValue.isNaN()) 0f else progressValue.coerceIn(0f, 100f)
+                                    if (progressValue.isNaN() || progressValue.isInfinite()) 0f else progressValue.coerceIn(0f, 100f)
                                 ),
                                 style = MaterialTheme.typography.labelMedium,
                             )
-                            val sliderValue = if (progressValue.isNaN()) 0f else progressValue.coerceIn(0f, 100f)
+                            val sliderValue = if (progressValue.isNaN() || progressValue.isInfinite()) 0f else progressValue.coerceIn(0f, 100f)
                             androidx.compose.material3.Slider(
                                 value = sliderValue,
                                 onValueChange = onProgressChange,

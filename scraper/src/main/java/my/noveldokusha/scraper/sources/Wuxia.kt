@@ -148,12 +148,19 @@ class Wuxia(
                 if (chapters.isNotEmpty()) return@tryConnect chapters.distinctBy { it.url }
             }
             
-            doc.select(".list-chapter a, #list-chapter a, #chapters a, #chapter-list a, .list-truyen a").map {
-                ChapterResult(
-                    title = it.text(),
-                    url = it.attr("abs:href")
+            // HTML Fallback for chapters
+            val finalChapters = mutableListOf<ChapterResult>()
+            doc.select(".list-chapter a, #list-chapter a, #chapters a, #chapter-list a, .list-truyen a, #tab-chapters a").forEach {
+                finalChapters.add(
+                    ChapterResult(
+                        title = it.text(),
+                        url = it.attr("abs:href")
+                    )
                 )
             }
+            
+            if (finalChapters.isNotEmpty()) finalChapters.distinctBy { it.url }
+            else emptyList()
         }
     }
 

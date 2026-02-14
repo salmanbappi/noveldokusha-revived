@@ -51,28 +51,37 @@ class LightNovelPub(
         tryConnect {
             val chapters = mutableListOf<ChapterResult>()
             
+            // Normalize URL to /book/ if needed
+            val normalizedUrl = if (bookUrl.contains("/novel/")) bookUrl.replace("/novel/", "/book/") else bookUrl
+            
             // Try fetching from the main page first
-            val mainDoc = networkClient.get(bookUrl).toDocument()
+            val mainDoc = networkClient.get(normalizedUrl).toDocument()
             mainDoc.select(".ul-list5 a, .chapter-list a, .list-chapter a").forEach {
-                chapters.add(
-                    ChapterResult(
-                        title = it.selectFirst(".chapter-title, .title")?.text() ?: it.text(),
-                        url = it.attr("abs:href")
+                val title = it.selectFirst(".chapter-title, .title")?.text() ?: it.text()
+                if (title.isNotBlank()) {
+                    chapters.add(
+                        ChapterResult(
+                            title = title,
+                            url = it.attr("abs:href")
+                        )
                     )
-                )
+                }
             }
             
             // If empty, try the /chapters subpage
             if (chapters.isEmpty()) {
-                val chaptersUrl = if (bookUrl.endsWith("/")) "${bookUrl}chapters" else "$bookUrl/chapters"
+                val chaptersUrl = if (normalizedUrl.endsWith("/")) "${normalizedUrl}chapters" else "$normalizedUrl/chapters"
                 val chapDoc = networkClient.get(chaptersUrl).toDocument()
                 chapDoc.select(".ul-list5 a, .chapter-list a, .list-chapter a").forEach {
-                    chapters.add(
-                        ChapterResult(
-                            title = it.selectFirst(".chapter-title, .title")?.text() ?: it.text(),
-                            url = it.attr("abs:href")
+                    val title = it.selectFirst(".chapter-title, .title")?.text() ?: it.text()
+                    if (title.isNotBlank()) {
+                        chapters.add(
+                            ChapterResult(
+                                title = title,
+                                url = it.attr("abs:href")
+                            )
                         )
-                    )
+                    }
                 }
             }
             
