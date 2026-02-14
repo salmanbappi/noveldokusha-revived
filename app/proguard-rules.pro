@@ -99,3 +99,9 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
     public void set*(...);
 }
+
+# Keep all Enum values and valueOf methods to prevent NoSuchMethodException in EnumMaps/initializers
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
