@@ -76,10 +76,10 @@ fun InternalTheme(
         color = Color.Transparent,
         darkIcons = theme.isLight || (theme == Themes.CUSTOM && customBg.luminance() > 0.5)
     )
-    val textSelectionColors = remember {
+    val textSelectionColors = remember(colorScheme.primary) {
         TextSelectionColors(
-            handleColor = ColorAccent,
-            backgroundColor = ColorAccent.copy(alpha = 0.3f)
+            handleColor = colorScheme.primary,
+            backgroundColor = colorScheme.primary.copy(alpha = 0.3f)
         )
     }
 
