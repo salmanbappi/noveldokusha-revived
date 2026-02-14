@@ -424,10 +424,21 @@ internal class ReaderTextToSpeech(
     }
 
     private fun setVoice(voiceId: String) {
+        val wasPlaying = state.isPlaying.value
         val success = manager.trySetVoiceById(id = voiceId)
+        
         if (success) {
             setPreferredVoiceId(voiceId)
-            resumeFromCurrentState()
+            // If it was playing, we want to restart playback immediately with the new voice
+            // without the user having to press play again.
+            if (wasPlaying) {
+                // Force stop to clear current synthesis
+                stop() 
+                // Immediately start to re-synthesize with new voice
+                // We do this by calling setPlaying(true) which triggers the logic
+                // to read from the current position.
+                setPlaying(true)
+            }
         }
     }
 
@@ -435,7 +446,10 @@ internal class ReaderTextToSpeech(
         val success = manager.trySetVoicePitch(value)
         if (success) {
             setPreferredVoicePitch(value)
-            resumeFromCurrentState()
+            if (state.isPlaying.value) {
+                // Seamlessly update if supported, or restart
+                resumeFromCurrentState()
+            }
         }
     }
 
@@ -443,7 +457,9 @@ internal class ReaderTextToSpeech(
         val success = manager.trySetVoiceSpeed(value)
         if (success) {
             setPreferredVoiceSpeed(value)
-            resumeFromCurrentState()
+            if (state.isPlaying.value) {
+                resumeFromCurrentState()
+            }
         }
     }
 

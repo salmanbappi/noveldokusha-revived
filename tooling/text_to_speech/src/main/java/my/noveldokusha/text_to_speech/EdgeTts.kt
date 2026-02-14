@@ -27,7 +27,11 @@ object EdgeTts {
         val requestId = UUID.randomUUID().toString().replace("-", "")
         val timestamp = System.currentTimeMillis().toString()
 
-        val request = Request.Builder().url(WSS_URL).build()
+        val request = Request.Builder()
+            .url(WSS_URL)
+            .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+            .addHeader("Origin", "chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold")
+            .build()
         
         val listener = object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
