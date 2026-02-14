@@ -34,7 +34,7 @@ class WuxiaWorld(
         if (match != null) {
             // Find the start of the actual JSON content (the first { or [ in the matched string)
             val capturedStr = match.groupValues[1]
-            val jsonStartInCaptured = capturedStr.indexOfAny(charArrayOf('{', '['))
+            val jsonStartInCaptured = capturedStr.indexOfFirst { it == '{' || it == '[' }
             if (jsonStartInCaptured == -1) return null
             
             val jsonStart = match.groups[1]!!.range.first + jsonStartInCaptured

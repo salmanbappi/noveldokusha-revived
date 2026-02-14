@@ -68,19 +68,22 @@ class Wuxia(
             // Try to fetch from API directly
             try {
                 val apiUrl = "https://wuxia.click/api/novels/$slug/chapters?page=1"
-                val response = networkClient.get(apiUrl, headers = mapOf("Accept" to "application/json"))
-                val apiJson = gson.fromJson(response.body?.string(), JsonObject::class.java)
-                val chapters = mutableListOf<ChapterResult>()
-                apiJson.getAsJsonArray("items")?.forEach { chapter ->
-                    val c = chapter.asJsonObject
-                    chapters.add(
-                        ChapterResult(
-                            title = c.get("name").asString,
-                            url = baseUrl + "/novel/" + slug + "/" + c.get("slug").asString
+                val response = networkClient.get(apiUrl)
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
+                    val apiJson = gson.fromJson(responseBody, JsonObject::class.java)
+                    val chapters = mutableListOf<ChapterResult>()
+                    apiJson.getAsJsonArray("items")?.forEach { chapter ->
+                        val c = chapter.asJsonObject
+                        chapters.add(
+                            ChapterResult(
+                                title = c.get("name").asString,
+                                url = baseUrl + "/novel/" + slug + "/" + c.get("slug").asString
+                            )
                         )
-                    )
+                    }
+                    if (chapters.isNotEmpty()) return@tryConnect chapters
                 }
-                if (chapters.isNotEmpty()) return@tryConnect chapters
             } catch (e: Exception) {
                 // Ignore and try other methods
             }
