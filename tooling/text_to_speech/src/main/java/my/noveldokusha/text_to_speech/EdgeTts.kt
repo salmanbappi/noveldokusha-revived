@@ -107,27 +107,27 @@ object EdgeTts {
     fun getVoices(): List<VoiceData> {
         // Expanded list of popular Edge TTS voices
         return listOf(
-            VoiceData("en-US-GuyNeural", "English (US) - Guy", 100, true),
-            VoiceData("en-US-JennyNeural", "English (US) - Jenny", 100, true),
-            VoiceData("en-US-AnaNeural", "English (US) - Ana", 100, true),
-            VoiceData("en-US-AriaNeural", "English (US) - Aria", 100, true),
-            VoiceData("en-US-ChristopherNeural", "English (US) - Christopher", 100, true),
-            VoiceData("en-US-EricNeural", "English (US) - Eric", 100, true),
-            VoiceData("en-US-MichelleNeural", "English (US) - Michelle", 100, true),
-            VoiceData("en-US-RogerNeural", "English (US) - Roger", 100, true),
+            VoiceData("en-US-GuyNeural", "English (US) - Guy", true, 100),
+            VoiceData("en-US-JennyNeural", "English (US) - Jenny", true, 100),
+            VoiceData("en-US-AnaNeural", "English (US) - Ana", true, 100),
+            VoiceData("en-US-AriaNeural", "English (US) - Aria", true, 100),
+            VoiceData("en-US-ChristopherNeural", "English (US) - Christopher", true, 100),
+            VoiceData("en-US-EricNeural", "English (US) - Eric", true, 100),
+            VoiceData("en-US-MichelleNeural", "English (US) - Michelle", true, 100),
+            VoiceData("en-US-RogerNeural", "English (US) - Roger", true, 100),
             
-            VoiceData("en-GB-RyanNeural", "English (UK) - Ryan", 100, true),
-            VoiceData("en-GB-SoniaNeural", "English (UK) - Sonia", 100, true),
-            VoiceData("en-GB-LibbyNeural", "English (UK) - Libby", 100, true),
+            VoiceData("en-GB-RyanNeural", "English (UK) - Ryan", true, 100),
+            VoiceData("en-GB-SoniaNeural", "English (UK) - Sonia", true, 100),
+            VoiceData("en-GB-LibbyNeural", "English (UK) - Libby", true, 100),
             
-            VoiceData("en-AU-NatashaNeural", "English (AU) - Natasha", 100, true),
-            VoiceData("en-AU-WilliamNeural", "English (AU) - William", 100, true),
+            VoiceData("en-AU-NatashaNeural", "English (AU) - Natasha", true, 100),
+            VoiceData("en-AU-WilliamNeural", "English (AU) - William", true, 100),
             
-            VoiceData("ja-JP-KeitaNeural", "Japanese - Keita", 100, true),
-            VoiceData("ja-JP-NanamiNeural", "Japanese - Nanami", 100, true),
+            VoiceData("ja-JP-KeitaNeural", "Japanese - Keita", true, 100),
+            VoiceData("ja-JP-NanamiNeural", "Japanese - Nanami", true, 100),
             
-            VoiceData("ko-KR-KeitaNeural", "Korean - Keita", 100, true), // Placeholder if exists
-            VoiceData("zh-CN-XiaoxiaoNeural", "Chinese - Xiaoxiao", 100, true)
+            VoiceData("ko-KR-KeitaNeural", "Korean - Keita", true, 100), // Placeholder if exists
+            VoiceData("zh-CN-XiaoxiaoNeural", "Chinese - Xiaoxiao", true, 100)
         )
     }
 }

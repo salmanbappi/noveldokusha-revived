@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.LinkedBlockingQueue
@@ -17,6 +18,8 @@ class OnlineNarrator(
 ) {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
+    
+    // Use a standard property with private setter
     var isPlaying = false
         private set
 
@@ -66,10 +69,11 @@ class OnlineNarrator(
                 setDataSource(path)
                 prepare()
                 setOnCompletionListener {
-                    isPlaying = false
+                    // This explicitly sets the property of the class instance
+                    this@OnlineNarrator.isPlaying = false
                     it.release()
                     // Delete temp file
-                    File(path).delete()
+                    try { File(path).delete() } catch(e: Exception) {}
                     playNext()
                 }
                 start()
