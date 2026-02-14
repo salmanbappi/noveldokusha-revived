@@ -59,7 +59,11 @@ class WuxiaWorld(
         
         return if (jsonEnd != -1) {
             val jsonStr = scriptData.substring(jsonStart, jsonEnd)
-            gson.fromJson(jsonStr, JsonObject::class.java)
+            try {
+                gson.fromJson(jsonStr, JsonObject::class.java)
+            } catch (e: Exception) {
+                null
+            }
         } else null
     }
 
@@ -94,7 +98,7 @@ class WuxiaWorld(
                     var novelId = -1
                     var novelSlug = ""
                     
-                    for (query in queries) {
+                    queries?.forEach { query ->
                         val state = query.asJsonObject.getAsJsonObject("state")
                         val data = state?.getAsJsonObject("data")
                         if (data != null) {
@@ -188,7 +192,6 @@ class WuxiaWorld(
         tryConnect {
             val url = "https://www.wuxiaworld.com/search?query=$input"
             val doc = networkClient.get(url).toDocument()
-            // Search might also use the same React state
             val scriptData = doc.select("script").find { it.html().contains("__REACT_QUERY_STATE__") }?.html()
             if (scriptData != null) {
                 val json = extractJson(scriptData, "__REACT_QUERY_STATE__")
@@ -250,4 +253,5 @@ class WuxiaWorld(
             }
         }
     }
+}
 }

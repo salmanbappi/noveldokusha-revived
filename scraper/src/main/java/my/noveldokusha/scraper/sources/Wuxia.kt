@@ -244,7 +244,9 @@ class Wuxia(
                                 )
                             }
                         }
-                if (books.isNotEmpty()) return@tryConnect PagedList(books.distinctBy { it.url }, index, true)
+                        if (books.isNotEmpty()) return@tryConnect PagedList(books.distinctBy { it.url }, index, true)
+                    }
+                }
             }
             
             // HTML Fallback
@@ -264,6 +266,4 @@ class Wuxia(
         }
     }
 }
-        }
-    }
 }
