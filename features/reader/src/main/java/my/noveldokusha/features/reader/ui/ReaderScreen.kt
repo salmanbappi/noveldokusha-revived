@@ -154,8 +154,11 @@ internal fun ReaderScreen(
                                 ),
                                 style = MaterialTheme.typography.labelMedium,
                             )
+                            val sliderValue = state.readerInfo.chapterPercentageProgress.value.let {
+                                if (it.isNaN()) 0f else it.coerceIn(0f, 100f)
+                            }
                             androidx.compose.material3.Slider(
-                                value = state.readerInfo.chapterPercentageProgress.value,
+                                value = sliderValue,
                                 onValueChange = onProgressChange,
                                 valueRange = 0f..100f,
                                 modifier = Modifier.fillMaxWidth()

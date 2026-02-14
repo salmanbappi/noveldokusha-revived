@@ -211,7 +211,7 @@ class Wuxia(
                                 }
                             }
                         } else if (data.isJsonObject) {
-                            val results = data.asJsonObject.getAsJsonArray("results") ?: data.asJsonObject.getAsJsonArray("items")
+                            val results = data.asJsonObject.getAsJsonArray("results") ?: data.asJsonObject.getAsJsonArray("items") ?: data.asJsonObject.getAsJsonObject("data")?.getAsJsonArray("results")
                             results?.forEach { novel ->
                                 val n = novel.asJsonObject
                                 books.add(

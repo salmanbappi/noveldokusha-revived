@@ -32,7 +32,7 @@ internal data class ReadingChapterPosStats(
 )
 
 internal fun ReadingChapterPosStats.chapterReadPercentage(): Float {
-    if (chapterItemsCount <= 0) return 100f
+    if (chapterItemsCount <= 0) return 0f
     val percent = (chapterItemPosition.toFloat() / chapterItemsCount.toFloat()) * 100f
     return if (percent.isNaN()) 0f else percent.coerceIn(0f, 100f)
 }

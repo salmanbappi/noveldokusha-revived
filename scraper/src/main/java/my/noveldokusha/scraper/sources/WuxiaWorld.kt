@@ -29,46 +29,21 @@ class WuxiaWorld(
     private val gson = GsonBuilder().setLenient().create()
 
     private fun extractJson(scriptData: String, key: String): JsonObject? {
-        val pattern = Regex("""(?:window\.)?$key\s*=\s*(\{.*\}|\[.*\])""", RegexOption.DOT_MATCHES_ALL)
-        val match = pattern.find(scriptData)
-        if (match != null) {
-            // Find the start of the actual JSON content (the first { or [ in the matched string)
-            val capturedStr = match.groupValues[1]
-            val jsonStartInCaptured = capturedStr.indexOfFirst { it == '{' || it == '[' }
-            if (jsonStartInCaptured == -1) return null
-            
-            val jsonStart = match.groups[1]!!.range.first + jsonStartInCaptured
-            var braceCount = 0
-            var jsonEnd = -1
-            for (i in jsonStart until scriptData.length) {
-                val c = scriptData[i]
-                if (c == '{' || c == '[') braceCount++
-                else if (c == '}' || c == ']') braceCount--
-                
-                if (braceCount == 0) {
-                    jsonEnd = i + 1
-                    break
-                }
-            }
-            if (jsonEnd != -1) {
-                return gson.fromJson(scriptData.substring(jsonStart, jsonEnd), JsonObject::class.java)
-            }
-        }
+        val startIdx = scriptData.indexOf(key)
+        if (startIdx == -1) return null
         
-        // Fallback to old method if regex fails
-        val start = scriptData.indexOf(key)
-        if (start == -1) return null
-        val eqStart = scriptData.indexOf("=", start)
-        if (eqStart == -1) return null
-        val jsonStart = scriptData.indexOf("{", eqStart)
+        val eqIdx = scriptData.indexOf("=", startIdx)
+        if (eqIdx == -1) return null
+        
+        val jsonStart = scriptData.indexOfAny(charArrayOf('{', '['), eqIdx)
         if (jsonStart == -1) return null
         
         var braceCount = 0
         var jsonEnd = -1
         for (i in jsonStart until scriptData.length) {
             val c = scriptData[i]
-            if (c == '{') braceCount++
-            else if (c == '}') braceCount--
+            if (c == '{' || c == '[') braceCount++
+            else if (c == '}' || c == ']') braceCount--
             
             if (braceCount == 0) {
                 jsonEnd = i + 1
@@ -80,6 +55,13 @@ class WuxiaWorld(
             val jsonStr = scriptData.substring(jsonStart, jsonEnd)
             gson.fromJson(jsonStr, JsonObject::class.java)
         } else null
+    }
+
+    private fun String.indexOfAny(chars: CharArray, startIndex: Int): Int {
+        for (i in startIndex until length) {
+            if (this[i] in chars) return i
+        }
+        return -1
     }
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
