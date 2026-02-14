@@ -244,11 +244,26 @@ class Wuxia(
                                 )
                             }
                         }
-                        if (books.isNotEmpty()) return@tryConnect PagedList(books.distinctBy { it.url }, index, true)
-                    }
-                }
+                if (books.isNotEmpty()) return@tryConnect PagedList(books.distinctBy { it.url }, index, true)
             }
-            PagedList.createEmpty(index)
+            
+            // HTML Fallback
+            doc.select(".list-novel .row, .list-truyen .row, .item").mapNotNull {
+                val link = it.selectFirst("a[href*='/novel/']") ?: return@mapNotNull null
+                val title = it.selectFirst("h3, .title, .tit")?.text() ?: link.text()
+                val cover = it.selectFirst("img")?.attr("abs:src") ?: ""
+                BookResult(
+                    title = title,
+                    url = link.attr("abs:href"),
+                    coverImageUrl = cover
+                )
+            }.let {
+                if (it.isNotEmpty()) PagedList(it.distinctBy { b -> b.url }, index, true)
+                else PagedList.createEmpty(index)
+            }
+        }
+    }
+}
         }
     }
 }

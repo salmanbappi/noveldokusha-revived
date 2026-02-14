@@ -95,7 +95,7 @@ private fun MySliderBase(
         val offsetPx by remember {
             derivedStateOf {
                 val rangeWidth = range.endInclusive - range.start
-                val safeValue = if (value.isNaN()) range.start else value.coerceIn(range.start, range.endInclusive)
+                val safeValue = if (currentValue.isNaN()) range.start else currentValue.coerceIn(range.start, range.endInclusive)
                 val normalizedValue = if (rangeWidth > 0f) {
                     (safeValue - range.start) / rangeWidth
                 } else 0f

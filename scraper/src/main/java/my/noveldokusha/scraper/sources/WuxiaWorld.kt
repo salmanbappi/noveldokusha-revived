@@ -199,10 +199,10 @@ class WuxiaWorld(
                         val data = state?.getAsJsonObject("data")
                         if (data != null && (data.has("items") || data.has("pages"))) {
                             val books = mutableListOf<BookResult>()
-                            val items = if (data.has("items")) data.getAsJsonArray("items") else {
+                            val items = if (data.has("items")) data.getAsJsonArray("items") else if (data.has("pages")) {
                                 val booksInPages = mutableListOf<BookResult>()
                                 data.getAsJsonArray("pages").forEach { page ->
-                                    page.asJsonObject.getAsJsonArray("items").forEach { item ->
+                                    page.asJsonObject.getAsJsonArray("items")?.forEach { item ->
                                         val b = item.asJsonObject
                                         booksInPages.add(
                                             BookResult(
@@ -215,7 +215,7 @@ class WuxiaWorld(
                                 }
                                 if (booksInPages.isNotEmpty()) return@tryConnect PagedList(booksInPages, index, true)
                                 null
-                            }
+                            } else null
                             
                             items?.forEach { item ->
                                 val b = item.asJsonObject
@@ -233,16 +233,21 @@ class WuxiaWorld(
                 }
             }
             
-            doc.select(".novel-item")
-                .mapNotNull {
-                    val link = it.selectFirst("a") ?: return@mapNotNull null
-                    BookResult(
-                        title = it.selectFirst(".title")?.text() ?: "",
-                        url = link.attr("abs:href"),
-                        coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
-                    )
-                }
-                .let { PagedList(it, index, true) }
+            // HTML Fallback for Search
+            doc.select(".novel-item, .search-result, .item").mapNotNull {
+                val link = it.selectFirst("a[href*='/novel/']") ?: return@mapNotNull null
+                val title = it.selectFirst(".title, h3, h4")?.text() ?: ""
+                val cover = it.selectFirst("img")?.attr("abs:src") ?: ""
+                if (title.isEmpty()) return@mapNotNull null
+                BookResult(
+                    title = title,
+                    url = link.attr("abs:href"),
+                    coverImageUrl = cover
+                )
+            }.let {
+                if (it.isNotEmpty()) PagedList(it, index, true)
+                else PagedList.createEmpty(index)
+            }
         }
     }
 }

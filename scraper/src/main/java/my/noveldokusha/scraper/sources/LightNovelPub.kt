@@ -91,7 +91,7 @@ class LightNovelPub(
                     val bookCover = it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
                     BookResult(
                         title = link.text(),
-                        url = link.attr("abs:href"),
+                        url = link.attr("abs:href").replace("/novel/", "/book/"),
                         coverImageUrl = bookCover
                     )
                 }
@@ -110,7 +110,7 @@ class LightNovelPub(
                     val bookCover = it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
                     BookResult(
                         title = link.text(),
-                        url = link.attr("abs:href"),
+                        url = link.attr("abs:href").replace("/novel/", "/book/"),
                         coverImageUrl = bookCover
                     )
                 }
