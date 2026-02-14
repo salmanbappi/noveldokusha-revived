@@ -98,7 +98,7 @@ internal fun LibraryScreenBody(
                         val title by remember { derivedStateOf { text } }
                         Tab(
                             selected = selected,
-                            text = { Text(title, color = MaterialTheme.colorScheme.onPrimary) },
+                            text = { Text(title, color = MaterialTheme.colorScheme.onSurface) },
                             onClick = { scope.launch { pagerState.animateScrollToPage(index) } }
                         )
                     }

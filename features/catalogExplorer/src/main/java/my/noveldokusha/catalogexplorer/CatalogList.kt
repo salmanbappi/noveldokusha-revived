@@ -58,7 +58,7 @@ internal fun CatalogList(
             Text(
                 text = stringResource(id = R.string.database),
                 style = MaterialTheme.typography.titleMedium,
-                color = ColorAccent,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 8.dp),
@@ -95,7 +95,7 @@ internal fun CatalogList(
             Text(
                 text = stringResource(id = R.string.sources),
                 style = MaterialTheme.typography.titleMedium,
-                color = ColorAccent,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 8.dp),
