@@ -94,7 +94,7 @@ class Wuxia(
                 }
             }
             
-            doc.select("#chapters a").map {
+            doc.select("#list-chapter a, #chapters a, #chapter-list a").map {
                 ChapterResult(
                     title = it.text(),
                     url = it.attr("abs:href")

@@ -46,25 +46,34 @@ class NovelFull(
         tryConnect {
             val doc = networkClient.get(bookUrl).toDocument()
             val novelId = doc.selectFirst("#rating")?.attr("data-novel-id")
+            val chapters = mutableListOf<ChapterResult>()
+            
             if (novelId != null) {
-                val ajaxUrl = "https://novelfull.com/ajax/chapter-archive?novelId=$novelId"
-                networkClient.get(ajaxUrl).toDocument()
-                    .select("ul.list-chapter li a")
-                    .map {
-                        ChapterResult(
-                            title = it.text(),
-                            url = it.attr("abs:href")
-                        )
-                    }
-            } else {
-                doc.select(".list-chapter li a")
-                    .map {
+                try {
+                    val ajaxUrl = "https://novelfull.com/ajax/chapter-archive?novelId=$novelId"
+                    networkClient.get(ajaxUrl).toDocument()
+                        .select("ul.list-chapter li a")
+                        .mapTo(chapters) {
+                            ChapterResult(
+                                title = it.text(),
+                                url = it.attr("abs:href")
+                            )
+                        }
+                } catch (e: Exception) {
+                    // Fallback to direct parsing
+                }
+            }
+            
+            if (chapters.isEmpty()) {
+                doc.select("#list-chapter li a, .list-chapter li a")
+                    .mapTo(chapters) {
                         ChapterResult(
                             title = it.text(),
                             url = it.attr("abs:href")
                         )
                     }
             }
+            chapters
         }
     }
 

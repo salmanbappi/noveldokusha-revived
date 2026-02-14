@@ -40,7 +40,6 @@ class Scraper @Inject constructor(
         SakuraNovel(networkClient),
         ScribbleHub(networkClient),
         WbNovel(networkClient),
-        BoxNovel(networkClient),
         LightNovelWorld(networkClient)
     )
 

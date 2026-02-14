@@ -29,13 +29,9 @@ class WuxiaWorld(
     private val gson = GsonBuilder().setLenient().create()
 
     private fun extractJson(scriptData: String, key: String): JsonObject? {
-        val pattern = Regex("""$key\s*=\s*(\{.*\}|\[.*\])""", RegexOption.DOT_MATCHES_ALL)
+        val pattern = Regex("""(?:window\.)?$key\s*=\s*(\{.*\}|\[.*\])""", RegexOption.DOT_MATCHES_ALL)
         val match = pattern.find(scriptData)
         if (match != null) {
-            val jsonStr = match.groupValues[1]
-            // We need to handle nested braces manually if regex DOT_MATCHES_ALL is too greedy or script has other things
-            // But since it is likely the end of script or followed by something distinct, let's refine
-            
             val jsonStart = match.groups[1]?.range?.first ?: return null
             var braceCount = 0
             var jsonEnd = -1
@@ -55,7 +51,7 @@ class WuxiaWorld(
         }
         
         // Fallback to old method if regex fails
-        val start = scriptData.indexOf("$key")
+        val start = scriptData.indexOf(key)
         if (start == -1) return null
         val eqStart = scriptData.indexOf("=", start)
         if (eqStart == -1) return null

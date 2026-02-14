@@ -62,25 +62,34 @@ class ReadNovelFull(
         tryConnect {
             val doc = networkClient.get(bookUrl).toDocument()
             val id = doc.selectFirst("#rating")?.attr("data-novel-id")
+            val chapters = mutableListOf<ChapterResult>()
+            
             if (id != null) {
-                val url = "https://readnovelfull.com/ajax/chapter-archive?novelId=$id"
-                networkClient.get(url).toDocument()
-                    .select("a[href]")
-                    .map {
-                        ChapterResult(
-                            title = it.text(),
-                            url = it.attr("abs:href")
-                        )
-                    }
-            } else {
-                doc.select(".list-chapter li a")
-                    .map {
+                try {
+                    val url = "https://readnovelfull.com/ajax/chapter-archive?novelId=$id"
+                    networkClient.get(url).toDocument()
+                        .select("a[href]")
+                        .mapTo(chapters) {
+                            ChapterResult(
+                                title = it.text(),
+                                url = it.attr("abs:href")
+                            )
+                        }
+                } catch (e: Exception) {
+                    // Fallback
+                }
+            }
+            
+            if (chapters.isEmpty()) {
+                doc.select("#list-chapter li a, .list-chapter li a")
+                    .mapTo(chapters) {
                         ChapterResult(
                             title = it.text(),
                             url = it.attr("abs:href")
                         )
                     }
             }
+            chapters
         }
     }
 

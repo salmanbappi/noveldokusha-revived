@@ -45,15 +45,26 @@ class LightNovelPub(
 
     override suspend fun getChapterList(bookUrl: String): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            val url = if (bookUrl.endsWith("/")) "${bookUrl}chapters" else "$bookUrl/chapters"
-            networkClient.get(url).toDocument()
-                .select(".chapter-list a")
+            val doc = networkClient.get(bookUrl).toDocument()
+            val chapters = doc.select(".ul-list5 a, .chapter-list a")
                 .map {
                     ChapterResult(
                         title = it.selectFirst(".chapter-title")?.text() ?: it.text(),
                         url = it.attr("abs:href")
                     )
                 }
+            
+            if (chapters.isEmpty()) {
+                val url = if (bookUrl.endsWith("/")) "${bookUrl}chapters" else "$bookUrl/chapters"
+                networkClient.get(url).toDocument()
+                    .select(".chapter-list a, .ul-list5 a")
+                    .map {
+                        ChapterResult(
+                            title = it.selectFirst(".chapter-title")?.text() ?: it.text(),
+                            url = it.attr("abs:href")
+                        )
+                    }
+            } else chapters
         }
     }
 
@@ -79,8 +90,8 @@ class LightNovelPub(
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = "https://lightnovelpub.me/search?keyword=$input&page=$page"
-            val doc = networkClient.get(url).toDocument()
+            val url = if (page == 1) "https://lightnovelpub.me/search/" else "https://lightnovelpub.me/search/page/$page"
+            val doc = networkClient.post(url, mapOf("searchkey" to input)).toDocument()
             doc.select(".li")
                 .mapNotNull {
                     val link = it.selectFirst("h3.tit a") ?: return@mapNotNull null
