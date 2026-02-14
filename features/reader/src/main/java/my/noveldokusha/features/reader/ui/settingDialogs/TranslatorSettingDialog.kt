@@ -60,7 +60,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import my.noveldoksuha.coreui.theme.InternalTheme
 import my.noveldokusha.features.reader.ui.ReaderScreenState
 import my.noveldokusha.strings.R
-import my.noveldokusha.tooling.texttranslator.domain.TranslationModel
+import my.noveldokusha.text_translator.domain.TranslationModelState
 
 @Composable
 internal fun TranslatorSettingDialog(
