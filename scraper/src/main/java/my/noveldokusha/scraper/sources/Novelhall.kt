@@ -2,102 +2,61 @@ package my.noveldokusha.scraper.sources
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import my.noveldokusha.scraper.R
+import my.noveldokusha.core.LanguageCode
+import my.noveldokusha.core.Response
 import my.noveldokusha.network.NetworkClient
 import my.noveldokusha.network.toDocument
 import my.noveldokusha.network.tryConnect
-import my.noveldokusha.scraper.SourceInterface
-import my.noveldokusha.core.LanguageCode
-import my.noveldokusha.core.PagedList
-import my.noveldokusha.core.Response
-import my.noveldokusha.scraper.TextExtractor
-import my.noveldokusha.scraper.domain.BookResult
+import my.noveldokusha.scraper.R
 import my.noveldokusha.scraper.domain.ChapterResult
+import my.noveldokusha.scraper.templates.BaseNovelFullScraper
 import org.jsoup.nodes.Document
 
-class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Catalog {
+class NovelHall(
+    networkClient: NetworkClient
+) : BaseNovelFullScraper(networkClient) {
     override val id = "novelhall"
     override val nameStrId = R.string.source_name_novelhall
-    override val baseUrl = "https://www.novelhall.com"
-    override val catalogUrl = "https://www.novelhall.com/lastupdate.html"
+    override val baseUrl = "https://www.novelhall.com/"
+    override val catalogUrl = "https://www.novelhall.com/all.html"
     override val language = LanguageCode.ENGLISH
 
-    override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
-        doc.selectFirst(".entry-content")?.let { TextExtractor.get(it) } ?: ""
+    // NovelHall-specific selectors
+    override val selectBookCover = ".book-img.hidden-xs img[src]"
+    override val selectBookDescription = "span.js-close-wrap"
+    override val selectChapterList = "#morelist a[href]"
+    override val selectChapterContent = "div#htmlContent"
+    override val selectCatalogItems = "li.btm"
+    override val selectPaginationLastPage = "div.page-nav span:last-child"
+    override val selectSearchItems: String = "td:nth-child(2) a[href]"
+    // NovelHall uses direct chapter list, not ajax
+    override val useAjaxChapterLoading = false
+
+    override fun buildCatalogUrl(index: Int): String {
+        val page = index + 1
+        return if (page == 1) "$baseUrl/all.html"
+        else "$baseUrl/all-$page.html"
     }
 
-    override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
-        tryConnect {
-            networkClient.get(bookUrl).toDocument()
-                .selectFirst(".book-img img")?.attr("abs:src")
-        }
+    override fun buildSearchUrl(index: Int, input: String): String {
+        return baseUrl + "index.php?s=so&module=book&keyword=$input"
     }
-
-    override suspend fun getBookDescription(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
+    override suspend fun getChapterList(
+        bookUrl: String
+    ): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            networkClient.get(bookUrl).toDocument()
-                .selectFirst(".intro")?.let { TextExtractor.get(it) }
-        }
-    }
-
-    override suspend fun getChapterList(bookUrl: String): Response<List<ChapterResult>> = withContext(Dispatchers.Default) {
-        tryConnect {
-            networkClient.get(bookUrl).toDocument()
-                .select(".book-catalog ul li a")
+            networkClient.get(bookUrl)
+                .toDocument()
+                .select(selectChapterList)
                 .map {
                     ChapterResult(
-                        title = it.text(),
-                        url = it.attr("abs:href")
+                        title = it.text() ?: "",
+                        url = (baseUrl + it.attr("href"))
                     )
                 }
         }
     }
 
-    override suspend fun getCatalogList(index: Int): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
-        if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
-        tryConnect {
-            val doc = networkClient.get(catalogUrl).toDocument()
-            doc.select("tr").drop(1)
-                .mapNotNull {
-                    val link = it.selectFirst("td.w70 a") ?: return@mapNotNull null
-                    val bookCover = "" // No covers on the latest release list
-                    BookResult(
-                        title = link.text(),
-                        url = link.attr("abs:href"),
-                        coverImageUrl = bookCover
-                    )
-                }
-                .let { PagedList(it, index, true) }
-        }
-    }
-
-    override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
-        if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
-        tryConnect {
-            val url = "https://www.novelhall.com/index.php?s=so&module=book&keyword=$input"
-            val doc = networkClient.get(url).toDocument()
-            val books = doc.select(".ranking-item, tr, .row").drop(1)
-                .mapNotNull {
-                    val link = it.selectFirst("h3 a, td.novel a, .novel a, a[href*='/novel/']") ?: return@mapNotNull null
-                    val bookCover = it.selectFirst("img")?.attr("abs:src") ?: ""
-                    BookResult(
-                        title = link.text(),
-                        url = link.attr("abs:href"),
-                        coverImageUrl = bookCover
-                    )
-                }
-            
-            if (books.isEmpty()) {
-                // Try alternate search
-                val url2 = "https://www.novelhall.com/search.php?q=$input"
-                val doc2 = networkClient.get(url2).toDocument()
-                val books2 = doc2.select("tr, .row").mapNotNull {
-                     val link = it.selectFirst("a[href*='/novel/']") ?: return@mapNotNull null
-                     BookResult(link.text(), link.attr("abs:href"), it.selectFirst("img")?.attr("abs:src") ?: "")
-                }
-                return@tryConnect PagedList(books2, index, true)
-            }
-            PagedList(books, index, true)
-        }
-    }
+    override fun isLastPage(doc: Document) =
+        doc.selectFirst("div.page-nav")?.children()?.last()?.tagName() == "span"
 }

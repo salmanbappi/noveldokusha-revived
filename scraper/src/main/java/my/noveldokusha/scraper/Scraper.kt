@@ -40,7 +40,27 @@ class Scraper @Inject constructor(
         SakuraNovel(networkClient),
         ScribbleHub(networkClient),
         WbNovel(networkClient),
-        LightNovelWorld(networkClient)
+        LightNovelWorld(networkClient),
+        Shuba69(networkClient),
+        LNMTL(networkClient),
+        ReadMTL(networkClient),
+        Ttkan(networkClient),
+        Twkan(networkClient),
+        UuKanshu(networkClient),
+        WtrLab(networkClient),
+        AllNovel(networkClient),
+        BacaLightnovel(networkClient),
+        BoxNovel(networkClient),
+        Ddxss(networkClient),
+        FanMTL(networkClient),
+        FreeWebNovel(networkClient),
+        Saikai(networkClient),
+        SonicMTL(networkClient),
+        MoreNovel(networkClient),
+        NewNovel(networkClient),
+        NoBadNovel(networkClient),
+        NovelBinCom(networkClient),
+        LeYueDu(networkClient)
     )
 
     val sourcesCatalogsLanguagesList: List<LanguageCode> = sourcesCatalogsList

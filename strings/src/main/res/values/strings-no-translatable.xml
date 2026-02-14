@@ -10,7 +10,28 @@
     <string translatable="false" name="source_name_read_novel_full">Read Novel Full</string>
     <string translatable="false" name="source_name_royalroad">RoyalRoad</string>
     <string translatable="false" name="source_name_wuxia">Wuxia</string>
-    <string translatable="false" name="source_name_wuxiaworld">WuxiaWorld</string>
+    <string translatable="false" name="source_name_wuxia_world">WuxiaWorld</string>
+    <string translatable="false" name="source_name_69shuba">69书吧</string>
+    <string translatable="false" name="source_name_allnovel">AllNovel</string>
+    <string translatable="false" name="source_name_baca_lightnovel">Baca Lightnovel</string>
+    <string translatable="false" name="source_name_ddxss">Ddxss</string>
+    <string translatable="false" name="source_name_fanmtl">FanMTL</string>
+    <string translatable="false" name="source_name_freewebnovel">FreeWebNovel</string>
+    <string translatable="false" name="source_name_lnmtl">LNMTL</string>
+    <string translatable="false" name="source_name_leyuedu">LeYueDu</string>
+    <string translatable="false" name="source_name_more_novel">MoreNovel</string>
+    <string translatable="false" name="source_name_newnovel">NewNovel</string>
+    <string translatable="false" name="source_name_nobadnovel">NoBadNovel</string>
+    <string translatable="false" name="source_name_readmtl">ReadMTL</string>
+    <string translatable="false" name="source_name_saikai">Saikai</string>
+    <string translatable="false" name="source_name_sonicmtl">SonicMTL</string>
+    <string translatable="false" name="source_name_sousetsuka">Sousetsuka</string>
+    <string translatable="false" name="source_name_ttkan">Ttkan</string>
+    <string translatable="false" name="source_name_twkan">Twkan</string>
+    <string translatable="false" name="source_name_uukanshu">UuKanshu</string>
+    <string translatable="false" name="source_name_wtrlab">WtrLab</string>
+    <string translatable="false" name="source_name_at">AT</string>
+    <string translatable="false" name="source_name_novelbin_com">NovelBin.com</string>
 
     <!-- Alive but Protected (Requires Bypass) -->
     <string translatable="false" name="source_name_indo_webnovel">Indonesia Webnovel</string>
