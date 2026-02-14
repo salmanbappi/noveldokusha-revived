@@ -264,6 +264,7 @@ internal class ReaderSession(
     }
 
     fun updateInfoViewTo(itemIndex: Int) {
+        if (chapterUrl.isBlank()) return
         val stats = readerChaptersLoader.getItemContext(
             itemIndex = itemIndex,
             chapterUrl = chapterUrl

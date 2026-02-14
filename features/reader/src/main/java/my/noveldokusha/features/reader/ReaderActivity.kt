@@ -285,9 +285,13 @@ class ReaderActivity : BaseActivity() {
                     },
                     onProgressChange = { progress ->
                         val targetChapterUrl = viewModel.state.readerInfo.chapterUrl.value
+                        if (targetChapterUrl.isBlank()) return@ReaderScreen
+                        
                         val chapterItems = viewModel.items.filter { it is ReaderItem.Position && it.chapterUrl == targetChapterUrl }
                         if (chapterItems.isNotEmpty()) {
-                            val indexInChapter = ((progress / 100f) * (chapterItems.size - 1)).toInt()
+                            val safeProgress = if (progress.isNaN()) 0f else progress.coerceIn(0f, 100f)
+                            val indexInChapter = ((safeProgress / 100f) * (chapterItems.size - 1)).toInt()
+                                .coerceIn(0, chapterItems.size - 1)
                             val item = chapterItems[indexInChapter] as ReaderItem.Position
                             scrollToReadingPositionImmediately(
                                 chapterIndex = item.chapterIndex,
