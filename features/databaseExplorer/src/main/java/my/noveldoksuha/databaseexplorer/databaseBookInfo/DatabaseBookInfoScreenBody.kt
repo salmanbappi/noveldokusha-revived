@@ -92,8 +92,8 @@ internal fun DatabaseBookInfoScreenBody(
                         .align(Alignment.BottomCenter)
                         .background(
                             Brush.verticalGradient(
-                                0f to MaterialTheme.colorScheme.primary.copy(alpha = 0f),
-                                1f to MaterialTheme.colorScheme.primary,
+                                0f to MaterialTheme.colorScheme.surface.copy(alpha = 0f),
+                                1f to MaterialTheme.colorScheme.surface,
                             )
                         )
                 )
@@ -207,7 +207,10 @@ internal fun DatabaseBookInfoScreenBody(
                 } else {
                     OutlinedCard(
                         onClick = { onGenresClick(state.book.value.genres) },
-                        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.primary),
+                        colors = CardDefaults.outlinedCardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        ),
                         shape = MaterialTheme.shapes.small,
                     ) {
                         TextAnimated(
@@ -281,7 +284,7 @@ private fun Section(title: String, content: @Composable () -> Unit) {
     ) {
         Text(
             text = title,
-            color = ColorAccent,
+            color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.titleMedium,
         )
         content()
@@ -296,7 +299,10 @@ private fun Container(
     ElevatedCard(
         modifier = modifier,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
         shape = MaterialTheme.shapes.small,
         content = content,
     )
