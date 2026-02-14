@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class AppThemeProvider @Inject constructor(
-    private val appPreferences: AppPreferences
+    override val appPreferences: AppPreferences
 ) : ThemeProvider {
 
     override fun followSystem(stateCoroutineScope: CoroutineScope): State<Boolean> {
