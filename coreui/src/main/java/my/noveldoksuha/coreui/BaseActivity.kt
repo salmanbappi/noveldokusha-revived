@@ -3,6 +3,7 @@ package my.noveldoksuha.coreui
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.drop
@@ -44,5 +45,6 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getAppTheme())
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 }
