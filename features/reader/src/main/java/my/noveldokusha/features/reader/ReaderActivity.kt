@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.AbsListView
 import androidx.activity.compose.setContent
@@ -306,7 +307,11 @@ class ReaderActivity : BaseActivity() {
                         }
                     },
                     readerContent = {
-                        AndroidView(factory = { viewBind.root })
+                        AndroidView(factory = { 
+                            val view = viewBind.root
+                            (view.parent as? ViewGroup)?.removeView(view)
+                            view
+                        })
                     },
                 )
 
