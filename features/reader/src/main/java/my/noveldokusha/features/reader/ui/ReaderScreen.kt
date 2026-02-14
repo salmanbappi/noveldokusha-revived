@@ -202,11 +202,12 @@ internal fun ReaderScreen(
                     )
                     Surface(
                         modifier = Modifier
+                            .padding(8.dp) // Extra padding for shadows
                             .animateContentSize(),
                         shape = RoundedCornerShape(32.dp),
                         color = MaterialTheme.colorApp.tintedSurface,
                         tonalElevation = 8.dp,
-                        shadowElevation = 8.dp
+                        shadowElevation = 12.dp
                     ) {
                         androidx.compose.foundation.layout.Row(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),

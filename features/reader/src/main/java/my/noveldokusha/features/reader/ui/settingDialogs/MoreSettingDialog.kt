@@ -3,6 +3,8 @@ package my.noveldokusha.features.reader.ui.settingDialogs
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,6 +15,7 @@ import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.TouchApp
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -21,6 +24,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,103 +54,111 @@ internal fun MoreSettingDialog(
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Header
-            Text(
-                text = stringResource(R.string.more),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold
-            )
-
-            // Timer
-            ListItem(
-                headlineContent = { Text("Reading Timer", style = MaterialTheme.typography.bodyLarge) },
-                leadingContent = { 
-                    Icon(Icons.Outlined.Timer, null, tint = MaterialTheme.colorScheme.primary) 
-                },
-                trailingContent = {
+            // Header with Timer
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.more),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Outlined.Timer, 
+                        null, 
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
                     Text(
                         text = readingTimer,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
-                },
-                colors = ListItemDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    headlineColor = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier.padding(bottom = 8.dp)
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 4.dp),
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
             )
 
             // Toggles
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                // Auto Scroll
-                ListItem(
-                    modifier = Modifier.clickable { onAutoScrollChange(if (autoScrollSpeed > 0) 0 else 5) },
-                    headlineContent = { Text("Auto Scroll") },
-                    leadingContent = { 
-                        Icon(Icons.Default.ArrowDownward, null, tint = MaterialTheme.colorScheme.secondary) 
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = autoScrollSpeed > 0,
-                            onCheckedChange = { onAutoScrollChange(if (it) 5 else 0) },
-                            colors = SwitchDefaults.colors(checkedThumbColor = ColorAccent)
-                        )
-                    }
+                SettingsToggleItem(
+                    title = "Auto Scroll",
+                    icon = Icons.Default.ArrowDownward,
+                    checked = autoScrollSpeed > 0,
+                    onCheckedChange = { onAutoScrollChange(if (it) 5 else 0) }
                 )
 
-                // Text Selection
-                ListItem(
-                    modifier = Modifier.clickable { onAllowTextSelectionChange(!allowTextSelection) },
-                    headlineContent = { Text(stringResource(id = R.string.allow_text_selection)) },
-                    leadingContent = { 
-                        Icon(Icons.Outlined.TouchApp, null, tint = MaterialTheme.colorScheme.secondary) 
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = allowTextSelection,
-                            onCheckedChange = onAllowTextSelectionChange,
-                            colors = SwitchDefaults.colors(checkedThumbColor = ColorAccent)
-                        )
-                    }
+                SettingsToggleItem(
+                    title = stringResource(id = R.string.allow_text_selection),
+                    icon = Icons.Outlined.TouchApp,
+                    checked = allowTextSelection,
+                    onCheckedChange = onAllowTextSelectionChange
                 )
 
-                // Keep Screen On
-                ListItem(
-                    modifier = Modifier.clickable { onKeepScreenOn(!keepScreenOn) },
-                    headlineContent = { Text(stringResource(R.string.keep_screen_on)) },
-                    leadingContent = { 
-                        Icon(Icons.Outlined.LightMode, null, tint = MaterialTheme.colorScheme.secondary) 
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = keepScreenOn,
-                            onCheckedChange = onKeepScreenOn,
-                            colors = SwitchDefaults.colors(checkedThumbColor = ColorAccent)
-                        )
-                    }
+                SettingsToggleItem(
+                    title = stringResource(R.string.keep_screen_on),
+                    icon = Icons.Outlined.LightMode,
+                    checked = keepScreenOn,
+                    onCheckedChange = onKeepScreenOn
                 )
 
-                // Full Screen
-                ListItem(
-                    modifier = Modifier.clickable { onFullScreen(!fullScreen) },
-                    headlineContent = { Text(stringResource(R.string.features_reader_full_screen)) },
-                    leadingContent = { 
-                        Icon(Icons.Outlined.Fullscreen, null, tint = MaterialTheme.colorScheme.secondary) 
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = fullScreen,
-                            onCheckedChange = onFullScreen,
-                            colors = SwitchDefaults.colors(checkedThumbColor = ColorAccent)
-                        )
-                    }
+                SettingsToggleItem(
+                    title = stringResource(R.string.features_reader_full_screen),
+                    icon = Icons.Outlined.Fullscreen,
+                    checked = fullScreen,
+                    onCheckedChange = onFullScreen
                 )
             }
         }
     }
 }
+
+@Composable
+private fun SettingsToggleItem(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    ListItem(
+        modifier = Modifier.clickable { onCheckedChange(!checked) },
+        headlineContent = { Text(title, style = MaterialTheme.typography.bodyMedium) },
+        leadingContent = { 
+            Icon(
+                icon, 
+                null, 
+                tint = if (checked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(4.dp)
+            ) 
+        },
+        trailingContent = {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = ColorAccent,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            )
+        },
+        colors = ListItemDefaults.colors(
+            containerColor = Color.Transparent,
+            headlineColor = MaterialTheme.colorScheme.onSurface
+        )
+    )
+}
+
+import androidx.compose.ui.graphics.Color

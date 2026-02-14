@@ -44,8 +44,8 @@ android {
         applicationId = "my.noveldokusha"
         minSdk = 26
         targetSdk = 34
-        versionCode = 67
-        versionName = "2.4.13" // Bumped version name
+        versionCode = 68
+        versionName = "2.4.14" // Bumped version name
         setProperty("archivesBaseName", "NovelDokusha_v$versionName")
 
         testInstrumentationRunner = "my.noveldokusha.HiltTestRunner"
