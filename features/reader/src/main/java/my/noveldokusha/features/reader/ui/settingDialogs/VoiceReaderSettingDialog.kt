@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.NavigateBefore
 import androidx.compose.material.icons.automirrored.rounded.NavigateNext
@@ -110,84 +111,115 @@ internal fun VoiceReaderSettingDialog(
     Column {
         AnimatedVisibility(visible = state.isLoadingChapter.value) {
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    strokeWidth = 6.dp,
+                    strokeWidth = 4.dp,
                     color = ColorAccent,
-                    modifier = Modifier.background(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                        CircleShape
-                    )
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
         ElevatedCard(
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 12.dp)
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorApp.tintedSurface
+            )
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(16.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(20.dp)
             ) {
-                // Player voice parameters
-                MySlider(
-                    value = state.voicePitch.value,
-                    valueRange = 0.1f..5f,
-                    onValueChange = state.setVoicePitch,
-                    text = stringResource(R.string.voice_pitch) + ": %.2f".format(state.voicePitch.value),
-                )
-                MySlider(
-                    value = state.voiceSpeed.value,
-                    valueRange = 0.1f..5f,
-                    onValueChange = state.setVoiceSpeed,
-                    text = stringResource(R.string.voice_speed) + ": %.2f".format(state.voiceSpeed.value),
+                // Header
+                Text(
+                    text = stringResource(R.string.voice_reader_settings),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 4.dp)
                 )
 
+                // Player voice parameters
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    MySlider(
+                        value = state.voicePitch.value,
+                        valueRange = 0.1f..5f,
+                        onValueChange = state.setVoicePitch,
+                        text = stringResource(R.string.voice_pitch) + ": %.2f".format(state.voicePitch.value),
+                    )
+                    MySlider(
+                        value = state.voiceSpeed.value,
+                        valueRange = 0.1f..5f,
+                        onValueChange = state.setVoiceSpeed,
+                        text = stringResource(R.string.voice_speed) + ": %.2f".format(state.voiceSpeed.value),
+                    )
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
                 // Player settings buttons
+                Text(
+                    text = "Controls & Voices",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     AssistChip(
                         label = { Text(text = stringResource(id = R.string.start_here)) },
                         onClick = debouncedAction { state.playFirstVisibleItem() },
-                        leadingIcon = { Icon(Icons.Filled.CenterFocusWeak, null) },
+                        leadingIcon = { Icon(Icons.Filled.CenterFocusWeak, null, modifier = Modifier.size(18.dp)) },
                         colors = AssistChipDefaults.assistChipColors(
-                            leadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                            disabledLeadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ),
+                        border = null
                     )
                     AssistChip(
                         label = { Text(text = stringResource(id = R.string.focus)) },
                         onClick = debouncedAction { state.scrollToActiveItem() },
-                        leadingIcon = { Icon(Icons.Filled.CenterFocusStrong, null) },
+                        leadingIcon = { Icon(Icons.Filled.CenterFocusStrong, null, modifier = Modifier.size(18.dp)) },
                         colors = AssistChipDefaults.assistChipColors(
-                            leadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                            disabledLeadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ),
+                        border = null
                     )
                     AssistChip(
-                        label = { Text(text = "AI Narrator Moods") },
+                        label = { Text(text = "Voices") },
                         onClick = { openVoicesDialog = !openVoicesDialog },
-                        leadingIcon = { Icon(Icons.Filled.RecordVoiceOver, null) },
+                        leadingIcon = { Icon(Icons.Filled.RecordVoiceOver, null, modifier = Modifier.size(18.dp)) },
                         colors = AssistChipDefaults.assistChipColors(
-                            leadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                            disabledLeadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            leadingIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
+                        border = null
                     )
                     AssistChip(
-                        label = { Text(text = stringResource(R.string.saved_voices)) },
+                        label = { Text(text = stringResource(R.string.saved)) },
                         onClick = {
                             dropdownCustomSavedVoicesExpanded.let {
                                 it.value = !it.value
                             }
                         },
-                        leadingIcon = { Icon(Icons.Filled.Bookmarks, null) },
+                        leadingIcon = { Icon(Icons.Filled.Bookmarks, null, modifier = Modifier.size(18.dp)) },
                         colors = AssistChipDefaults.assistChipColors(
-                            leadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                            disabledLeadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            leadingIconContentColor = MaterialTheme.colorScheme.onTertiaryContainer
                         ),
+                        border = null
                     )
+                    
                     Box {
                         DropdownCustomSavedVoices(
                             expanded = dropdownCustomSavedVoicesExpanded,
@@ -213,92 +245,93 @@ internal fun VoiceReaderSettingDialog(
                     }
                 }
 
+                Spacer(modifier = Modifier.heightIn(8.dp))
+
                 // Player playback buttons
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = CircleShape,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 72.dp)
                 ) {
-                    val alpha by animateFloatAsState(
-                        targetValue = if (state.isThereActiveItem.value) 1f else 0.5f,
-                        label = ""
-                    )
-                    IconButton(
-                        onClick = debouncedAction(waitMillis = 1000) { state.playPreviousChapter() },
-                        enabled = state.isThereActiveItem.value,
-                        modifier = Modifier.alpha(alpha),
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.FastRewind,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .background(ColorAccent, CircleShape),
-                            tint = Color.White,
+                        val alpha by animateFloatAsState(
+                            targetValue = if (state.isThereActiveItem.value) 1f else 0.5f,
+                            label = ""
                         )
-                    }
-                    IconButton(
-                        onClick = debouncedAction(waitMillis = 100) { state.playPreviousItem() },
-                        enabled = state.isThereActiveItem.value,
-                        modifier = Modifier.alpha(alpha),
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.NavigateBefore,
-                            contentDescription = null,
-                            tint = Color.White,
+                        IconButton(
+                            onClick = debouncedAction(waitMillis = 1000) { state.playPreviousChapter() },
+                            enabled = state.isThereActiveItem.value,
+                            modifier = Modifier.alpha(alpha),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.FastRewind,
+                                contentDescription = "Previous Chapter",
+                                modifier = Modifier.size(28.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        IconButton(
+                            onClick = debouncedAction(waitMillis = 100) { state.playPreviousItem() },
+                            enabled = state.isThereActiveItem.value,
+                            modifier = Modifier.alpha(alpha),
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.NavigateBefore,
+                                contentDescription = "Previous Sentence",
+                                modifier = Modifier.size(32.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                        
+                        // Play/Pause Button
+                        Box(
+                            contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .size(38.dp)
-                                .background(ColorAccent, CircleShape),
-                        )
-                    }
-                    IconButton(onClick = { state.setPlaying(!state.isPlaying.value) }) {
-                        AnimatedContent(
-                            targetState = state.isPlaying.value,
-                            modifier = Modifier
-                                .size(56.dp)
-                                .background(ColorAccent, CircleShape), label = ""
-                        ) { target ->
-                            when (target) {
-                                true -> Icon(
-                                    Icons.Rounded.Pause,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                )
-                                false -> Icon(
-                                    Icons.Rounded.PlayArrow,
-                                    contentDescription = null,
-                                    tint = Color.White,
+                                .size(64.dp)
+                                .background(MaterialTheme.colorScheme.primary, CircleShape)
+                                .clickable { state.setPlaying(!state.isPlaying.value) }
+                        ) {
+                            AnimatedContent(
+                                targetState = state.isPlaying.value,
+                                label = ""
+                            ) { target ->
+                                Icon(
+                                    imageVector = if (target) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                                    contentDescription = if (target) "Pause" else "Play",
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.size(36.dp)
                                 )
                             }
                         }
-                    }
-                    IconButton(
-                        onClick = debouncedAction(waitMillis = 100) { state.playNextItem() },
-                        enabled = state.isThereActiveItem.value,
-                        modifier = Modifier.alpha(alpha),
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.Rounded.NavigateNext,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(38.dp)
-                                .background(ColorAccent, CircleShape),
-                        )
-                    }
-                    IconButton(
-                        onClick = debouncedAction(waitMillis = 1000) { state.playNextChapter() },
-                        enabled = state.isThereActiveItem.value,
-                        modifier = Modifier.alpha(alpha),
-                    ) {
-                        Icon(
-                            Icons.Rounded.FastForward,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .background(ColorAccent, CircleShape),
-                        )
+
+                        IconButton(
+                            onClick = debouncedAction(waitMillis = 100) { state.playNextItem() },
+                            enabled = state.isThereActiveItem.value,
+                            modifier = Modifier.alpha(alpha),
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Rounded.NavigateNext,
+                                contentDescription = "Next Sentence",
+                                modifier = Modifier.size(32.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                        IconButton(
+                            onClick = debouncedAction(waitMillis = 1000) { state.playNextChapter() },
+                            enabled = state.isThereActiveItem.value,
+                            modifier = Modifier.alpha(alpha),
+                        ) {
+                            Icon(
+                                Icons.Rounded.FastForward,
+                                contentDescription = "Next Chapter",
+                                modifier = Modifier.size(28.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
@@ -359,21 +392,27 @@ private fun VoiceSelectorDialog(
         LazyColumn(
             state = listState,
             modifier = Modifier
-                .shadow(10.dp, MaterialTheme.shapes.large)
-                .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+                .shadow(16.dp, MaterialTheme.shapes.extraLarge)
+                .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.extraLarge)
+                .padding(bottom = 16.dp)
         ) {
             stickyHeader {
-                Surface(color = MaterialTheme.colorApp.tintedSurface) {
-                    Column {
+                Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 3.dp) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Select Voice",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
                         MyOutlinedTextField(
                             value = inputTextFilter.value,
                             onValueChange = { inputTextFilter.value = it },
                             placeHolderText = stringResource(R.string.search_voice_by_language),
                             modifier = Modifier
-                                .padding(12.dp)
+                                .fillMaxWidth()
                                 .focusRequester(inputFocusRequester)
                         )
-                        HorizontalDivider(Modifier.padding(top = 0.dp))
                     }
                 }
                 LaunchedEffect(Unit) {
@@ -387,9 +426,11 @@ private fun VoiceSelectorDialog(
                 Text(
                     text = stringResource(R.string.no_matches),
                     textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(24.dp),
                 )
             }
 
@@ -397,62 +438,61 @@ private fun VoiceSelectorDialog(
                 val selected by remember { derivedStateOf { it.id == currentVoice?.id } }
                 Row(
                     modifier = Modifier
-                        .heightIn(min = 54.dp)
+                        .heightIn(min = 64.dp)
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
                         .background(
-                            if (selected) MaterialTheme.colorApp.tintedSelectedSurface
-                            else MaterialTheme.colorScheme.primary
+                            if (selected) MaterialTheme.colorScheme.secondaryContainer
+                            else Color.Transparent,
+                            MaterialTheme.shapes.medium
                         )
                         .clickable(enabled = !selected) { setVoice(it.id) }
-                        .padding(horizontal = 16.dp)
-                        .padding(4.dp)
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = it.language,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.widthIn(min = 84.dp)
-                    )
-                    Row {
-                        for (star in 0..4) {
-                            val yay = it.quality > star * 100
-                            Icon(
-                                imageVector = if (yay) Icons.Filled.StarRate else Icons.Outlined.StarBorder,
-                                contentDescription = null,
-                                tint = if (yay) ColorNotice else MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(10.dp)
-                            )
+                    Column(modifier = Modifier.widthIn(min = 84.dp)) {
+                        Text(
+                            text = it.language,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
+                        )
+                        Row {
+                            for (star in 0..4) {
+                                val yay = it.quality > star * 100
+                                Icon(
+                                    imageVector = if (yay) Icons.Filled.StarRate else Icons.Outlined.StarBorder,
+                                    contentDescription = null,
+                                    tint = if (yay) ColorNotice else MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(12.dp)
+                                )
+                            }
                         }
                     }
+                    
                     Spacer(Modifier.weight(1f))
+                    
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(2.dp),
                         horizontalAlignment = Alignment.End,
-                        modifier = Modifier.wrapContentHeight()
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = it.id,
-                            modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.primary, MaterialTheme.shapes.medium
-                                )
-                                .padding(horizontal = 4.dp, vertical = 2.dp),
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontSize = 10.sp,
+                            text = it.id.takeLast(12), // Show only last part of ID for cleaner look
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline
                         )
                         if (it.needsInternet) {
                             Text(
                                 text = stringResource(R.string.needs_internet),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier
                                     .background(
-                                        MaterialTheme.colorScheme.primary,
-                                        MaterialTheme.shapes.medium
+                                        MaterialTheme.colorScheme.errorContainer,
+                                        MaterialTheme.shapes.extraSmall
                                     )
-                                    .padding(horizontal = 4.dp, vertical = 2.dp),
-                                fontSize = 10.sp,
-                                style = MaterialTheme.typography.bodyMedium
+                                    .padding(horizontal = 4.dp, vertical = 2.dp)
                             )
                         }
                     }
@@ -488,7 +528,7 @@ private fun DropdownCustomSavedVoices(
                 Icon(
                     Icons.Outlined.Save,
                     null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             modifier = Modifier.clickable { expandedAddNextEntry = true }
@@ -547,7 +587,7 @@ private fun DropdownCustomSavedVoices(
             focusRequester.requestFocus()
         }
         AlertDialog(
-            tonalElevation = 24.dp,
+            tonalElevation = 6.dp,
             onDismissRequest = { expandedAddNextEntry = false },
             title = { Text(text = stringResource(R.string.save_current_voice_parameters)) },
             text = {
