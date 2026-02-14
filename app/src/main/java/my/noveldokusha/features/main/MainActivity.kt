@@ -82,7 +82,10 @@ open class MainActivity : BaseActivity() {
                             }
                         }
                     }
-                    NavigationBar {
+                    NavigationBar(
+                        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer,
+                        contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                    ) {
                         pages.forEachIndexed { pageIndex, page ->
                             NavigationBarItem(
                                 icon = {
