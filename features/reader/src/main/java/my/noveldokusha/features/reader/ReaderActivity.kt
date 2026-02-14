@@ -173,7 +173,7 @@ class ReaderActivity : BaseActivity() {
                 val oldSize = viewAdapter.listView.count
                 val position = viewBind.listView.lastVisiblePosition
                 val positionView = position - viewBind.listView.firstVisiblePosition
-                val top = viewBind.listView.getChildAt(positionView)?.let { it.top - paddingTop } ?: 0
+                val top = viewBind.listView.getChildAt(positionView)?.let { it.top - viewBind.listView.paddingTop } ?: 0
                 it()
                 val displacement = viewAdapter.listView.count - oldSize
                 viewBind.listView.setSelectionFromTop(position + displacement, top)
@@ -567,7 +567,7 @@ class ReaderActivity : BaseActivity() {
         if (item !is ReaderItem.Position) return
 
         val offset = viewBind.listView.run { 
-            getChildAt(0)?.let { it.top - paddingTop } ?: 0
+            getChildAt(0)?.let { it.top - viewBind.listView.paddingTop } ?: 0
         }
         viewModel.readingCurrentChapter = ChapterState(
             chapterUrl = item.chapterUrl,
