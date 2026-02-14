@@ -208,8 +208,8 @@ internal fun DatabaseBookInfoScreenBody(
                     OutlinedCard(
                         onClick = { onGenresClick(state.book.value.genres) },
                         colors = CardDefaults.outlinedCardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                            containerColor = Color.Transparent,
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         ),
                         shape = MaterialTheme.shapes.small,
                     ) {
@@ -249,6 +249,8 @@ internal fun DatabaseBookInfoScreenBody(
                             text = book.title,
                             onClick = { onBookClick(book.mapToBookMetadata()) },
                             outerPadding = 0.dp,
+                            backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
                             modifier = Modifier
                                 .fillMaxWidth()
                         )
@@ -266,6 +268,8 @@ internal fun DatabaseBookInfoScreenBody(
                             text = book.title,
                             onClick = { onBookClick(book.mapToBookMetadata()) },
                             outerPadding = 0.dp,
+                            backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
                             modifier = Modifier
                                 .fillMaxWidth()
                         )
@@ -300,8 +304,8 @@ private fun Container(
         modifier = modifier,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurface
         ),
         shape = MaterialTheme.shapes.small,
         content = content,
