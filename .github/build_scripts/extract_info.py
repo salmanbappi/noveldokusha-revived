@@ -27,14 +27,14 @@ def processAPK(path, fileName):
     name, version, flavour = re.match(
         "^(.+)_v(\d+\.\d+\.\d+)-(.+)-.*\.apk$", fileName).groups()
     newFileName = f"NovelDokusha_v{version}_{flavour}.apk"
-    newFileNamePath = os.path.join(path, newFileName)
+    newFileNamePath = os.path.join(mainDir, newFileName)
 
     shutil.move(fileNamePath, newFileNamePath)
 
     print(f"{name=} {version=} {newFileName=}")
 
     setEnvValue("APP_VERSION", version)
-    setEnvValue(f"APK_FILE_PATH_{flavour}", newFileNamePath)
+    setEnvValue(f"APK_FILE_PATH_{flavour}", newFileName)
 
 
 for [path, fileName] in getAPKs():
