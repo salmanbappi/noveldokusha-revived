@@ -19,10 +19,12 @@ import my.noveldokusha.scraper.domain.BookResult
 import my.noveldokusha.scraper.domain.ChapterResult
 import org.jsoup.nodes.Document
 
-class BacaLightnovel(private val networkClient: NetworkClient) : SourceInterface.Catalog {
-    override val id = "baca_lightnovel"
-    override val nameStrId = R.string.source_name_bacalightnovel
-    override val baseUrl = "https://bacalightnovel.co/"
+class BacaLightnovel(
+    private val networkClient: NetworkClient
+) : SourceInterface.Catalog {
+    override val id = "bacalightnovel"
+    override val nameStrId = R.string.source_name_baca_lightnovel
+    override val baseUrl = "https://bacalightnovel.id/"
     override val catalogUrl = "https://bacalightnovel.co/series/"
     override val iconUrl =
         "https://bacalightnovel.co/wp-content/uploads/2022/09/cropped-fav-32x32.png"
