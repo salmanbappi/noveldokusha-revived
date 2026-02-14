@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import my.noveldoksuha.coreui.theme.Themes
+import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.ui.settingDialogs.MoreSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.StyleSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.TranslatorSettingDialog
@@ -18,6 +19,7 @@ import my.noveldokusha.features.reader.ui.settingDialogs.VoiceReaderSettingDialo
 @Composable
 internal fun ReaderScreenBottomBarDialogs(
     state: ReaderScreenState,
+    appPreferences: AppPreferences,
     onTextFontChanged: (String) -> Unit,
     onTextSizeChanged: (Float) -> Unit,
     onSelectableTextChange: (Boolean) -> Unit,
@@ -48,6 +50,7 @@ internal fun ReaderScreenBottomBarDialogs(
                             onThemeChange = onThemeSelected,
                             onTextFontChange = onTextFontChanged,
                             onTextSizeChange = onTextSizeChanged,
+                            appPreferences = appPreferences
                         )
                     }
                     ReaderScreenState.Settings.Type.More -> MoreSettingDialog(

@@ -8,11 +8,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun <T> rememberMutableStateOf(value: T) = remember { mutableStateOf(value) }
+
+@Composable
+fun <T> Flow<T>.collectAsStateInitial(initial: T) = collectAsState(initial = initial)
 
 
 @Composable

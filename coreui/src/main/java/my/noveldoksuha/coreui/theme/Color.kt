@@ -78,3 +78,83 @@ val Zinc800 = Color(0xFF27272A)
 val Zinc700 = Color(0xFF3F3F46)
 val Red500 = Color(0xFFEF4444)
 val Zinc100 = Color(0xFFF4F4F5)
+
+// --- New Modern Themes ---
+
+// Nord
+val Nord0 = Color(0xFF2E3440)
+val Nord4 = Color(0xFFD8DEE9)
+val Nord8 = Color(0xFF88C0D0)
+
+// Dracula
+val DraculaBackground = Color(0xFF282A36)
+val DraculaForeground = Color(0xFFF8F8F2)
+val DraculaSelection = Color(0xFF44475A)
+val DraculaComment = Color(0xFF6272A4)
+val DraculaPink = Color(0xFFFF79C6)
+
+// Solarized Light
+val SolBase03 = Color(0xFF002B36)
+val SolBase3 = Color(0xFFFDF6E3)
+val SolBase00 = Color(0xFF657B83)
+val SolBlue = Color(0xFF268BD2)
+
+// Solarized Dark
+val SolBase0 = Color(0xFF839496)
+
+// Gruvbox Dark
+val GruvBg0 = Color(0xFF282828)
+val GruvFg0 = Color(0xFFFBF1C7)
+val GruvOrange = Color(0xFFFE8019)
+
+// Sepia
+val SepiaBg = Color(0xFFF4ECD8)
+val SepiaFg = Color(0xFF5B4636)
+
+// Everforest
+val EverforestBg = Color(0xFF2D353B)
+val EverforestFg = Color(0xFFD3C6AA)
+val EverforestGreen = Color(0xFFA7C080)
+
+// Rose Pine
+val RosePineBg = Color(0xFF191724)
+val RosePineFg = Color(0xFFE0DEF4)
+val RosePineGold = Color(0xFFF6C177)
+
+// Sakura
+val SakuraBg = Color(0xFFFFF5F7)
+val SakuraFg = Color(0xFF5D2A42)
+val SakuraPink = Color(0xFFFFB7C5)
+
+// Forest
+val ForestBg = Color(0xFF1B2B1E)
+val ForestFg = Color(0xFFE3EFDA)
+val ForestAccent = Color(0xFF4E9A06)
+
+// Catppuccin Mocha
+val CatMochaBase = Color(0xFF1E1E2E)
+val CatMochaText = Color(0xFFCDD6F4)
+val CatMochaMauve = Color(0xFFCBA6F7)
+
+// Catppuccin Latte
+val CatLatteBase = Color(0xFFEFF1F5)
+val CatLatteText = Color(0xFF4C4F69)
+val CatLatteMauve = Color(0xFF8839EF)
+
+// Matcha
+val MatchaBg = Color(0xFFE5E9E0)
+val MatchaFg = Color(0xFF3B4252)
+val MatchaGreen = Color(0xFF81A1C1)
+
+// Ocean
+val OceanBg = Color(0xFF0F111A)
+val OceanFg = Color(0xFF8F93A2)
+val OceanBlue = Color(0xFF82AAFF)
+
+// Paper
+val PaperBg = Color(0xFFF9F7F3)
+val PaperFg = Color(0xFF333333)
+
+// Sand
+val SandBg = Color(0xFFE6D5B8)
+val SandFg = Color(0xFF4A4031)

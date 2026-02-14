@@ -46,6 +46,12 @@ class AppPreferences @Inject constructor(
     val THEME_FOLLOW_SYSTEM = object : Preference<Boolean>("THEME_FOLLOW_SYSTEM") {
         override var value by SharedPreference_Boolean(name, preferences, true)
     }
+    val CUSTOM_THEME_BACKGROUND_COLOR = object : Preference<Int>("CUSTOM_THEME_BACKGROUND_COLOR") {
+        override var value by SharedPreference_Int(name, preferences, 0xFFFDF6E3.toInt())
+    }
+    val CUSTOM_THEME_TEXT_COLOR = object : Preference<Int>("CUSTOM_THEME_TEXT_COLOR") {
+        override var value by SharedPreference_Int(name, preferences, 0xFF657B83.toInt())
+    }
     val READER_FONT_SIZE = object : Preference<Float>("READER_FONT_SIZE") {
         override var value by SharedPreference_Float(name, preferences, 14f)
     }

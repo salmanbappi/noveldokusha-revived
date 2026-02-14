@@ -59,6 +59,7 @@ import my.noveldoksuha.coreui.theme.InternalTheme
 import my.noveldoksuha.coreui.theme.Themes
 import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldoksuha.coreui.theme.rememberMutableStateOf
+import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.domain.ReaderItem
 import my.noveldokusha.features.reader.features.LiveTranslationSettingData
 import my.noveldokusha.features.reader.features.TextSynthesis
@@ -73,6 +74,7 @@ import my.noveldokusha.text_translator.domain.TranslationModelState
 @Composable
 internal fun ReaderScreen(
     state: ReaderScreenState,
+    appPreferences: AppPreferences,
     onSelectableTextChange: (Boolean) -> Unit,
     onKeepScreenOn: (Boolean) -> Unit,
     onFollowSystem: (Boolean) -> Unit,
@@ -191,6 +193,7 @@ internal fun ReaderScreen(
                 ) {
                     ReaderScreenBottomBarDialogs(
                         state = state,
+                        appPreferences = appPreferences,
                         onTextFontChanged = onTextFontChanged,
                         onTextSizeChanged = onTextSizeChanged,
                         onSelectableTextChange = onSelectableTextChange,
@@ -333,6 +336,7 @@ private fun ViewsPreview(
         },
         isThereActiveItem = rememberMutableStateOf(true),
         setPlaying = {},
+        playFirstVisibleItem = {},
         playPreviousItem = {},
         playPreviousChapter = {},
         playNextItem = {},
@@ -376,6 +380,7 @@ private fun ViewsPreview(
                     ),
                     showInvalidChapterDialog = remember { mutableStateOf(false) }
                 ),
+                appPreferences = AppPreferences(androidx.compose.ui.platform.LocalContext.current),
                 onTextSizeChanged = {},
                 onTextFontChanged = {},
                 onSelectableTextChange = {},

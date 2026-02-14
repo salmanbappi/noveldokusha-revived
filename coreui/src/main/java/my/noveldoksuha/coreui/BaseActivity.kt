@@ -43,8 +43,6 @@ abstract class BaseActivity : AppCompatActivity() {
     // This will remain until Reader Screen has no View XML usages
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getAppTheme())
-        appPreferences.THEME_ID.flow().drop(1).asLiveData().observe(this) { recreate() }
-        appPreferences.THEME_FOLLOW_SYSTEM.flow().drop(1).asLiveData().observe(this) { recreate() }
         super.onCreate(savedInstanceState)
     }
 }

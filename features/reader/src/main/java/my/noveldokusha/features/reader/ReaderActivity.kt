@@ -267,6 +267,7 @@ class ReaderActivity : BaseActivity() {
                 // Reader info
                 ReaderScreen(
                     state = viewModel.state,
+                    appPreferences = appPreferences,
                     onTextFontChanged = { appPreferences.READER_FONT_FAMILY.value = it },
                     onTextSizeChanged = { appPreferences.READER_FONT_SIZE.value = it },
                     onSelectableTextChange = { appPreferences.READER_SELECTABLE_TEXT.value = it },
