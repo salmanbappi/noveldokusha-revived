@@ -49,8 +49,8 @@ class WtrLab(
         val nextData = doc.selectFirst("script#__NEXT_DATA__")?.html() ?: return@withContext ""
         
         // Extract raw_id and chapter number from URL or data
-        val rawIdMatch = Regex("\"raw_id\":(\d+)").find(nextData)
-        val chapterMatch = Regex("/chapter-(\d+)").find(doc.location())
+        val rawIdMatch = Regex("\"raw_id\":(\\d+)").find(nextData)
+        val chapterMatch = Regex("/chapter-(\\d+)").find(doc.location())
         
         if (rawIdMatch != null && chapterMatch != null) {
             val rawId = rawIdMatch.groupValues[1]
@@ -129,8 +129,8 @@ class WtrLab(
             val nextData = doc.selectFirst("script#__NEXT_DATA__")?.html() ?: return@tryConnect emptyList()
             
             // Extract raw_id and chapter_count
-            val rawIdMatch = Regex("\"raw_id\":(\d+)").find(nextData)
-            val chapterCountMatch = Regex("\"chapter_count\":(\d+)").find(nextData)
+            val rawIdMatch = Regex("\"raw_id\":(\\d+)").find(nextData)
+            val chapterCountMatch = Regex("\"chapter_count\":(\\d+)").find(nextData)
             val slugMatch = Regex("\"slug\":\"([^\"]+)\"").find(nextData)
             
             if (rawIdMatch != null && chapterCountMatch != null && slugMatch != null) {
