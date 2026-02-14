@@ -61,25 +61,9 @@ private fun createColorScheme(
 val light_colorScheme = createColorScheme(ColorAccent, Color.White, Grey25, Grey900, secondary = ColorAccent, tertiary = ColorNotice)
 val dark_colorScheme = createColorScheme(ColorAccent, Grey25, Grey900, Grey50, secondary = ColorAccent, tertiary = ColorNotice)
 val black_colorScheme = createColorScheme(ColorAccent, Grey25, Grey1000, Grey50, secondary = ColorAccent, tertiary = ColorNotice)
-val midnight_colorScheme = createColorScheme(Sky400, Slate100, Slate900, Slate100, secondary = Sky400)
-val lava_colorScheme = createColorScheme(Red500, Zinc100, Zinc900, Zinc100, secondary = Red500)
 
 val nord_colorScheme = createColorScheme(Nord8, Nord0, Nord0, Nord4, secondary = Nord9, tertiary = Nord10)
-val dracula_colorScheme = createColorScheme(DraculaPink, DraculaBackground, DraculaBackground, DraculaForeground, secondary = DraculaPurple, tertiary = DraculaCyan)
-val solarized_light_colorScheme = createColorScheme(SolBlue, SolBase3, SolBase3, SolBase00, secondary = SolCyan, tertiary = SolViolet)
-val solarized_dark_colorScheme = createColorScheme(SolBlue, SolBase03, SolBase03, SolBase0, secondary = SolCyan, tertiary = SolViolet)
-val gruvbox_dark_colorScheme = createColorScheme(GruvOrange, GruvBg0, GruvBg0, GruvFg0, secondary = GruvBlue, tertiary = GruvAqua)
 val sepia_colorScheme = createColorScheme(SepiaFg, SepiaBg, SepiaBg, SepiaFg, secondary = SepiaAccent)
-val everforest_colorScheme = createColorScheme(EverforestGreen, EverforestBg, EverforestBg, EverforestFg, secondary = EverforestBlue)
-val rose_pine_colorScheme = createColorScheme(RosePineGold, RosePineBg, RosePineBg, RosePineFg, secondary = RosePineRose, tertiary = RosePineLove)
-val sakura_colorScheme = createColorScheme(SakuraPink, SakuraFg, SakuraBg, SakuraFg, secondary = SakuraRed)
-val forest_colorScheme = createColorScheme(ForestAccent, ForestFg, ForestBg, ForestFg, secondary = ForestLight)
-val catppuccin_mocha_colorScheme = createColorScheme(CatMochaMauve, CatMochaBase, CatMochaBase, CatMochaText, secondary = CatMochaBlue, tertiary = CatMochaRed)
-val catppuccin_latte_colorScheme = createColorScheme(CatLatteMauve, CatLatteBase, CatLatteBase, CatLatteText, secondary = CatLatteBlue)
-val matcha_colorScheme = createColorScheme(MatchaGreen, MatchaFg, MatchaBg, MatchaFg, secondary = MatchaGreenDark)
-val ocean_colorScheme = createColorScheme(OceanBlue, OceanBg, OceanBg, OceanFg, secondary = OceanCyan, tertiary = OceanPurple)
-val paper_colorScheme = createColorScheme(Color(0xFF555555), PaperBg, PaperBg, PaperFg, secondary = Color(0xFF777777))
-val sand_colorScheme = createColorScheme(SandFg, SandBg, SandBg, SandFg, secondary = Color(0xFF8D6E63))
 
 fun custom_colorScheme(background: Color, text: Color): ColorScheme {
     val isLight = background.luminance() > 0.5
