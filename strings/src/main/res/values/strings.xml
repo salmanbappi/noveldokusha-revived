@@ -208,4 +208,5 @@
     <string name="cancel">Cancel</string>
     <string name="save_voice">Save Voice</string>
     <string name="invalid_source">Invalid Source</string>
+    <string name="local">Local</string>
 </resources>
