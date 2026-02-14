@@ -73,8 +73,6 @@ class LNMTL(
             
             if (chapters.isNotEmpty()) return@tryConnect chapters
             
-            // Alternative: extract novel ID and fetch from API if possible
-            // This is a simplified version
             emptyList<ChapterResult>()
         }
     }
@@ -115,7 +113,6 @@ class LNMTL(
             if (input.isBlank() || index > 0)
                 return@tryConnect PagedList.createEmpty(index = index)
 
-            // LNMTL search is a bit complex, using simple library filtering for now
             val url = "https://lnmtl.com/novel?search=$input"
             val doc = networkClient.get(url).toDocument()
             

@@ -100,7 +100,7 @@ class WtrLab(
                 val imageMatch = Regex("\"image\":\"([^"]+)\"").find(nextData)
                 imageMatch?.groupValues?.get(1)
             } else {
-                doc.selectFirst("img[src*=\"cover\"]", ".novel-cover img")?.attr("src")
+                doc.selectFirst(".novel-cover img")?.attr("src")
             }
         }
     }
@@ -138,7 +138,7 @@ class WtrLab(
                 val chapterCount = chapterCountMatch.groupValues[1].toInt()
                 val slug = slugMatch.groupValues[1]
                 
-                (1..chapterCount).map { chapterNo ->
+                (1..chapterCount).map {
                     ChapterResult(
                         title = "Chapter $chapterNo",
                         url = "$baseUrl/en/serie-$rawId/$slug/chapter-$chapterNo"
@@ -196,8 +196,8 @@ class WtrLab(
             val dataArray = jsonResponse.asJsonObject.getAsJsonArray("data")
             
             val books = mutableListOf<BookResult>()
-            dataArray?.forEach { item ->
-                val novel = item.asJsonObject
+            dataArray?.forEach {
+                val novel = it.asJsonObject
                 val data = novel.getAsJsonObject("data")
                 val rawId = novel.get("raw_id").asInt
                 val slug = novel.get("slug").asString
