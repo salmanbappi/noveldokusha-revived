@@ -109,7 +109,7 @@ class Ttkan(
             val apiUrl = "https://www.ttkan.co/api/nq/amp_novel_chapters?language=tw&novel_id=$novelId"
             
             val response = networkClient.get(apiUrl)
-            val jsonText = response.body.string()
+            val jsonText = response.body?.string() ?: ""
             
             // Parse the JSON response manually to extract chapters
             // Format: {"items":[{"chapter_name":"第1章 ...","chapter_id":1},...]}

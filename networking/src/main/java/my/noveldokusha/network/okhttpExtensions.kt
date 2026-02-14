@@ -36,6 +36,11 @@ fun Response.toDocument(): Document {
     return Jsoup.parse(body?.string() ?: "", request.url.toString())
 }
 
+fun Response.toDocument(charset: String): Document {
+    val bytes = body?.bytes() ?: return Jsoup.parse("", request.url.toString())
+    return Jsoup.parse(String(bytes, charset(charset)), request.url.toString())
+}
+
 fun Response.toJson(): JsonElement {
     return JsonParser.parseString(body?.string() ?: "{}")
 }

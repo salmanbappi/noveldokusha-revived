@@ -36,7 +36,7 @@ class Scraper @Inject constructor(
         Wuxia(networkClient),
         IndoWebnovel(networkClient),
         LightNovelPub(networkClient),
-        Novelhall(networkClient),
+        NovelHall(networkClient),
         SakuraNovel(networkClient),
         ScribbleHub(networkClient),
         WbNovel(networkClient),
