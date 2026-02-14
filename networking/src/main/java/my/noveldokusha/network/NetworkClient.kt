@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import my.noveldokusha.core.AppInternalState
-import my.noveldokusha.network.interceptors.CloudFareVerificationInterceptor
+import my.noveldokusha.network.interceptors.CloudfareVerificationInterceptor
 import my.noveldokusha.network.interceptors.DecodeResponseInterceptor
 import my.noveldokusha.network.interceptors.UserAgentInterceptor
 import okhttp3.Cache
@@ -68,10 +68,10 @@ class ScraperNetworkClient @Inject constructor(
                 it.addInterceptor(okhttpLoggingInterceptor)
             } else it
         }
-        .addInterceptor(UserAgentInterceptor("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"))
+        .addInterceptor(UserAgentInterceptor("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"))
         .addInterceptor(refererInterceptor)
         .addInterceptor(DecodeResponseInterceptor())
-        .addInterceptor(CloudFareVerificationInterceptor(appContext))
+        .addInterceptor(CloudfareVerificationInterceptor(appContext))
         .cookieJar(cookieJar)
         .cache(Cache(cacheDir, cacheSize))
         .connectTimeout(30, TimeUnit.SECONDS)

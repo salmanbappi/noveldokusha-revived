@@ -149,7 +149,7 @@ class ReaderActivity : BaseActivity() {
         readerViewHandlersActions.maintainStartPosition = {
             withContext(Dispatchers.Main.immediate) {
                 it()
-                val titleIndex = (0..viewAdapter.listView.count)
+                val titleIndex = (0 until viewAdapter.listView.count)
                     .indexOfFirst { viewAdapter.listView.getItem(it) is ReaderItem.Title }
 
                 if (titleIndex != -1) {
@@ -287,9 +287,11 @@ class ReaderActivity : BaseActivity() {
                         val targetChapterUrl = viewModel.state.readerInfo.chapterUrl.value
                         if (targetChapterUrl.isBlank()) return@ReaderScreen
                         
-                        val chapterItems = viewModel.items.filter { it is ReaderItem.Position && it.chapterUrl == targetChapterUrl }
+                        // Use a local copy of items to avoid ConcurrentModificationException
+                        val currentItems = viewModel.items.toList()
+                        val chapterItems = currentItems.filter { it is ReaderItem.Position && it.chapterUrl == targetChapterUrl }
                         if (chapterItems.isNotEmpty()) {
-                            val safeProgress = if (progress.isNaN()) 0f else progress.coerceIn(0f, 100f)
+                            val safeProgress = if (progress.isNaN() || progress.isInfinite()) 0f else progress.coerceIn(0f, 100f)
                             val indexInChapter = ((safeProgress / 100f) * (chapterItems.size - 1)).toInt()
                                 .coerceIn(0, chapterItems.size - 1)
                             val item = chapterItems[indexInChapter] as ReaderItem.Position
@@ -461,7 +463,7 @@ class ReaderActivity : BaseActivity() {
             ) {
                 val viewIndex = index - viewBind.listView.firstVisiblePosition
                 val currentOffsetPx =
-                    viewBind.listView.getChildAt(viewIndex).run { top - paddingTop }
+                    viewBind.listView.getChildAt(viewIndex)?.let { it.top - viewBind.listView.paddingTop } ?: 0
                 val newOffsetPx = 200.dpToPx(this@ReaderActivity)
                 viewAdapter.listView.notifyDataSetChanged()
                 // Scroll if item below new scroll position
