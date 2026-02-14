@@ -70,7 +70,7 @@ import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.tools.FontsLoader
 import my.noveldokusha.features.reader.ui.ReaderScreenState
-import my.noveldokusha.reader.R
+import my.noveldokusha.strings.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -244,8 +244,7 @@ internal fun StyleSettingDialog(
                                 ThemeChip(
                                     selected = theme == state.currentTheme.value,
                                     onClick = { onThemeChange(theme) },
-                                    label = stringResource(id = theme.nameId),
-                                    isDark = !theme.isLight
+                                    label = stringResource(id = theme.nameId)
                                 )
                             }
                         }
@@ -276,8 +275,7 @@ private fun LabelText(text: String) {
 private fun ThemeChip(
     selected: Boolean,
     onClick: () -> Unit,
-    label: String,
-    isDark: Boolean
+    label: String
 ) {
     val containerColor by animateColorAsState(
         targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -366,6 +364,7 @@ private fun CustomThemeEditor(appPreferences: AppPreferences) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ColorPickerItem(
     label: String,
