@@ -49,13 +49,13 @@ private fun createColorScheme(
     outline = onSurface.copy(alpha = 0.5f),
     outlineVariant = onSurface.copy(alpha = 0.2f),
     scrim = Color.Black,
-    surfaceBright = surface.mix(Color.White, 0.05f),
-    surfaceDim = surface.mix(Color.Black, 0.05f),
+    surfaceBright = surface.mix(Color.White, 0.95f),
+    surfaceDim = surface.mix(Color.Black, 0.95f),
     surfaceContainerLowest = surface,
-    surfaceContainerLow = surface.mix(onSurface, 0.04f),
-    surfaceContainer = surface.mix(onSurface, 0.08f),
-    surfaceContainerHigh = surface.mix(onSurface, 0.12f),
-    surfaceContainerHighest = surface.mix(onSurface, 0.16f),
+    surfaceContainerLow = surface.mix(onSurface, 0.96f),
+    surfaceContainer = surface.mix(onSurface, 0.92f),
+    surfaceContainerHigh = surface.mix(onSurface, 0.88f),
+    surfaceContainerHighest = surface.mix(onSurface, 0.84f),
 )
 
 val light_colorScheme = createColorScheme(ColorAccent, Color.White, Grey25, Grey900)
