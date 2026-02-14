@@ -73,9 +73,9 @@ class NovelFull(
             val page = index + 1
             val url = "$catalogUrl?page=$page"
             val doc = networkClient.get(url).toDocument()
-            doc.select(".list-novel .row")
+            doc.select(".list-novel .row, .list-truyen .row")
                 .mapNotNull {
-                    val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.novel-title a, h3.truyen-title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),
@@ -91,7 +91,7 @@ class NovelFull(
             val url = "https://novelfull.com/search?keyword=$input&page=${index + 1}"
             networkClient.get(url).toDocument().select(".list-novel .row, .list-truyen .row")
                 .mapNotNull {
-                    val link = it.selectFirst("h3.title a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.title a, h3.truyen-title a, h3.novel-title a") ?: return@mapNotNull null
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),

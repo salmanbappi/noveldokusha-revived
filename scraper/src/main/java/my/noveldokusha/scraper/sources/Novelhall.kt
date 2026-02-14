@@ -19,7 +19,7 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
     override val id = "novelhall"
     override val nameStrId = R.string.source_name_novelhall
     override val baseUrl = "https://www.novelhall.com"
-    override val catalogUrl = "https://www.novelhall.com/ranking/"
+    override val catalogUrl = "https://www.novelhall.com/lastupdate.html"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
@@ -57,10 +57,10 @@ class Novelhall(private val networkClient: NetworkClient) : SourceInterface.Cata
         if (index > 0) return@withContext Response.Success(PagedList.createEmpty(index))
         tryConnect {
             val doc = networkClient.get(catalogUrl).toDocument()
-            doc.select(".ranking-item, tr").drop(1)
+            doc.select("tr").drop(1)
                 .mapNotNull {
-                    val link = it.selectFirst("h3 a, td.novel a") ?: return@mapNotNull null
-                    val bookCover = it.selectFirst("img")?.attr("abs:src") ?: ""
+                    val link = it.selectFirst("td.w70 a") ?: return@mapNotNull null
+                    val bookCover = "" // No covers on the latest release list
                     BookResult(
                         title = link.text(),
                         url = link.attr("abs:href"),

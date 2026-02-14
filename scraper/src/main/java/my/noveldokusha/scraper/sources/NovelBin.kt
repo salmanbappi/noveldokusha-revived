@@ -39,7 +39,7 @@ class NovelBin(
                         select(".list-novel .row").mapNotNull {
                             val link = it.selectFirst("h3.novel-title a") ?: return@mapNotNull null
                             val bookCover =
-                                it.selectFirst("img")?.attr("abs:src") 
+                                it.selectFirst("img")?.attr("abs:src")?.takeIf { it.isNotBlank() }
                                     ?: it.selectFirst("img")?.attr("abs:data-src") 
                                     ?: ""
                             BookResult(

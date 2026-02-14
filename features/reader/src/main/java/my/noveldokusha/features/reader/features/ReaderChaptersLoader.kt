@@ -60,7 +60,8 @@ internal class ReaderChaptersLoader(
     fun getItemContext(itemIndex: Int, chapterUrl: String): ReadingChapterPosStats? {
         val item = items.getOrNull(itemIndex) ?: return null
         if (item !is ReaderItem.Position) return null
-        val chapterStats = chaptersStats[chapterUrl] ?: return null
+        val targetChapterUrl = item.chapterUrl
+        val chapterStats = chaptersStats[targetChapterUrl] ?: return null
         return ReadingChapterPosStats(
             chapterIndex = item.chapterIndex,
             chapterCount = orderedChapters.size,

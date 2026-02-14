@@ -30,12 +30,12 @@ class CloudFareVerificationInterceptor @Inject constructor(
         val request = chain.request()
         val response = chain.proceed(request)
 
-        // Check if blocked by Cloudflare (403, 503 OR 200 with challenge)
+        // Check if blocked by Cloudflare or other bot protections (403, 503 OR 200 with challenge)
         val body = response.peekBody(1024 * 10).string().lowercase()
         val isChallenge = response.code == 403 || response.code == 503 || 
-            (response.code == 200 && (body.contains("cf-challenge") || body.contains("just a moment") || body.contains("verify you are human") || body.contains("verification required")))
+            (response.code == 200 && (body.contains("cf-challenge") || body.contains("just a moment") || body.contains("verify you are human") || body.contains("verification required") || body.contains("redirecting...") || body.contains("detecting if you are a bot")))
 
-        if (isChallenge && body.contains("cloudflare")) {
+        if (isChallenge && (body.contains("cloudflare") || body.contains("sucuri") || body.contains("parklogic") || body.contains("javascript") || body.contains("redirect"))) {
             response.close()
             
             // Trigger WebView bypass

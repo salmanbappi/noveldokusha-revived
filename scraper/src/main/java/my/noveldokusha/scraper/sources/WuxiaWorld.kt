@@ -29,9 +29,37 @@ class WuxiaWorld(
     private val gson = GsonBuilder().setLenient().create()
 
     private fun extractJson(scriptData: String, key: String): JsonObject? {
-        val start = scriptData.indexOf("$key = ")
+        val pattern = Regex("""$key\s*=\s*(\{.*\}|\[.*\])""", RegexOption.DOT_MATCHES_ALL)
+        val match = pattern.find(scriptData)
+        if (match != null) {
+            val jsonStr = match.groupValues[1]
+            // We need to handle nested braces manually if regex DOT_MATCHES_ALL is too greedy or script has other things
+            // But since it is likely the end of script or followed by something distinct, let's refine
+            
+            val jsonStart = match.groups[1]?.range?.first ?: return null
+            var braceCount = 0
+            var jsonEnd = -1
+            for (i in jsonStart until scriptData.length) {
+                val c = scriptData[i]
+                if (c == '{' || c == '[') braceCount++
+                else if (c == '}' || c == ']') braceCount--
+                
+                if (braceCount == 0) {
+                    jsonEnd = i + 1
+                    break
+                }
+            }
+            if (jsonEnd != -1) {
+                return gson.fromJson(scriptData.substring(jsonStart, jsonEnd), JsonObject::class.java)
+            }
+        }
+        
+        // Fallback to old method if regex fails
+        val start = scriptData.indexOf("$key")
         if (start == -1) return null
-        val jsonStart = scriptData.indexOf("{", start)
+        val eqStart = scriptData.indexOf("=", start)
+        if (eqStart == -1) return null
+        val jsonStart = scriptData.indexOf("{", eqStart)
         if (jsonStart == -1) return null
         
         var braceCount = 0

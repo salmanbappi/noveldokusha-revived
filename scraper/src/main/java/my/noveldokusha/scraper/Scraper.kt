@@ -135,14 +135,14 @@ class Scraper @Inject constructor(
             url.contains("novelfull.com") || url.contains("readnovelfull.com") -> mapOf(
                 "title" to "h3.title", "cover" to ".book img", "chapter_list" to ".list-chapter li a", "content" to "#chapter-content"
             )
-            url.contains("meionovel.id") || url.contains("novelku.id") -> mapOf(
+            url.contains("meionovels.com") || url.contains("novelku.id") -> mapOf(
                 "title" to "h1.entry-title", "cover" to ".thumb img", "chapter_list" to ".eplister li a", "content" to ".entry-content"
             )
             url.contains("lightnovelstranslations.com") -> mapOf(
                 "title" to "h1", "cover" to "img.wp-post-image", "chapter_list" to ".chapter-item a", "content" to ".novel_text"
             )
             url.contains("wuxia.blog") || url.contains("wuxia.click") -> mapOf(
-                "title" to "h1", "cover" to "img.img-responsive", "chapter_list" to "#chapter-list a", "content" to "div.panel-body.article"
+                "title" to "h1", "cover" to ".imageCover img", "chapter_list" to "#chapters a", "content" to "div.panel-body.article"
             )
             url.contains("boxnovel.com") || url.contains("boxnovel.webflow.io") || url.contains("indowebnovel.id") || 
             url.contains("sakuranovel.id") || url.contains("allnovelupdates.com") || url.contains("wbnovel.com") -> mapOf(

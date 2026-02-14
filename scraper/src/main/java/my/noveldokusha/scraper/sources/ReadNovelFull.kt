@@ -105,7 +105,7 @@ class ReadNovelFull(
 
             val page = index + 1
             // Use standard search path
-            val url = "https://readnovelfull.com/search?keyword=$input&page=$page"
+            val url = "https://readnovelfull.com/novel-list/search?keyword=$input&page=$page"
             val doc = networkClient.get(url).toDocument()
             parseToBooks(doc, index)
         }

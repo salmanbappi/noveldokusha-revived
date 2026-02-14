@@ -33,5 +33,5 @@ internal data class ReadingChapterPosStats(
 
 internal fun ReadingChapterPosStats.chapterReadPercentage() = when (chapterItemsCount) {
     0 -> 100f
-    else -> ceil((chapterItemPosition.toFloat() / chapterItemsCount.toFloat()) * 100f)
+    else -> ceil((chapterItemPosition.toFloat() / chapterItemsCount.toFloat()) * 100f).coerceIn(0f, 100f)
 }

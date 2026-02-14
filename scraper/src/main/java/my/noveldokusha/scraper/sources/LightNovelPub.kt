@@ -62,9 +62,9 @@ class LightNovelPub(
             val page = index + 1
             val url = "$catalogUrl?page=$page"
             val doc = networkClient.get(url).toDocument()
-            doc.select(".novel-item")
+            doc.select(".li")
                 .mapNotNull {
-                    val link = it.selectFirst(".novel-title a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.tit a") ?: return@mapNotNull null
                     val bookCover = it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
                     BookResult(
                         title = link.text(),
@@ -81,9 +81,9 @@ class LightNovelPub(
             val page = index + 1
             val url = "https://lightnovelpub.me/search?keyword=$input&page=$page"
             val doc = networkClient.get(url).toDocument()
-            doc.select(".novel-item")
+            doc.select(".li")
                 .mapNotNull {
-                    val link = it.selectFirst(".novel-title a") ?: return@mapNotNull null
+                    val link = it.selectFirst("h3.tit a") ?: return@mapNotNull null
                     val bookCover = it.selectFirst("img")?.attr("abs:src") ?: it.selectFirst("img")?.attr("abs:data-src") ?: ""
                     BookResult(
                         title = link.text(),

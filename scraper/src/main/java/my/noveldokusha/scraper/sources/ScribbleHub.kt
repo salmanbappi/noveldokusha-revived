@@ -21,7 +21,7 @@ class ScribbleHub(
     override val id = "scribblehub"
     override val nameStrId = R.string.source_name_scribblehub
     override val baseUrl = "https://www.scribblehub.com"
-    override val catalogUrl = "https://www.scribblehub.com/series-ranking/?sort=rank&order=asc"
+    override val catalogUrl = "https://www.scribblehub.com/series-ranking/?sort=1&order=4"
     override val language = LanguageCode.ENGLISH
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
