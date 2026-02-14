@@ -213,4 +213,5 @@
     <string name="voice_reader">Voice Reader</string>
     <string name="style">Style</string>
     <string name="more">More</string>
+    <string name="size">Size</string>
 </resources>
