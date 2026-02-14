@@ -1,6 +1,7 @@
 package my.noveldokusha.core
 
 import androidx.annotation.StringRes
+import my.noveldokusha.strings.R
 
 /**
  * ISO 639-1 codes
