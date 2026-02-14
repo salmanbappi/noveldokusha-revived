@@ -12,4 +12,5 @@ dependencies {
     implementation(projects.tooling.algorithms)
     implementation(libs.androidx.core.ktx)
     implementation(libs.google.gemini)
+    implementation(libs.okhttp)
 }

@@ -1,6 +1,7 @@
 package my.noveldokusha.text_to_speech
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,7 +10,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
-import java.net.URL
 import java.util.concurrent.LinkedBlockingQueue
 
 class OnlineNarrator(
@@ -21,34 +21,33 @@ class OnlineNarrator(
         private set
 
     private val audioQueue = LinkedBlockingQueue<String>()
-    private var currentFile: File? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     fun speak(text: String, voiceId: String, speed: Float, pitch: Float) {
         scope.launch {
             try {
-                // Simulate fetching audio from an online TTS service (e.g., Google Cloud, Azure, EdgeTTS)
-                // In a real implementation, you would make a network request here.
-                // For now, we'll placeholder this with a log message and simulated delay.
-                Log.d("OnlineNarrator", "Fetching audio for: $text using voice: $voiceId")
+                Log.d("OnlineNarrator", "Synthesizing: $text")
+                // Format pitch and rate for EdgeTTS
+                // Rate: +50% or -50%
+                val ratePercent = ((speed - 1.0f) * 100).toInt()
+                val rateStr = if (ratePercent >= 0) "+$ratePercent%" else "$ratePercent%"
                 
-                // Construct a dummy URL or use a free TTS API if available/legal
-                // Example: https://translate.google.com/translate_tts?ie=UTF-8&q=$text&tl=en&client=tw-ob
-                // Note: Direct use of Google Translate TTS API is often rate-limited or blocked.
-                
-                // For this implementation, we will assume a local synthesis or a specific API integration is needed.
-                // Since we cannot easily add a full EdgeTTS library without gradle changes, 
-                // we will focus on the structure to support it.
-                
-                // TODO: Integrate EdgeTTS or similar library here.
-                // val audioData = EdgeTts.synthesize(text, voiceId, speed, pitch)
-                // val file = File(context.cacheDir, "tts_audio_${System.currentTimeMillis()}.mp3")
-                // FileOutputStream(file).use { it.write(audioData) }
-                // audioQueue.offer(file.absolutePath)
-                
-                // Mocking queue for now to prevent crashes if this class is used
-                // audioQueue.offer("mock_path") 
-                // playNext()
+                // Pitch: +50Hz or -50Hz (simplified)
+                val pitchHz = ((pitch - 1.0f) * 50).toInt()
+                val pitchStr = if (pitchHz >= 0) "+${pitchHz}Hz" else "${pitchHz}Hz"
 
+                val audioData = EdgeTts.synthesize(text, voiceId, rateStr, pitchStr)
+                
+                if (audioData.isNotEmpty()) {
+                    val file = File(context.cacheDir, "tts_${System.currentTimeMillis()}.mp3")
+                    FileOutputStream(file).use { it.write(audioData) }
+                    
+                    audioQueue.offer(file.absolutePath)
+                    
+                    withContext(Dispatchers.Main) {
+                        playNext()
+                    }
+                }
             } catch (e: Exception) {
                 Log.e("OnlineNarrator", "Error synthesizing text", e)
             }
@@ -61,19 +60,38 @@ class OnlineNarrator(
         val path = audioQueue.poll() ?: return
         isPlaying = true
         
-        // Use MediaPlayer to play the file
-        // ... implementation ...
-        
-        // On completion:
-        // isPlaying = false
-        // playNext()
+        try {
+            mediaPlayer?.release()
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(path)
+                prepare()
+                setOnCompletionListener {
+                    isPlaying = false
+                    it.release()
+                    // Delete temp file
+                    File(path).delete()
+                    playNext()
+                }
+                start()
+            }
+        } catch (e: Exception) {
+            Log.e("OnlineNarrator", "Error playing audio", e)
+            isPlaying = false
+            playNext()
+        }
     }
 
     fun stop() {
         isPlaying = false
         audioQueue.clear()
+        try {
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+            mediaPlayer = null
+        } catch (e: Exception) {
+            // Ignore
+        }
         job?.cancel()
-        // Stop MediaPlayer
     }
 
     fun release() {

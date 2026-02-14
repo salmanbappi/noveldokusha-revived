@@ -1,9 +1,7 @@
 package my.noveldokusha.text_to_speech
 
 import android.content.Context
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,86 +9,82 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
+// Wrapper that combines System TTS (Offline) and Edge TTS (Online)
 class GeminiTextToSpeechManager<T : Utterance<T>>(
     context: Context,
-    initialItemState: T,
+    initialItemState: T
 ) {
     private val scope = CoroutineScope(Dispatchers.Default)
+    private val systemTts = TextToSpeechManager(context, initialItemState)
     private val narrator = OnlineNarrator(context)
     
-    private val _queueList = mutableMapOf<String, T>()
-    private val _currentTextSpeakFlow = MutableSharedFlow<T>()
-    
     val availableVoices = mutableStateListOf<VoiceData>()
-    val voiceSpeed = mutableFloatStateOf(1f)
-    val voicePitch = mutableFloatStateOf(1f)
-    val activeVoice = mutableStateOf<VoiceData?>(null)
-    val serviceLoadedFlow = MutableSharedFlow<Unit>(replay = 1)
-
-    val queueList = _queueList as Map<String, T>
-    val currentTextSpeakFlow = _currentTextSpeakFlow.shareIn(
-        scope = scope,
-        started = SharingStarted.WhileSubscribed()
-    )
-
-    val currentActiveItemState = mutableStateOf(initialItemState)
-
-    init {
-        availableVoices.addAll(listOf(
-            VoiceData("default", "Online: Default", true, 1000)
-        ))
-        activeVoice.value = availableVoices.first()
-        scope.launch { serviceLoadedFlow.emit(Unit) }
-    }
-
-    fun stop() {
-        narrator.stop()
-        _queueList.clear()
-    }
-
-    fun speak(text: String, textSynthesis: T) {
-        _queueList[textSynthesis.utteranceId] = textSynthesis
-        
-        narrator.enqueue(
-            utteranceId = textSynthesis.utteranceId,
-            text = text,
-            onStarted = { id ->
-                scope.launch {
-                    val item = _queueList[id] ?: return@launch
-                    val playingItem = item.copyWithState(Utterance.PlayState.PLAYING)
-                    currentActiveItemState.value = playingItem
-                    _currentTextSpeakFlow.emit(playingItem)
-                }
-            },
-            onFinished = { id ->
-                scope.launch {
-                    val item = _queueList[id] ?: return@launch
-                    val finishedItem = item.copyWithState(Utterance.PlayState.FINISHED)
-                    _queueList.remove(id)
-                    currentActiveItemState.value = finishedItem
-                    _currentTextSpeakFlow.emit(finishedItem)
-                }
-            }
-        )
-    }
-
-    fun setCurrentSpeakState(textSynthesis: T) {
-        currentActiveItemState.value = textSynthesis
-        scope.launch { _currentTextSpeakFlow.emit(textSynthesis) }
-    }
-
-    fun trySetVoiceById(id: String): Boolean {
-        narrator.setMood(id)
-        val voice = availableVoices.find { it.id == id } ?: return false
-        activeVoice.value = voice
-        return true
-    }
-
-    fun trySetVoicePitch(value: Float): Boolean = true
-    fun trySetVoiceSpeed(value: Float): Boolean = true
+    val activeVoice = systemTts.activeVoice
+    val voiceSpeed = systemTts.voiceSpeed
+    val voicePitch = systemTts.voicePitch
     
-    fun shutdown() {
-        stop()
-        narrator.shutdown()
+    // Combine flows? For now, we mainly rely on System TTS for state tracking
+    val currentTextSpeakFlow = systemTts.currentTextSpeakFlow
+    val currentActiveItemState = systemTts.currentActiveItemState
+    
+    init {
+        scope.launch {
+            systemTts.serviceLoadedFlow.collect {
+                refreshVoices()
+            }
+        }
     }
+    
+    private fun refreshVoices() {
+        availableVoices.clear()
+        
+        // 1. Add System Voices (Offline capable)
+        availableVoices.addAll(systemTts.availableVoices.map { 
+            it.copy(id = "sys:${it.id}") // Prefix to distinguish
+        })
+        
+        // 2. Add Edge TTS Voices (Online)
+        availableVoices.addAll(EdgeTts.getVoices().map {
+            it.copy(id = "edge:${it.id}")
+        })
+    }
+    
+    fun speak(text: String, textSynthesis: T) {
+        val voiceId = activeVoice.value?.id ?: ""
+        
+        if (voiceId.startsWith("edge:")) {
+            // Use Online Narrator
+            val realId = voiceId.removePrefix("edge:")
+            narrator.speak(text, realId, voiceSpeed.floatValue, voicePitch.floatValue)
+            // Manually update state since OnlineNarrator doesn't have the same granular callbacks yet
+            // This is a simplification
+            systemTts.setCurrentSpeakState(textSynthesis.copyWithState(Utterance.PlayState.PLAYING))
+        } else {
+            // Use System TTS
+            // If ID starts with "sys:", strip it, otherwise let it be (default)
+            val realId = voiceId.removePrefix("sys:")
+            if (realId.isNotEmpty() && realId != voiceId) {
+                systemTts.trySetVoiceById(realId)
+            }
+            systemTts.speak(text, textSynthesis)
+        }
+    }
+    
+    fun stop() {
+        systemTts.stop()
+        narrator.stop()
+    }
+    
+    fun setVoiceId(id: String) {
+        val voice = availableVoices.find { it.id == id } ?: return
+        activeVoice.value = voice
+        
+        if (id.startsWith("sys:")) {
+            systemTts.trySetVoiceById(id.removePrefix("sys:"))
+        }
+    }
+    
+    // Delegate other methods
+    fun trySetVoiceSpeed(value: Float) = systemTts.trySetVoiceSpeed(value)
+    fun trySetVoicePitch(value: Float) = systemTts.trySetVoicePitch(value)
 }
