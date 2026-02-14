@@ -214,4 +214,6 @@
     <string name="style">Style</string>
     <string name="more">More</string>
     <string name="size">Size</string>
+    <string name="add_local_directory">Add local directory</string>
+    <string name="no_directories_added_please_add_them_to_see_them_in_the_source_catalog_list">No directories added. Please add them to see them in the source catalog list</string>
 </resources>
