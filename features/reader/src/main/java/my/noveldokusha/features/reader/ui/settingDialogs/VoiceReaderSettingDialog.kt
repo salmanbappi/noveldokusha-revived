@@ -101,8 +101,6 @@ import kotlinx.coroutines.withContext
 import my.noveldoksuha.coreui.components.MyOutlinedTextField
 import my.noveldoksuha.coreui.components.MySlider
 import my.noveldoksuha.coreui.composableActions.debouncedAction
-import my.noveldoksuha.coreui.theme.ColorAccent
-import my.noveldoksuha.coreui.theme.ColorNotice
 import my.noveldoksuha.coreui.theme.InternalTheme
 import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldoksuha.coreui.theme.rememberMutableStateOf
@@ -130,7 +128,7 @@ internal fun VoiceReaderSettingDialog(
             ) {
                 CircularProgressIndicator(
                     strokeWidth = 4.dp,
-                    color = ColorAccent,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -649,7 +647,7 @@ private fun VoiceSelectorDialog(
                                     Icon(
                                         imageVector = if (yay) Icons.Filled.StarRate else Icons.Outlined.StarBorder,
                                         contentDescription = null,
-                                        tint = if (yay) ColorNotice else MaterialTheme.colorScheme.outline,
+                                        tint = if (yay) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline,
                                         modifier = Modifier.size(14.dp)
                                     )
                                 }

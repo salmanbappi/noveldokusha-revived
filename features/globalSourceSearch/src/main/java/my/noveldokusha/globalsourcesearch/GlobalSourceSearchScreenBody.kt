@@ -118,7 +118,7 @@ private fun SourceListView(
             ) {
                 when (loadState) {
                     IteratorState.LOADING -> CircularProgressIndicator(
-                        color = ColorAccent,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(36.dp)
                     )
 
@@ -131,12 +131,12 @@ private fun SourceListView(
 
                         list.isEmpty() -> Text(
                             text = stringResource(R.string.no_results_found),
-                            color = ColorAccent,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
 
                         else -> Text(
                             text = stringResource(R.string.no_more_results),
-                            color = ColorAccent,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.topPadding()
                         )
                     }

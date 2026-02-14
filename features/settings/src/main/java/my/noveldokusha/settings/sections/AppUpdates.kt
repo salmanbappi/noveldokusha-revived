@@ -35,7 +35,7 @@ internal fun AppUpdates(
             text = stringResource(R.string.app_updates) + " | " + state.currentAppVersion,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.textPadding(),
-            color = ColorAccent
+            color = MaterialTheme.colorScheme.primary
         )
         ListItem(
             modifier = Modifier.clickable {
@@ -48,7 +48,7 @@ internal fun AppUpdates(
                 Icon(
                     Icons.Outlined.AutoMode,
                     null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             },
             trailingContent = {
@@ -56,12 +56,7 @@ internal fun AppUpdates(
                     checked = state.appUpdateCheckerEnabled.value,
                     onCheckedChange = {
                         state.appUpdateCheckerEnabled.value = !state.appUpdateCheckerEnabled.value
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = ColorAccent,
-                        checkedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                        uncheckedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    }
                 )
             }
         )
@@ -73,14 +68,14 @@ internal fun AppUpdates(
                 Icon(
                     Icons.Outlined.DoubleArrow,
                     null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             },
             trailingContent = {
                 AnimatedVisibility(visible = state.checkingForNewVersion.value) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(22.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             },

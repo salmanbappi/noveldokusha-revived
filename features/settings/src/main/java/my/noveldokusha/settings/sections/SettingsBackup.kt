@@ -26,7 +26,7 @@ internal fun SettingsBackup(
             text = stringResource(id = R.string.backup),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.textPadding(),
-            color = ColorAccent
+            color = MaterialTheme.colorScheme.primary
         )
         ListItem(
             headlineContent = {
@@ -36,7 +36,7 @@ internal fun SettingsBackup(
                 Text(text = stringResource(id = R.string.opens_the_file_explorer_to_select_the_backup_saving_location))
             },
             leadingContent = {
-                Icon(Icons.Outlined.Save, null, tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Outlined.Save, null, tint = MaterialTheme.colorScheme.onSurface)
             },
             modifier = Modifier.clickable { onBackupData() }
         )
@@ -51,7 +51,7 @@ internal fun SettingsBackup(
                 Icon(
                     Icons.Outlined.SettingsBackupRestore,
                     null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             },
             modifier = Modifier.clickable { onRestoreData() }

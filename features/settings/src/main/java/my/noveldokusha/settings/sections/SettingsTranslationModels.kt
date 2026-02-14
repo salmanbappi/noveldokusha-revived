@@ -33,7 +33,7 @@ internal fun SettingsTranslationModels(
             text = stringResource(R.string.settings_title_translation_models),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.textPadding(),
-            color = ColorAccent
+            color = MaterialTheme.colorScheme.primary
         )
         ListItem(
             headlineContent = {
@@ -43,7 +43,7 @@ internal fun SettingsTranslationModels(
                 Text(text = stringResource(id = R.string.settings_translations_models_main_description))
             },
             leadingContent = {
-                Icon(Icons.Outlined.Translate, null, tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Outlined.Translate, null, tint = MaterialTheme.colorScheme.onSurface)
             },
             modifier = Modifier.clickable { isDialogVisible = true }
         )

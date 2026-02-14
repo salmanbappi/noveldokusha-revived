@@ -28,7 +28,7 @@ internal fun SettingsData(
             text = stringResource(id = R.string.data),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.textPadding(),
-            color = ColorAccent
+            color = MaterialTheme.colorScheme.primary
         )
         ListItem(
             headlineContent = {
@@ -40,7 +40,7 @@ internal fun SettingsData(
                 }
             },
             leadingContent = {
-                Icon(Icons.Outlined.DataArray, null, tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Outlined.DataArray, null, tint = MaterialTheme.colorScheme.onSurface)
             },
             modifier = Modifier.clickable { onCleanDatabase() }
         )
@@ -55,7 +55,7 @@ internal fun SettingsData(
                 }
             },
             leadingContent = {
-                Icon(Icons.Outlined.Image, null, tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Outlined.Image, null, tint = MaterialTheme.colorScheme.onSurface)
             },
             modifier = Modifier.clickable { onCleanImageFolder() }
         )

@@ -38,7 +38,7 @@ internal fun LibraryBottomSheet(
                 modifier = Modifier
                     .padding(8.dp)
                     .padding(horizontal = 8.dp),
-                color = ColorAccent,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleMedium
             )
             PosNegCheckbox(
@@ -53,7 +53,7 @@ internal fun LibraryBottomSheet(
                 modifier = Modifier
                     .padding(8.dp)
                     .padding(horizontal = 8.dp),
-                color = ColorAccent,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleMedium
             )
             TernaryStateToggle(

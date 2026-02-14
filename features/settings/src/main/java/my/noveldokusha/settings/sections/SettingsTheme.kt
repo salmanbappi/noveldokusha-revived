@@ -37,7 +37,7 @@ internal fun SettingsTheme(
             text = stringResource(id = R.string.theme),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.textPadding(),
-            color = ColorAccent
+            color = MaterialTheme.colorScheme.primary
         )
         // Follow system theme
         ListItem(
@@ -50,18 +50,13 @@ internal fun SettingsTheme(
                 Icon(
                     Icons.Outlined.AutoAwesome,
                     null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             },
             trailingContent = {
                 Switch(
                     checked = currentFollowSystem,
-                    onCheckedChange = onFollowSystemChange,
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = ColorAccent,
-                        checkedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                        uncheckedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    onCheckedChange = onFollowSystemChange
                 )
             }
         )
@@ -80,7 +75,7 @@ internal fun SettingsTheme(
 
             },
             leadingContent = {
-                Icon(Icons.Outlined.ColorLens, null, tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Outlined.ColorLens, null, tint = MaterialTheme.colorScheme.onSurface)
             }
         )
     }

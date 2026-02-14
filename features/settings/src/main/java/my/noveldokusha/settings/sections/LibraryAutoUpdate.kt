@@ -42,7 +42,7 @@ fun LibraryAutoUpdate(
             text = "Library updates",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.textPadding(),
-            color = ColorAccent
+            color = MaterialTheme.colorScheme.primary
         )
         ListItem(
             modifier = Modifier.clickable {
@@ -55,7 +55,7 @@ fun LibraryAutoUpdate(
                 Icon(
                     Icons.Outlined.AutoMode,
                     null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             },
             trailingContent = {
@@ -63,12 +63,7 @@ fun LibraryAutoUpdate(
                     checked = state.autoUpdateEnabled.value,
                     onCheckedChange = {
                         state.autoUpdateEnabled.value = !state.autoUpdateEnabled.value
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = ColorAccent,
-                        checkedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                        uncheckedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    }
                 )
             }
         )
@@ -86,7 +81,7 @@ fun LibraryAutoUpdate(
                 }
             },
             leadingContent = {
-                Icon(Icons.Outlined.Timer, null, tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Outlined.Timer, null, tint = MaterialTheme.colorScheme.onSurface)
             }
         )
     }

@@ -60,7 +60,7 @@ internal fun GlobalSourceSearchScreen(
                 LinearProgressIndicator(
                     progress = { progress },
                     modifier = Modifier.fillMaxWidth(),
-                    color = ColorAccent,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         },
