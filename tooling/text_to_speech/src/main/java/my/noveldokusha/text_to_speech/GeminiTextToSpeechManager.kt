@@ -23,9 +23,11 @@ class GeminiTextToSpeechManager<T : Utterance<T>>(
     val voiceSpeed = systemTts.voiceSpeed
     val voicePitch = systemTts.voicePitch
     
-    // Combine flows? For now, we mainly rely on System TTS for state tracking
+    // API Compatibility: Expose underlying flows and properties
     val currentTextSpeakFlow = systemTts.currentTextSpeakFlow
     val currentActiveItemState = systemTts.currentActiveItemState
+    val serviceLoadedFlow = systemTts.serviceLoadedFlow
+    val queueList get() = systemTts.queueList
     
     init {
         scope.launch {
@@ -64,6 +66,7 @@ class GeminiTextToSpeechManager<T : Utterance<T>>(
             // If ID starts with "sys:", strip it, otherwise let it be (default)
             val realId = voiceId.removePrefix("sys:")
             if (realId.isNotEmpty() && realId != voiceId) {
+                // We don't need to set it here if trySetVoiceById was called, but to be safe
                 systemTts.trySetVoiceById(realId)
             }
             systemTts.speak(text, textSynthesis)
@@ -74,14 +77,25 @@ class GeminiTextToSpeechManager<T : Utterance<T>>(
         systemTts.stop()
         narrator.stop()
     }
+
+    fun shutdown() {
+        stop()
+        narrator.release()
+    }
     
-    fun setVoiceId(id: String) {
-        val voice = availableVoices.find { it.id == id } ?: return
+    fun trySetVoiceById(id: String): Boolean {
+        val voice = availableVoices.find { it.id == id } ?: return false
         activeVoice.value = voice
         
         if (id.startsWith("sys:")) {
-            systemTts.trySetVoiceById(id.removePrefix("sys:"))
+            return systemTts.trySetVoiceById(id.removePrefix("sys:"))
         }
+        // For Edge TTS, we just set the active voice property, success is implied if found
+        return true
+    }
+    
+    fun setCurrentSpeakState(textSynthesis: T) {
+        systemTts.setCurrentSpeakState(textSynthesis)
     }
     
     // Delegate other methods
