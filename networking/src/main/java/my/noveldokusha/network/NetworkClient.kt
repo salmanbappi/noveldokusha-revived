@@ -37,10 +37,12 @@ class ScraperNetworkClient @Inject constructor(
 
     private val cookieJar = ScraperCookieJar()
 
-    private val okhttpLoggingInterceptor = HttpLoggingInterceptor {
-        Timber.v(it)
-    }.apply {
-        level = HttpLoggingInterceptor.Level.BODY
+    private val okhttpLoggingInterceptor by lazy {
+        HttpLoggingInterceptor {
+            Timber.v(it)
+        }.apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
     }
 
     /**
@@ -62,27 +64,30 @@ class ScraperNetworkClient @Inject constructor(
         chain.proceed(newRequest)
     }
 
-    val client = OkHttpClient.Builder()
-        .let {
-            if (appInternalState.isDebugMode) {
-                it.addInterceptor(okhttpLoggingInterceptor)
-            } else it
-        }
-        .addInterceptor(UserAgentInterceptor("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"))
-        .addInterceptor(refererInterceptor)
-        .addInterceptor(DecodeResponseInterceptor())
-        .addInterceptor(CloudfareVerificationInterceptor(appContext))
-        .cookieJar(cookieJar)
-        .cache(Cache(cacheDir, cacheSize))
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .build()
+    val client: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .apply {
+                if (appInternalState.isDebugMode) {
+                    addInterceptor(okhttpLoggingInterceptor)
+                }
+            }
+            .addInterceptor(UserAgentInterceptor("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"))
+            .addInterceptor(refererInterceptor)
+            .addInterceptor(DecodeResponseInterceptor())
+            .addInterceptor(CloudfareVerificationInterceptor(appContext))
+            .cookieJar(cookieJar)
+            .cache(Cache(cacheDir, cacheSize))
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
 
-    private val clientWithRedirects = client
-        .newBuilder()
-        .followRedirects(true)
-        .followSslRedirects(true)
-        .build()
+    private val clientWithRedirects: OkHttpClient by lazy {
+        client.newBuilder()
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .build()
+    }
 
     override suspend fun call(request: Request.Builder, followRedirects: Boolean): Response {
         return if (followRedirects) clientWithRedirects.call(request) else client.call(request)

@@ -21,10 +21,16 @@
 # Jsoup
 -keep class org.jsoup.** { *; }
 
-# Scraper Sources - Keep all scraper sources from being obfuscated/removed
+# Scraper Sources & Domain Models
 -keep class my.noveldokusha.scraper.sources.** { *; }
 -keep class my.noveldokusha.scraper.SourceInterface* { *; }
 -keep class my.noveldokusha.scraper.domain.** { *; }
+-keep class my.noveldokusha.core.** { *; }
+
+# Interceptors & Bypass Result (Fix for startup crash if R8 strips them)
+-keep class my.noveldokusha.network.interceptors.** { *; }
+-keep class my.noveldokusha.network.interceptors.CloudfareVerificationInterceptor { *; }
+-keep class my.noveldokusha.network.interceptors.CloudfareVerificationInterceptor$BypassResult { *; }
 
 # Kotlin Serialization
 -keepattributes RuntimeVisibleAnnotations,AnnotationDefault
@@ -61,6 +67,11 @@
 -keepattributes Signature
 -keep class com.google.gson.** { *; }
 -keep class my.noveldokusha.scraper.domain.** { *; }
+-keep class com.google.gson.reflect.TypeToken
+-keep class * extends com.google.gson.reflect.TypeToken
+-keep public class * implements com.google.gson.TypeAdapterFactory
+-keep public class * implements com.google.gson.JsonSerializer
+-keep public class * implements com.google.gson.JsonDeserializer
 
 # AndroidX Navigation
 -keep class * extends androidx.navigation.NavArgs { *; }
