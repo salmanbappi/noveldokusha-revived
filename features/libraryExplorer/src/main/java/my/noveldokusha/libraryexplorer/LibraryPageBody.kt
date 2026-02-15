@@ -43,40 +43,6 @@ import my.noveldokusha.core.isLocalUri
 import my.noveldokusha.core.rememberResolvedBookImagePath
 import my.noveldokusha.feature.local_database.BookWithContext
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import my.noveldoksuha.coreui.components.BookImageButtonView
-import my.noveldoksuha.coreui.components.ImageViewGlide
-import my.noveldoksuha.coreui.modifiers.bounceOnPressed
-import my.noveldoksuha.coreui.theme.ColorAccent
-import my.noveldoksuha.coreui.theme.ImageBorderShape
-import my.noveldokusha.core.appPreferences.ListLayoutMode
-import my.noveldokusha.core.isLocalUri
-import my.noveldokusha.core.rememberResolvedBookImagePath
-import my.noveldokusha.feature.local_database.BookWithContext
-
 @Composable
 internal fun LibraryPageBody(
     list: List<BookWithContext>,
@@ -199,8 +165,14 @@ private fun LibraryListItem(
         },
         supportingContent = {
             Column {
+                val domain = try {
+                    val uri = android.net.Uri.parse(it.book.url)
+                    uri.host ?: it.book.url
+                } catch (e: Exception) {
+                    it.book.url
+                }
                 Text(
-                    text = it.book.baseUrl, // Or source name if available
+                    text = domain,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

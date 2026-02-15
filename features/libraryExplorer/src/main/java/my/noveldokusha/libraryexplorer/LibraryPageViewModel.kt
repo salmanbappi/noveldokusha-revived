@@ -33,13 +33,13 @@ internal class LibraryPageViewModel @Inject constructor(
     private fun createPageList(isShowCompleted: Boolean) = appRepository.libraryBooks
         .getBooksInLibraryWithContextFlow
         .map { it.filter { book -> book.book.completed == isShowCompleted } }
-        .combine(preferences.LIBRARY_FILTER_READ.flow()) { list, filterRead ->
+        .combine(preferences.LIBRARY_FILTER_READ.flow()) { list: List<BookWithContext>, filterRead: TernaryState ->
             when (filterRead) {
                 TernaryState.Active -> list.filter { it.chaptersCount == it.chaptersReadCount }
                 TernaryState.Inverse -> list.filter { it.chaptersCount != it.chaptersReadCount }
                 TernaryState.Inactive -> list
             }
-        }.combine(preferences.LIBRARY_SORT_MODE.flow()) { list, sortMode ->
+        }.combine(preferences.LIBRARY_SORT_MODE.flow()) { list: List<BookWithContext>, sortMode: LibrarySortMode ->
             when (sortMode) {
                 LibrarySortMode.LastRead -> list.sortedByDescending { it.book.lastReadEpochTimeMilli }
                 LibrarySortMode.RecentlyUpdated -> list.sortedByDescending { it.book.lastUpdateEpochTimeMilli }

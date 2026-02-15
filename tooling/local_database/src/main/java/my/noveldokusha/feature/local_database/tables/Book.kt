@@ -14,6 +14,8 @@ data class Book(
     val lastReadChapter: String? = null,
     val inLibrary: Boolean = false,
     val coverImageUrl: String = "",
-    val description: String = "",
-    val lastReadEpochTimeMilli: Long = 0,
-) : Parcelable
+        val description: String = "",
+        val lastReadEpochTimeMilli: Long = 0,
+        val lastUpdateEpochTimeMilli: Long = 0,
+    ) : Parcelable
+    
