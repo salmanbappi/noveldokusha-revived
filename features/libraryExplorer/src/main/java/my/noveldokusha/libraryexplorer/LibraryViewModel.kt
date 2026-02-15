@@ -34,7 +34,7 @@ internal class LibraryViewModel @Inject constructor(
         readFilter = readFilter.next()
     }
 
-    fun setSortMode(mode: my.noveldokusha.core.appPreferences.LibrarySortMode) {
+    fun updateSortMode(mode: my.noveldokusha.core.appPreferences.LibrarySortMode) {
         sortMode = mode
     }
 

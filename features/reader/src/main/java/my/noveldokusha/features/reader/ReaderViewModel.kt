@@ -93,7 +93,7 @@ internal class ReaderViewModel @Inject constructor(
     )
 
     init {
-        state.lastSentencePosition.value = readingCurrentChapter.chapterItemPosition
+        state.lastSentencePosition.value = readerSession.currentChapter.chapterItemPosition
         viewModelScope.launch {
             delay(3000)
             state.lastSentencePosition.value = null

@@ -62,7 +62,7 @@ internal fun LibraryBottomSheet(
                 LibrarySortMode.entries.forEach { mode ->
                     FilterChip(
                         selected = model.sortMode == mode,
-                        onClick = { model.setSortMode(mode) },
+                        onClick = { model.updateSortMode(mode) },
                         label = { Text(mode.name.replace("([a-z])([A-Z])".toRegex(), "$1 $2")) }
                     )
                 }
