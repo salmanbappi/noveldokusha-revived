@@ -83,6 +83,22 @@ internal class ReaderItemAdapter(
     private val topPadding = ReaderItem.Padding(chapterIndex = Int.MIN_VALUE)
     private val bottomPadding = ReaderItem.Padding(chapterIndex = Int.MAX_VALUE)
 
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return when (val item = getItem(position)) {
+            is ReaderItem.Body -> viewBody(item, convertView, parent)
+            is ReaderItem.Image -> viewImage(item, convertView, parent)
+            is ReaderItem.BookEnd -> viewBookEnd(convertView, parent)
+            is ReaderItem.BookStart -> viewBookStart(convertView, parent)
+            is ReaderItem.Divider -> viewDivider(convertView, parent)
+            is ReaderItem.Error -> viewError(item, convertView, parent)
+            is ReaderItem.Padding -> viewPadding(convertView, parent)
+            is ReaderItem.Progressbar -> viewProgressbar(convertView, parent)
+            is ReaderItem.Title -> viewTitle(item, convertView, parent)
+            is ReaderItem.Translating -> viewTranslating(item, convertView, parent)
+            is ReaderItem.GoogleTranslateAttribution -> viewTranslateAttribution(convertView, parent)
+        }
+    }
+
     override fun getViewTypeCount(): Int = 11
     override fun getItemViewType(position: Int) = when (getItem(position)) {
         is ReaderItem.Body -> 0
