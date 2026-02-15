@@ -277,6 +277,5 @@ private fun PreviewView() {
             onSourceSetPinned = { _, _ -> },
             onSourceSetDefault = { _, _ -> },
         )
-        }
     }
-    
+}
