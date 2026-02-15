@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -49,7 +50,7 @@ import my.noveldokusha.scraper.SourceInterface
 import my.noveldokusha.scraper.fixtures.fixturesCatalogList
 import my.noveldokusha.scraper.fixtures.fixturesDatabaseList
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun CatalogList(
     innerPadding: PaddingValues,
