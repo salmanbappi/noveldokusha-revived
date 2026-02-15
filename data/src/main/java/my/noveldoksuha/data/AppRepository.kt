@@ -21,6 +21,7 @@ class AppRepository @Inject constructor(
     val libraryBooks: LibraryBooksRepository,
     val bookChapters: BookChaptersRepository,
     val chapterBody: ChapterBodyRepository,
+    val bookmarks: BookmarksRepository,
     private val appFileResolver: AppFileResolver,
     private val epubImporterRepository: EpubImporterRepository
 ) {

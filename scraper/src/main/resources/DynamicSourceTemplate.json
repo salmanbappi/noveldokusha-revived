@@ -1,0 +1,19 @@
+{
+  "id": "boxnovel_dynamic",
+  "name": "BoxNovel (Dynamic)",
+  "baseUrl": "https://boxnovel.com",
+  "catalogUrl": "https://boxnovel.com/novel/page/{page}/",
+  "language": "en",
+  "selectors": {
+    "bookItem": ".manga-item",
+    "bookItemTitle": ".post-title h3 a",
+    "bookItemUrl": ".post-title h3 a",
+    "bookItemCover": ".item-thumb img",
+    "nextPage": ".next",
+    "bookDescription": ".description-summary .summary__content",
+    "bookCover": ".summary_image img",
+    "chapterItem": ".wp-manga-chapter a",
+    "chapterTitle": ".breadcrumb li.active",
+    "chapterText": ".text-left"
+  }
+}

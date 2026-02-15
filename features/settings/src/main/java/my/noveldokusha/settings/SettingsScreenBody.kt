@@ -31,6 +31,7 @@ import my.noveldokusha.settings.sections.AppUpdates
 import my.noveldokusha.settings.sections.LibraryAutoUpdate
 import my.noveldokusha.settings.sections.SettingsBackup
 import my.noveldokusha.settings.sections.SettingsData
+import my.noveldokusha.settings.sections.SettingsExternalSources
 import my.noveldokusha.settings.sections.SettingsTheme
 import my.noveldokusha.settings.sections.SettingsTranslationModels
 
@@ -48,49 +49,75 @@ internal fun SettingsScreenBody(
     onRemoveTranslationModel: (lang: String) -> Unit,
     onCheckForUpdatesManual: () -> Unit,
     onDebugLogs: () -> Unit,
+    onExternalSourcesUriSelected: (String) -> Unit = {},
+    onManageRepositories: () -> Unit = {},
 ) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
     ) {
+        // Section: Appearance
+        SettingHeader("Appearance & Reading")
         SettingsTheme(
             currentFollowSystem = state.followsSystemTheme.value,
             currentTheme = state.currentTheme.value,
             onFollowSystemChange = onFollowSystem,
             onCurrentThemeChange = onThemeSelected
         )
-        HorizontalDivider()
-        SettingsData(
-            databaseSize = state.databaseSize.value,
-            imagesFolderSize = state.imageFolderSize.value,
-            onCleanDatabase = onCleanDatabase,
-            onCleanImageFolder = onCleanImageFolder
-        )
-        HorizontalDivider()
-        SettingsBackup(
-            onBackupData = onBackupData,
-            onRestoreData = onRestoreData
-        )
+        
         if (state.isTranslationSettingsVisible.value) {
-            HorizontalDivider()
+            HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
             SettingsTranslationModels(
                 translationModelsStates = state.translationModelsStates,
                 onDownloadTranslationModel = onDownloadTranslationModel,
                 onRemoveTranslationModel = onRemoveTranslationModel
             )
         }
-        HorizontalDivider()
+
+        Spacer(Modifier.height(16.dp))
+        
+        // Section: Library
+        SettingHeader("Library & Automation")
         LibraryAutoUpdate(state = state.libraryAutoUpdate)
-        HorizontalDivider()
+        HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
         AppUpdates(
             state = state.updateAppSetting,
             onCheckForUpdatesManual = onCheckForUpdatesManual
         )
-        HorizontalDivider()
-        androidx.compose.material3.ListItem(
-            headlineContent = { Text("Debug Logs") },
-            modifier = Modifier.clickable(onClick = onDebugLogs)
+
+        Spacer(Modifier.height(16.dp))
+
+        // Section: Data
+        SettingHeader("Data Management")
+        SettingsBackup(
+            onBackupData = onBackupData,
+            onRestoreData = onRestoreData
         )
-        Spacer(modifier = Modifier.height(500.dp))
+        HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
+        SettingsData(
+            databaseSize = state.databaseSize.value,
+            imagesFolderSize = state.imageFolderSize.value,
+            onCleanDatabase = onCleanDatabase,
+            onCleanImageFolder = onCleanImageFolder
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        // Section: Advanced
+        SettingHeader("Advanced")
+        SettingsExternalSources(
+            currentUri = state.externalSourcesDirectoryUri.value,
+            onUriSelected = onExternalSourcesUriSelected,
+            onManageRepositories = onManageRepositories
+        )
+        HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
+        androidx.compose.material3.ListItem(
+            headlineContent = { Text("Debug Logs", style = MaterialTheme.typography.bodyLarge) },
+            supportingContent = { Text("View system logs for troubleshooting", style = MaterialTheme.typography.bodySmall) },
+            modifier = Modifier.clickable(onClick = onDebugLogs),
+            colors = androidx.compose.material3.ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
+        )
+        
+        Spacer(modifier = Modifier.height(80.dp))
         Text(
             text = "(°.°)",
             modifier = Modifier
@@ -98,11 +125,24 @@ internal fun SettingsScreenBody(
                 .fillMaxWidth(),
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(120.dp))
     }
+}
+
+@Composable
+private fun SettingHeader(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth()
+    )
 }
 
 
@@ -134,7 +174,8 @@ private fun Preview() {
                     libraryAutoUpdate = SettingsScreenState.LibraryAutoUpdate(
                         autoUpdateEnabled = remember { mutableStateOf(true) },
                         autoUpdateIntervalHours = remember { mutableIntStateOf(24) },
-                    )
+                    ),
+                    externalSourcesDirectoryUri = remember { mutableStateOf("") }
                 ),
                 onFollowSystem = { },
                 onThemeSelected = { },

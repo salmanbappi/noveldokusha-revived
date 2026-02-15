@@ -58,6 +58,12 @@ class AppPreferences @Inject constructor(
     val READER_FONT_FAMILY = object : Preference<String>("READER_FONT_FAMILY") {
         override var value by SharedPreference_String(name, preferences, "serif")
     }
+    val READER_LINE_HEIGHT = object : Preference<Float>("READER_LINE_HEIGHT") {
+        override var value by SharedPreference_Float(name, preferences, 1.2f)
+    }
+    val READER_PARAGRAPH_SPACING = object : Preference<Float>("READER_PARAGRAPH_SPACING") {
+        override var value by SharedPreference_Float(name, preferences, 8f)
+    }
     val READER_TEXT_TO_SPEECH_VOICE_ID =
         object : Preference<String>("READER_TEXT_TO_SPEECH_VOICE_ID") {
             override var value by SharedPreference_String(name, preferences, "")
@@ -113,6 +119,9 @@ class AppPreferences @Inject constructor(
     val FINDER_SOURCES_PINNED = object : Preference<Set<String>>("FINDER_SOURCES_PINNED") {
         override var value by SharedPreference_StringSet(name, preferences, setOf())
     }
+    val FINDER_DEFAULT_SOURCE = object : Preference<String>("FINDER_DEFAULT_SOURCE") {
+        override var value by SharedPreference_String(name, preferences, "")
+    }
     val LIBRARY_FILTER_READ = object : Preference<TernaryState>("LIBRARY_FILTER_READ") {
         override var value by SharedPreference_Enum(
             name,
@@ -120,11 +129,11 @@ class AppPreferences @Inject constructor(
             TernaryState.Inactive
         ) { enumValueOf(it) }
     }
-    val LIBRARY_SORT_LAST_READ = object : Preference<TernaryState>("LIBRARY_SORT_LAST_READ") {
+    val LIBRARY_SORT_MODE = object : Preference<LibrarySortMode>("LIBRARY_SORT_MODE") {
         override var value by SharedPreference_Enum(
             name,
             preferences,
-            TernaryState.Inverse
+            LibrarySortMode.LastRead
         ) { enumValueOf(it) }
     }
     val BOOKS_LIST_LAYOUT_MODE = object : Preference<ListLayoutMode>("BOOKS_LIST_LAYOUT_MODE") {
@@ -160,6 +169,19 @@ class AppPreferences @Inject constructor(
         object : Preference<Int>("GLOBAL_APP_AUTOMATIC_LIBRARY_UPDATES_INTERVAL_HOURS") {
             override var value by SharedPreference_Int(name, preferences, 24)
         }
+
+    val GLOBAL_APP_PRE_FETCH_NEXT_CHAPTER_ENABLED =
+        object : Preference<Boolean>("GLOBAL_APP_PRE_FETCH_NEXT_CHAPTER_ENABLED") {
+            override var value by SharedPreference_Boolean(name, preferences, true)
+        }
+
+    val SOURCES_EXTERNAL_DIRECTORY_URI = object : Preference<String>("SOURCES_EXTERNAL_DIRECTORY_URI") {
+        override var value by SharedPreference_String(name, preferences, "")
+    }
+
+    val SOURCES_REPOSITORIES_URLS = object : Preference<Set<String>>("SOURCES_REPOSITORIES_URLS") {
+        override var value by SharedPreference_StringSet(name, preferences, setOf())
+    }
 
 
     @Deprecated("Removed", level = DeprecationLevel.HIDDEN)

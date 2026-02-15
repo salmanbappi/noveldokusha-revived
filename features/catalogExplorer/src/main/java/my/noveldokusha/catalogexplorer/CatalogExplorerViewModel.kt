@@ -36,4 +36,8 @@ internal class CatalogExplorerViewModel @Inject constructor(
         appPreferences.FINDER_SOURCES_PINNED.value = appPreferences.FINDER_SOURCES_PINNED
             .value.let { if (pinned) it.plus(id) else it.minus(id) }
     }
+
+    fun onSourceSetDefault(id: String, isDefault: Boolean) {
+        appPreferences.FINDER_DEFAULT_SOURCE.value = if (isDefault) id else ""
+    }
 }

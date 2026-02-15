@@ -270,6 +270,12 @@ internal class ReaderSession(
             chapterUrl = chapterUrl
         ) ?: return
         readingStats.value = stats
+        
+        // Cache-Ahead logic: load next chapter when 80% of current is read
+        val progress = stats.chapterReadPercentage()
+        if (progress > 80f && appPreferences.GLOBAL_APP_PRE_FETCH_NEXT_CHAPTER_ENABLED.value) {
+            readerChaptersLoader.tryLoadNext()
+        }
     }
 
     fun markChapterStartAsSeen(chapterUrl: String) {

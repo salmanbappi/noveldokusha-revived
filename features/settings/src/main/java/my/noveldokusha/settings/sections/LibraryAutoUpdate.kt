@@ -7,14 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AutoMode
+import androidx.compose.material.icons.outlined.FastForward
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -22,8 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import my.noveldoksuha.coreui.theme.ColorAccent
 import my.noveldoksuha.coreui.theme.InternalTheme
 import my.noveldoksuha.coreui.theme.textPadding
 import my.noveldokusha.core.domain.AppVersion
@@ -39,11 +36,39 @@ fun LibraryAutoUpdate(
 ) {
     Column {
         Text(
-            text = "Library updates",
+            text = "Automation",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.textPadding(),
             color = MaterialTheme.colorScheme.primary
         )
+        
+        ListItem(
+            modifier = Modifier.clickable {
+                state.preFetchNextChapterEnabled.value = !state.preFetchNextChapterEnabled.value
+            },
+            headlineContent = {
+                Text(text = "Smart pre-fetch")
+            },
+            supportingContent = {
+                Text(text = "Automatically load next chapter while reading")
+            },
+            leadingContent = {
+                Icon(
+                    Icons.Outlined.FastForward,
+                    null,
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            trailingContent = {
+                Switch(
+                    checked = state.preFetchNextChapterEnabled.value,
+                    onCheckedChange = {
+                        state.preFetchNextChapterEnabled.value = it
+                    }
+                )
+            }
+        )
+
         ListItem(
             modifier = Modifier.clickable {
                 state.autoUpdateEnabled.value = !state.autoUpdateEnabled.value
@@ -62,7 +87,7 @@ fun LibraryAutoUpdate(
                 Switch(
                     checked = state.autoUpdateEnabled.value,
                     onCheckedChange = {
-                        state.autoUpdateEnabled.value = !state.autoUpdateEnabled.value
+                        state.autoUpdateEnabled.value = it
                     }
                 )
             }

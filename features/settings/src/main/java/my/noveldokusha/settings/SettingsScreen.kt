@@ -9,6 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -24,6 +28,16 @@ import my.noveldokusha.tooling.backup_restore.onBackupRestore
 fun SettingsScreen() {
     val viewModel: SettingsViewModel = viewModel()
     val context = LocalContext.current
+    var showRepositoryManager by remember { mutableStateOf(false) }
+
+    if (showRepositoryManager) {
+        RepositoryScreen(onBack = { showRepositoryManager = false })
+        // Handle back press to set showRepositoryManager = false
+        androidx.activity.compose.BackHandler {
+            showRepositoryManager = false
+        }
+        return
+    }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         snapAnimationSpec = null,
@@ -63,6 +77,8 @@ fun SettingsScreen() {
                 onRemoveTranslationModel = viewModel::removeTranslationModel,
                 onCheckForUpdatesManual = viewModel::onCheckForUpdatesManual,
                 onDebugLogs = { viewModel.onDebugLogs(context) },
+                onExternalSourcesUriSelected = { viewModel.state.externalSourcesDirectoryUri.value = it },
+                onManageRepositories = { showRepositoryManager = true },
                 modifier = Modifier.padding(innerPadding),
             )
         }

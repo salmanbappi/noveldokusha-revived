@@ -22,6 +22,8 @@ internal fun ReaderScreenBottomBarDialogs(
     appPreferences: AppPreferences,
     onTextFontChanged: (String) -> Unit,
     onTextSizeChanged: (Float) -> Unit,
+    onLineHeightChanged: (Float) -> Unit,
+    onParagraphSpacingChanged: (Float) -> Unit,
     onSelectableTextChange: (Boolean) -> Unit,
     onFollowSystem: (Boolean) -> Unit,
     onThemeSelected: (Themes) -> Unit,
@@ -37,11 +39,9 @@ internal fun ReaderScreenBottomBarDialogs(
         Box(Modifier.padding(horizontal = 24.dp)) {
             AnimatedContent(targetState = settings.selectedSetting.value, label = "") { target ->
                 when (target) {
-                    ReaderScreenState.Settings.Type.LiveTranslation -> TranslatorSettingDialog(
-                        state = settings.liveTranslation
-                    )
-                    ReaderScreenState.Settings.Type.TextToSpeech -> VoiceReaderSettingDialog(
-                        state = settings.textToSpeech
+                    ReaderScreenState.Settings.Type.Tools -> ToolsSettingDialog(
+                        ttsState = settings.textToSpeech,
+                        translationState = settings.liveTranslation
                     )
                     ReaderScreenState.Settings.Type.Style -> {
                         StyleSettingDialog(
@@ -50,6 +50,8 @@ internal fun ReaderScreenBottomBarDialogs(
                             onThemeChange = onThemeSelected,
                             onTextFontChange = onTextFontChanged,
                             onTextSizeChange = onTextSizeChanged,
+                            onLineHeightChange = onLineHeightChanged,
+                            onParagraphSpacingChange = onParagraphSpacingChanged,
                             appPreferences = appPreferences
                         )
                     }

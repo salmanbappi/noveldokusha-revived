@@ -13,7 +13,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class LanguageItem(val language: LanguageCode, val active: Boolean)
-data class CatalogItem(val catalog: SourceInterface.Catalog, val pinned: Boolean)
+data class CatalogItem(val catalog: SourceInterface.Catalog, val pinned: Boolean, val isDefault: Boolean = false)
 
 @Singleton
 class ScraperRepository @Inject constructor(
@@ -28,23 +28,38 @@ class ScraperRepository @Inject constructor(
     fun sourcesCatalogListFlow(): Flow<List<CatalogItem>> {
         return combine(
             appPreferences.SOURCES_LANGUAGES_ISO639_1.flow(),
-            appPreferences.FINDER_SOURCES_PINNED.flow()
-        ) { activeLanguages, pinnedSourcesIds ->
+            appPreferences.FINDER_SOURCES_PINNED.flow(),
+            appPreferences.FINDER_DEFAULT_SOURCE.flow(),
+            scraper.externalSourcesFlow,
+            scraper.installedSourcesFlow
+        ) { activeLanguages, pinnedSourcesIds, defaultSourceId, _, _ ->
             scraper.sourcesCatalogsList
                 .filter { it.language == null || it.language?.iso639_1 in activeLanguages }
-                .map { CatalogItem(catalog = it, pinned = it.id in pinnedSourcesIds) }
-                .sortedByDescending { it.pinned }
+                .map { 
+                    CatalogItem(
+                        catalog = it, 
+                        pinned = it.id in pinnedSourcesIds,
+                        isDefault = it.id == defaultSourceId
+                    ) 
+                }
+                .sortedWith(
+                    compareByDescending<CatalogItem> { it.isDefault }
+                        .thenByDescending { it.pinned }
+                )
         }.flowOn(Dispatchers.Default)
     }
 
     fun sourcesLanguagesListFlow(): Flow<List<LanguageItem>> {
-        return appPreferences.SOURCES_LANGUAGES_ISO639_1.flow()
-            .map { activeLanguages ->
-                scraper
-                    .sourcesCatalogsLanguagesList
-                    .map {
-                        LanguageItem(it, active = activeLanguages.contains(it.iso639_1))
-                    }
-            }
+        return combine(
+            appPreferences.SOURCES_LANGUAGES_ISO639_1.flow(),
+            scraper.externalSourcesFlow,
+            scraper.installedSourcesFlow
+        ) { activeLanguages, _, _ ->
+            scraper
+                .sourcesCatalogsLanguagesList
+                .map {
+                    LanguageItem(it, active = activeLanguages.contains(it.iso639_1))
+                }
+        }.flowOn(Dispatchers.Default)
     }
 }

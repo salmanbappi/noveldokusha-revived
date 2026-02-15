@@ -61,13 +61,11 @@ internal class SettingsViewModel @Inject constructor(
             checkingForNewVersion = mutableStateOf(false)
         ),
         libraryAutoUpdate = SettingsScreenState.LibraryAutoUpdate(
-            autoUpdateEnabled = appPreferences.GLOBAL_APP_AUTOMATIC_LIBRARY_UPDATES_ENABLED.state(
-                viewModelScope
-            ),
-            autoUpdateIntervalHours = appPreferences.GLOBAL_APP_AUTOMATIC_LIBRARY_UPDATES_INTERVAL_HOURS.state(
-                viewModelScope
-            )
-        )
+            autoUpdateEnabled = appPreferences.GLOBAL_APP_AUTOMATIC_LIBRARY_UPDATES_ENABLED.state(viewModelScope),
+            autoUpdateIntervalHours = appPreferences.GLOBAL_APP_AUTOMATIC_LIBRARY_UPDATES_INTERVAL_HOURS.state(viewModelScope),
+            preFetchNextChapterEnabled = appPreferences.GLOBAL_APP_PRE_FETCH_NEXT_CHAPTER_ENABLED.state(viewModelScope)
+        ),
+        externalSourcesDirectoryUri = appPreferences.SOURCES_EXTERNAL_DIRECTORY_URI.state(viewModelScope)
     )
 
     init {

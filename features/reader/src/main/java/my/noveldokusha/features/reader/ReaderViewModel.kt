@@ -75,12 +75,20 @@ internal class ReaderViewModel @Inject constructor(
                 currentTheme = derivedStateOf { themeId.value.toTheme },
                 textFont = appPreferences.READER_FONT_FAMILY.state(viewModelScope),
                 textSize = appPreferences.READER_FONT_SIZE.state(viewModelScope),
+                lineHeightMultiplier = appPreferences.READER_LINE_HEIGHT.state(viewModelScope),
+                paragraphSpacing = appPreferences.READER_PARAGRAPH_SPACING.state(viewModelScope),
             )
         ),
         showInvalidChapterDialog = mutableStateOf(false)
     )
 
     init {
+        state.lastSentencePosition.value = readingCurrentChapter.chapterItemPosition
+        viewModelScope.launch {
+            delay(3000)
+            state.lastSentencePosition.value = null
+        }
+        
         viewModelScope.launch {
             var seconds = 0
             while (true) {
@@ -130,4 +138,22 @@ internal class ReaderViewModel @Inject constructor(
 
     fun markChapterEndAsSeen(chapterUrl: String) =
         readerSession.markChapterEndAsSeen(chapterUrl = chapterUrl)
+
+    fun toggleBookmark(item: my.noveldokusha.features.reader.domain.ReaderItem.Position) {
+        viewModelScope.launch {
+            val textSnippet = if (item is my.noveldokusha.features.reader.domain.ReaderItem.Text) {
+                item.text
+            } else {
+                "Image"
+            }
+            
+            appRepository.bookmarks.toggleBookmark(
+                bookUrl = bookUrl,
+                chapterUrl = item.chapterUrl,
+                chapterTitle = state.readerInfo.chapterTitle.value,
+                itemPosition = item.chapterItemPosition,
+                textSnippet = textSnippet
+            )
+        }
+    }
 }

@@ -100,15 +100,19 @@ class ReaderActivity : BaseActivity() {
                 viewModel.bookUrl,
                 currentTextSelectability = { appPreferences.READER_SELECTABLE_TEXT.value },
                 currentFontSize = { appPreferences.READER_FONT_SIZE.value },
+                currentLineHeight = { viewModel.state.settings.style.lineHeightMultiplier.value },
+                currentParagraphSpacing = { viewModel.state.settings.style.paragraphSpacing.value },
                 currentTypeface = { fontsLoader.getTypeFaceNORMAL(appPreferences.READER_FONT_FAMILY.value) },
                 currentTypefaceBold = { fontsLoader.getTypeFaceBOLD(appPreferences.READER_FONT_FAMILY.value) },
                 currentSpeakerActiveItem = { viewModel.readerSpeaker.currentTextPlaying.value },
+                lastReadItemPosition = { viewModel.state.lastSentencePosition.value },
                 onChapterStartVisible = viewModel::markChapterStartAsSeen,
                 onChapterEndVisible = viewModel::markChapterEndAsSeen,
                 onReloadReader = viewModel::reloadReader,
                 onClick = {
                     viewModel.state.showReaderInfo.value = !viewModel.state.showReaderInfo.value
                 },
+                onBookmarkToggle = { viewModel.toggleBookmark(it) }
             )
         }
     }
@@ -247,6 +251,16 @@ class ReaderActivity : BaseActivity() {
             .asLiveData()
             .observe(this) { viewAdapter.listView.notifyDataSetChanged() }
 
+        // Notify manually line height changed for list view
+        snapshotFlow { viewModel.state.settings.style.lineHeightMultiplier.value }.drop(1)
+            .asLiveData()
+            .observe(this) { viewAdapter.listView.notifyDataSetChanged() }
+
+        // Notify manually paragraph spacing changed for list view
+        snapshotFlow { viewModel.state.settings.style.paragraphSpacing.value }.drop(1)
+            .asLiveData()
+            .observe(this) { viewAdapter.listView.notifyDataSetChanged() }
+
         // Notify manually selectable text changed for list view
         snapshotFlow { viewModel.state.settings.isTextSelectable.value }.drop(1)
             .asLiveData()
@@ -263,6 +277,8 @@ class ReaderActivity : BaseActivity() {
         setContent {
             Theme(themeProvider) {
                 SetSystemBarTransparent()
+                
+                viewAdapter.listView.hapticFeedback = androidx.compose.ui.platform.LocalHapticFeedback.current
 
                 // Reader info
                 ReaderScreen(
@@ -270,6 +286,8 @@ class ReaderActivity : BaseActivity() {
                     appPreferences = appPreferences,
                     onTextFontChanged = { appPreferences.READER_FONT_FAMILY.value = it },
                     onTextSizeChanged = { appPreferences.READER_FONT_SIZE.value = it },
+                    onLineHeightChanged = { appPreferences.READER_LINE_HEIGHT.value = it },
+                    onParagraphSpacingChanged = { appPreferences.READER_PARAGRAPH_SPACING.value = it },
                     onSelectableTextChange = { appPreferences.READER_SELECTABLE_TEXT.value = it },
                     onKeepScreenOn = { appPreferences.READER_KEEP_SCREEN_ON.value = it },
                     onFollowSystem = { appPreferences.THEME_FOLLOW_SYSTEM.value = it },
@@ -328,6 +346,12 @@ class ReaderActivity : BaseActivity() {
 
         viewBind.listView.setOnItemClickListener { _, _, _, _ ->
             viewModel.state.showReaderInfo.value = !viewModel.state.showReaderInfo.value
+        }
+
+        viewBind.listView.setOnItemLongClickListener { _, _, _, _ ->
+            viewModel.state.showReaderInfo.value = true
+            viewModel.state.settings.selectedSetting.value = my.noveldokusha.features.reader.ui.ReaderScreenState.Settings.Type.Tools
+            true
         }
 
         viewBind.listView.setOnScrollListener(

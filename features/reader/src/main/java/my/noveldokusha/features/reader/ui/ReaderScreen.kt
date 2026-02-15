@@ -82,6 +82,8 @@ internal fun ReaderScreen(
     onThemeSelected: (Themes) -> Unit,
     onTextFontChanged: (String) -> Unit,
     onTextSizeChanged: (Float) -> Unit,
+    onLineHeightChanged: (Float) -> Unit,
+    onParagraphSpacingChanged: (Float) -> Unit,
     onPressBack: () -> Unit,
     onOpenChapterInWeb: () -> Unit,
     onProgressChange: (Float) -> Unit,
@@ -135,31 +137,61 @@ internal fun ReaderScreen(
                         )
                         Column(
                             modifier = Modifier
-                                .padding(bottom = 8.dp)
-                                .padding(horizontal = 16.dp),
+                                .padding(vertical = 12.dp, horizontal = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(
-                                text = stringResource(
-                                    id = R.string.chapter_x_over_n,
-                                    state.readerInfo.chapterCurrentNumber.value,
-                                    state.readerInfo.chaptersCount.value,
-                                ),
-                                style = MaterialTheme.typography.labelMedium,
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                Text(
+                                    text = stringResource(
+                                        id = R.string.chapter_x_over_n,
+                                        state.readerInfo.chapterCurrentNumber.value,
+                                        state.readerInfo.chaptersCount.value,
+                                    ),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                
+                                val progressValue = state.readerInfo.chapterPercentageProgress.value
+                                Text(
+                                    text = stringResource(
+                                        id = R.string.progress_x_percentage,
+                                        if (progressValue.isNaN() || progressValue.isInfinite()) 0f else progressValue.coerceIn(0f, 100f)
+                                    ),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                            
                             val progressValue = state.readerInfo.chapterPercentageProgress.value
-                            Text(
-                                text = stringResource(
-                                    id = R.string.progress_x_percentage,
-                                    if (progressValue.isNaN() || progressValue.isInfinite()) 0f else progressValue.coerceIn(0f, 100f)
-                                ),
-                                style = MaterialTheme.typography.labelMedium,
-                            )
                             val sliderValue = if (progressValue.isNaN() || progressValue.isInfinite()) 0f else progressValue.coerceIn(0f, 100f)
+                            
+                            val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                             androidx.compose.material3.Slider(
                                 value = sliderValue,
                                 onValueChange = onProgressChange,
                                 valueRange = 0f..100f,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                interactionSource = interactionSource,
+                                thumb = {
+                                    androidx.compose.material3.SliderDefaults.Thumb(
+                                        interactionSource = interactionSource,
+                                        thumbSize = androidx.compose.ui.unit.DpSize(16.dp, 16.dp)
+                                    )
+                                },
+                                track = { sliderState ->
+                                    androidx.compose.material3.SliderDefaults.Track(
+                                        sliderState = sliderState,
+                                        modifier = Modifier.height(6.dp),
+                                        thumbTrackGapSize = 0.dp,
+                                        trackInsideCornerSize = 3.dp
+                                    )
+                                }
                             )
                         }
                         HorizontalDivider()
@@ -196,6 +228,8 @@ internal fun ReaderScreen(
                         appPreferences = appPreferences,
                         onTextFontChanged = onTextFontChanged,
                         onTextSizeChanged = onTextSizeChanged,
+                        onLineHeightChanged = onLineHeightChanged,
+                        onParagraphSpacingChanged = onParagraphSpacingChanged,
                         onSelectableTextChange = onSelectableTextChange,
                         onFollowSystem = onFollowSystem,
                         onThemeSelected = onThemeSelected,
@@ -216,19 +250,12 @@ internal fun ReaderScreen(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (state.settings.liveTranslation.isAvailable) SettingIconItem(
-                                currentType = state.settings.selectedSetting.value,
-                                settingType = Type.LiveTranslation,
-                                onClick = toggleOrSet,
-                                icon = Icons.Outlined.Translate,
-                                textId = R.string.translator,
-                            )
                             SettingIconItem(
                                 currentType = state.settings.selectedSetting.value,
-                                settingType = Type.TextToSpeech,
+                                settingType = Type.Tools,
                                 onClick = toggleOrSet,
-                                icon = Icons.Filled.RecordVoiceOver,
-                                textId = R.string.voice_reader,
+                                icon = Icons.Outlined.Translate,
+                                textId = R.string.tools,
                             )
                             SettingIconItem(
                                 currentType = state.settings.selectedSetting.value,
@@ -381,6 +408,8 @@ private fun ViewsPreview(
                 ),
                 appPreferences = AppPreferences(androidx.compose.ui.platform.LocalContext.current),
                 onTextSizeChanged = {},
+                onLineHeightChanged = {},
+                onParagraphSpacingChanged = {},
                 onTextFontChanged = {},
                 onSelectableTextChange = {},
                 onFollowSystem = {},
@@ -404,8 +433,7 @@ private class PreviewDataProvider : PreviewParameterProvider<PreviewDataProvider
 
     override val values = sequenceOf(
         Data(selectedSetting = Type.None),
-        Data(selectedSetting = Type.LiveTranslation),
-        Data(selectedSetting = Type.TextToSpeech),
+        Data(selectedSetting = Type.Tools),
         Data(selectedSetting = Type.Style),
         Data(selectedSetting = Type.More),
     )

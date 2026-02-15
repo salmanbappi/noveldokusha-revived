@@ -102,7 +102,8 @@ fun CatalogExplorerScreen(
                         sourceBaseUrl = it.baseUrl
                     ).let(context::startActivity)
                 },
-                onSourceSetPinned = viewModel::onSourceSetPinned
+                onSourceSetPinned = viewModel::onSourceSetPinned,
+                onSourceSetDefault = viewModel::onSourceSetDefault
             )
         }
     )

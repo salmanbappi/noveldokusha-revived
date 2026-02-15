@@ -77,4 +77,4 @@ val Nord10 = Color(0xFF5E81AC) // Tertiary
 // Sepia
 val SepiaBg = Color(0xFFF4ECD8)
 val SepiaFg = Color(0xFF5B4636)
-val SepiaAccent = Color(0xFF8D6E63) // Secondary
+val SepiaAccent = Color(0xFFB04A00) // More vibrant orange-brown for UI elements

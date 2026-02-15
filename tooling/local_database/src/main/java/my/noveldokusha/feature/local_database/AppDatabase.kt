@@ -10,9 +10,11 @@ import kotlinx.coroutines.withContext
 import my.noveldokusha.feature.local_database.DAOs.ChapterBodyDao
 import my.noveldokusha.feature.local_database.DAOs.ChapterDao
 import my.noveldokusha.feature.local_database.DAOs.LibraryDao
+import my.noveldokusha.feature.local_database.DAOs.BookmarkDao
 import my.noveldokusha.feature.local_database.tables.Book
 import my.noveldokusha.feature.local_database.tables.Chapter
 import my.noveldokusha.feature.local_database.tables.ChapterBody
+import my.noveldokusha.feature.local_database.tables.Bookmark
 import java.io.InputStream
 
 
@@ -20,6 +22,7 @@ interface AppDatabase {
     fun libraryDao(): LibraryDao
     fun chapterDao(): ChapterDao
     fun chapterBodyDao(): ChapterBodyDao
+    fun bookmarkDao(): BookmarkDao
     val name: String
 
     fun closeDatabase()
@@ -35,6 +38,7 @@ interface AppDatabase {
         fun createRoom(ctx: Context, name: String): AppDatabase = Room
             .databaseBuilder(ctx, AppRoomDatabase::class.java, name)
             .addMigrations(*databaseMigrations())
+            .fallbackToDestructiveMigration() // Added for development ease
             .build()
             .also { it.name = name }
 
@@ -45,6 +49,7 @@ interface AppDatabase {
         ): AppDatabase = Room
             .databaseBuilder(ctx, AppRoomDatabase::class.java, name)
             .addMigrations(*databaseMigrations())
+            .fallbackToDestructiveMigration()
             .createFromInputStream { inputStream }
             .build()
             .also { it.name = name }
@@ -56,15 +61,17 @@ interface AppDatabase {
     entities = [
         Book::class,
         Chapter::class,
-        ChapterBody::class
+        ChapterBody::class,
+        Bookmark::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 internal abstract class AppRoomDatabase : RoomDatabase(), AppDatabase {
     abstract override fun libraryDao(): LibraryDao
     abstract override fun chapterDao(): ChapterDao
     abstract override fun chapterBodyDao(): ChapterBodyDao
+    abstract override fun bookmarkDao(): BookmarkDao
 
     override lateinit var name: String
 

@@ -6,10 +6,13 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.GestureDetector
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
@@ -37,12 +40,17 @@ internal class ReaderItemAdapter(
     private val currentSpeakerActiveItem: () -> TextSynthesis,
     private val currentTextSelectability: () -> Boolean,
     private val currentFontSize: () -> Float,
+    private val currentLineHeight: () -> Float,
+    private val currentParagraphSpacing: () -> Float,
     private val currentTypeface: () -> Typeface,
     private val currentTypefaceBold: () -> Typeface,
+    private val lastReadItemPosition: () -> Int?,
+    var hapticFeedback: androidx.compose.ui.hapticfeedback.HapticFeedback? = null,
     private val onChapterStartVisible: (chapterUrl: String) -> Unit,
     private val onChapterEndVisible: (chapterUrl: String) -> Unit,
     private val onReloadReader: () -> Unit,
     private val onClick: () -> Unit,
+    private val onBookmarkToggle: (item: ReaderItem.Position) -> Unit,
 ) : ArrayAdapter<ReaderItem>(ctx, 0, list) {
     private val appFileResolver = AppFileResolver(ctx)
     override fun getCount() = super.getCount() + 2
@@ -113,10 +121,18 @@ internal class ReaderItemAdapter(
         }
 
         bind.body.updateTextSelectability()
+        bind.root.setupItemGestures(item)
         bind.root.background = getItemReadingStateBackground(item)
-        val paragraph = item.textToDisplay + "\n"
+        val paragraph = item.textToDisplay
         bind.body.text = paragraph
         bind.body.textSize = currentFontSize()
+        bind.body.setLineSpacing(0f, currentLineHeight())
+        bind.root.setPadding(
+            bind.root.paddingLeft,
+            bind.root.paddingTop,
+            bind.root.paddingRight,
+            currentParagraphSpacing().toInt()
+        )
         bind.body.typeface = currentTypeface()
 
         when (item.location) {
@@ -138,6 +154,7 @@ internal class ReaderItemAdapter(
             else -> ActivityReaderListItemImageBinding.bind(convertView)
         }
 
+        bind.root.setupItemGestures(item)
         bind.image.updateLayoutParams<ConstraintLayout.LayoutParams> {
             dimensionRatio = "1:${item.image.yrel}"
         }
@@ -278,6 +295,7 @@ internal class ReaderItemAdapter(
         }
 
         bind.title.updateTextSelectability()
+        bind.root.setupItemGestures(item)
         bind.root.background = getItemReadingStateBackground(item)
         bind.title.text = item.textToDisplay
         bind.title.typeface = currentTypefaceBold()
@@ -298,53 +316,37 @@ internal class ReaderItemAdapter(
         )
     }
 
+    private val currentResumeHighlightDrawable by lazy {
+        AppCompatResources.getDrawable(
+            context,
+            R.drawable.translucent_resume_highlight_background
+        )
+    }
+
     private fun TextView.updateTextSelectability() {
         val selectableText = currentTextSelectability()
         setTextIsSelectable(selectableText)
-        if (selectableText) {
-            setTextSelectionAwareClick { onClick() }
-        }
     }
 
-    private fun getItemReadingStateBackground(item: ReaderItem): Drawable? {
-        val textSynthesis = currentSpeakerActiveItem()
-        val isReadingItem = item is ReaderItem.Position &&
-                textSynthesis.itemPos.chapterIndex == item.chapterIndex &&
-                textSynthesis.itemPos.chapterItemPosition == item.chapterItemPosition
-
-        if (!isReadingItem) return null
-
-        return when (textSynthesis.playState) {
-            Utterance.PlayState.PLAYING -> currentReadingAloudDrawable
-            Utterance.PlayState.LOADING -> currentReadingAloudLoadingDrawable
-            Utterance.PlayState.FINISHED -> null
-        }
-    }
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
-        when (val item = getItem(position)) {
-            is ReaderItem.GoogleTranslateAttribution -> viewTranslateAttribution(
-                convertView,
-                parent
-            )
-            is ReaderItem.Body -> viewBody(item, convertView, parent)
-            is ReaderItem.Image -> viewImage(item, convertView, parent)
-            is ReaderItem.BookEnd -> viewBookEnd(convertView, parent)
-            is ReaderItem.BookStart -> viewBookStart(convertView, parent)
-            is ReaderItem.Divider -> viewDivider(convertView, parent)
-            is ReaderItem.Error -> viewError(item, convertView, parent)
-            is ReaderItem.Padding -> viewPadding(convertView, parent)
-            is ReaderItem.Progressbar -> viewProgressbar(convertView, parent)
-            is ReaderItem.Translating -> viewTranslating(item, convertView, parent)
-            is ReaderItem.Title -> viewTitle(item, convertView, parent)
-        }
-
-    private fun View.setTextSelectionAwareClick(action: () -> Unit) {
-        setOnClickListener { action() }
-        setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP && !this.isFocused) {
-                performClick()
+    private fun View.setupItemGestures(item: ReaderItem) {
+        val gestureDetector = GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                onClick()
+                return true
             }
+
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                if (item is ReaderItem.Position) {
+                    hapticFeedback?.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                    onBookmarkToggle(item)
+                    Toast.makeText(context, "Bookmarked paragraph", Toast.LENGTH_SHORT).show()
+                }
+                return true
+            }
+        })
+
+        setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
             false
         }
     }

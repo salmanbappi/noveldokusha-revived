@@ -10,12 +10,13 @@ import my.noveldoksuha.coreui.theme.Themes
 data class SettingsScreenState(
     val databaseSize: MutableState<String>,
     val imageFolderSize: MutableState<String>,
-    val followsSystemTheme: State<Boolean>,
+    val followsSystemTheme: MutableState<Boolean>,
     val currentTheme: State<Themes>,
-    val isTranslationSettingsVisible: State<Boolean>,
-    val translationModelsStates: SnapshotStateList<TranslationModelState>,
+    val isTranslationSettingsVisible: MutableState<Boolean>,
+    val translationModelsStates: SnapshotStateList<TranslationManager.ModelStatus>,
     val updateAppSetting: UpdateApp,
     val libraryAutoUpdate: LibraryAutoUpdate,
+    val externalSourcesDirectoryUri: MutableState<String>
 ) {
     data class UpdateApp(
         val currentAppVersion: String,
@@ -27,5 +28,6 @@ data class SettingsScreenState(
     data class LibraryAutoUpdate(
         val autoUpdateEnabled: MutableState<Boolean>,
         val autoUpdateIntervalHours: MutableState<Int>,
+        val preFetchNextChapterEnabled: MutableState<Boolean>
     )
 }

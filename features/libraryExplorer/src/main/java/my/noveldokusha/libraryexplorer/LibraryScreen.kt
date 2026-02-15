@@ -77,7 +77,9 @@ fun LibraryScreen(
                         )
                         LibraryDropDown(
                             expanded = showDropDown,
-                            onDismiss = { showDropDown = false }
+                            onDismiss = { showDropDown = false },
+                            layoutMode = libraryModel.layoutMode,
+                            onLayoutModeChange = { libraryModel.layoutMode = it }
                         )
                     }
                 }
@@ -88,6 +90,7 @@ fun LibraryScreen(
                 tabs = listOf("Default", "Completed"),
                 innerPadding = innerPadding,
                 topAppBarState = scrollBehavior.state,
+                layoutMode = libraryModel.layoutMode,
                 onBookClick = { book ->
                     navigationRouteViewModel.chapters(
                         context = context,

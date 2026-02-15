@@ -1,0 +1,19 @@
+{
+  "name": "Official Noveldokusha Repo",
+  "sources": [
+    {
+      "id": "boxnovel_dynamic",
+      "name": "BoxNovel (Dynamic)",
+      "version": 1,
+      "baseUrl": "https://boxnovel.com",
+      "jsonUrl": "https://raw.githubusercontent.com/user/repo/main/sources/boxnovel.json"
+    },
+    {
+      "id": "royalroad_alt",
+      "name": "RoyalRoad (Alternative)",
+      "version": 2,
+      "baseUrl": "https://www.royalroad.com",
+      "jsonUrl": "https://raw.githubusercontent.com/user/repo/main/sources/royalroad.json"
+    }
+  ]
+}

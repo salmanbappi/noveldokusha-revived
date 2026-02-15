@@ -38,7 +38,7 @@ private fun createColorScheme(
     surface = surface,
     onSurface = onSurface,
     surfaceVariant = surface.mix(onSurface, 0.9f),
-    onSurfaceVariant = onSurface.copy(alpha = 0.7f),
+    onSurfaceVariant = onSurface.copy(alpha = 0.8f),
     surfaceTint = primary,
     inverseSurface = onSurface,
     inverseOnSurface = surface,
@@ -46,8 +46,8 @@ private fun createColorScheme(
     onError = onError,
     errorContainer = error.copy(alpha = 0.1f),
     onErrorContainer = error,
-    outline = onSurface.copy(alpha = 0.5f),
-    outlineVariant = onSurface.copy(alpha = 0.2f),
+    outline = onSurface.copy(alpha = 0.6f),
+    outlineVariant = onSurface.copy(alpha = 0.3f),
     scrim = Color.Black,
     surfaceBright = surface.mix(Color.White, 0.95f),
     surfaceDim = surface.mix(Color.Black, 0.95f),
@@ -63,7 +63,7 @@ val dark_colorScheme = createColorScheme(ColorAccent, Grey25, Grey900, Grey50, s
 val black_colorScheme = createColorScheme(ColorAccent, Grey25, Grey1000, Grey50, secondary = ColorAccent, tertiary = ColorNotice)
 
 val nord_colorScheme = createColorScheme(Nord8, Nord0, Nord0, Nord4, secondary = Nord9, tertiary = Nord10)
-val sepia_colorScheme = createColorScheme(SepiaFg, SepiaBg, SepiaBg, SepiaFg, secondary = SepiaAccent)
+val sepia_colorScheme = createColorScheme(SepiaAccent, SepiaBg, SepiaBg, SepiaFg, secondary = SepiaAccent)
 
 fun custom_colorScheme(background: Color, text: Color): ColorScheme {
     val isLight = background.luminance() > 0.5

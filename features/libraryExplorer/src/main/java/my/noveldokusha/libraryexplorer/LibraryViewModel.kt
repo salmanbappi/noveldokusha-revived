@@ -27,14 +27,15 @@ internal class LibraryViewModel @Inject constructor(
     var showBottomSheet by stateHandle.asMutableStateOf("showBottomSheet") { false }
 
     var readFilter by appPreferences.LIBRARY_FILTER_READ.state(viewModelScope)
-    var readSort by appPreferences.LIBRARY_SORT_LAST_READ.state(viewModelScope)
+    var sortMode by appPreferences.LIBRARY_SORT_MODE.state(viewModelScope)
+    var layoutMode by appPreferences.BOOKS_LIST_LAYOUT_MODE.state(viewModelScope)
 
     fun readFilterToggle() {
         readFilter = readFilter.next()
     }
 
-    fun readSortToggle() {
-        readSort = readSort.next()
+    fun setSortMode(mode: my.noveldokusha.core.appPreferences.LibrarySortMode) {
+        sortMode = mode
     }
 
     fun bookCompletedToggle(bookUrl: String) {

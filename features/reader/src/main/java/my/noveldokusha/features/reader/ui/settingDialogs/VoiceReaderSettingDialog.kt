@@ -154,88 +154,128 @@ internal fun VoiceReaderSettingDialog(
                 )
 
                 // Player voice parameters
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    MySlider(
-                        value = state.voicePitch.value,
-                        valueRange = 0.1f..5f,
-                        onValueChange = state.setVoicePitch,
-                        text = stringResource(R.string.voice_pitch) + ": %.2f".format(state.voicePitch.value),
-                    )
-                    MySlider(
-                        value = state.voiceSpeed.value,
-                        valueRange = 0.1f..5f,
-                        onValueChange = state.setVoiceSpeed,
-                        text = stringResource(R.string.voice_speed) + ": %.2f".format(state.voiceSpeed.value),
-                    )
-                }
-
-                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                // Player settings buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Controls & Voices",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    
-                    if (state.customSavedVoices.value.isNotEmpty()) {
-                        Text(
-                            text = "${state.customSavedVoices.value.size} Saved",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                AnimatedVisibility(visible = !state.isPlaying.value) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        MySlider(
+                            value = state.voicePitch.value,
+                            valueRange = 0.1f..5f,
+                            onValueChange = state.setVoicePitch,
+                            text = stringResource(R.string.voice_pitch) + ": %.2f".format(state.voicePitch.value),
                         )
+                        MySlider(
+                            value = state.voiceSpeed.value,
+                            valueRange = 0.1f..5f,
+                            onValueChange = state.setVoiceSpeed,
+                            text = stringResource(R.string.voice_speed) + ": %.2f".format(state.voiceSpeed.value),
+                        )
+                        
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     }
                 }
-                
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    AssistChip(
-                        label = { Text(text = stringResource(id = R.string.start_here)) },
-                        onClick = debouncedAction { state.playFirstVisibleItem() },
-                        leadingIcon = { Icon(Icons.Filled.CenterFocusWeak, null, modifier = Modifier.size(18.dp)) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        border = null
-                    )
-                    AssistChip(
-                        label = { Text(text = stringResource(id = R.string.focus)) },
-                        onClick = debouncedAction { state.scrollToActiveItem() },
-                        leadingIcon = { Icon(Icons.Filled.CenterFocusStrong, null, modifier = Modifier.size(18.dp)) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        border = null
-                    )
-                    AssistChip(
-                        label = { Text(text = "Voices") },
-                        onClick = { openVoicesDialog = true },
-                        leadingIcon = { Icon(Icons.Filled.RecordVoiceOver, null, modifier = Modifier.size(18.dp)) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
-                        border = null
-                    )
-                    AssistChip(
-                        label = { Text(text = stringResource(R.string.saved)) },
-                        onClick = { showSavedVoices = !showSavedVoices },
-                        leadingIcon = { Icon(Icons.Filled.Bookmarks, null, modifier = Modifier.size(18.dp)) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = if (showSavedVoices) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-                            labelColor = if (showSavedVoices) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiaryContainer
-                        ),
-                        border = null
-                    )
+
+                // Player settings buttons
+                AnimatedVisibility(visible = !state.isPlaying.value) {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Presets & Voices",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                            
+                            if (state.customSavedVoices.value.isNotEmpty()) {
+                                Text(
+                                    text = "${state.customSavedVoices.value.size} Saved",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                                )
+                            }
+                        }
+                        
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            // Presets
+                            InputChip(
+                                selected = state.voiceSpeed.value == 0.8f && state.voicePitch.value == 0.9f,
+                                onClick = { 
+                                    state.setVoiceSpeed(0.8f)
+                                    state.setVoicePitch(0.9f)
+                                },
+                                label = { Text("Calm") },
+                                border = null,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            InputChip(
+                                selected = state.voiceSpeed.value == 1.0f && state.voicePitch.value == 1.0f,
+                                onClick = { 
+                                    state.setVoiceSpeed(1.0f)
+                                    state.setVoicePitch(1.0f)
+                                },
+                                label = { Text("Natural") },
+                                border = null,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            InputChip(
+                                selected = state.voiceSpeed.value == 1.5f && state.voicePitch.value == 1.1f,
+                                onClick = { 
+                                    state.setVoiceSpeed(1.5f)
+                                    state.setVoicePitch(1.1f)
+                                },
+                                label = { Text("Fast") },
+                                border = null,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            
+                            Spacer(modifier = Modifier.width(4.dp))
+                            
+                            AssistChip(
+                                label = { Text(text = stringResource(id = R.string.start_here)) },
+                                onClick = debouncedAction { state.playFirstVisibleItem() },
+                                leadingIcon = { Icon(Icons.Filled.CenterFocusWeak, null, modifier = Modifier.size(18.dp)) },
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
+                                    labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                ),
+                                border = null
+                            )
+                            AssistChip(
+                                label = { Text(text = stringResource(id = R.string.focus)) },
+                                onClick = debouncedAction { state.scrollToActiveItem() },
+                                leadingIcon = { Icon(Icons.Filled.CenterFocusStrong, null, modifier = Modifier.size(18.dp)) },
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
+                                    labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                ),
+                                border = null
+                            )
+                            AssistChip(
+                                label = { Text(text = "Voices") },
+                                onClick = { openVoicesDialog = true },
+                                leadingIcon = { Icon(Icons.Filled.RecordVoiceOver, null, modifier = Modifier.size(18.dp)) },
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                    labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ),
+                                border = null
+                            )
+                            AssistChip(
+                                label = { Text(text = stringResource(R.string.saved)) },
+                                onClick = { showSavedVoices = !showSavedVoices },
+                                leadingIcon = { Icon(Icons.Filled.Bookmarks, null, modifier = Modifier.size(18.dp)) },
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = if (showSavedVoices) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
+                                    labelColor = if (showSavedVoices) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiaryContainer
+                                ),
+                                border = null
+                            )
+                        }
+                    }
                 }
 
                 AnimatedVisibility(visible = showSavedVoices) {
@@ -629,9 +669,8 @@ private fun VoiceSelectorDialog(
                     val selected by remember { derivedStateOf { voice.id == currentVoice?.id } }
                     ListItem(
                         modifier = Modifier
-                            .clickable(enabled = !selected) { 
+                            .clickable(enabled = !selected) {
                                 setVoice(voice.id)
-                                setDialogOpen(false)
                             },
                         headlineContent = {
                             Text(

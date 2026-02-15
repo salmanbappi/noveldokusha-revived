@@ -14,6 +14,7 @@ import my.noveldoksuha.data.AppRepository
 import my.noveldokusha.core.Toasty
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.core.appPreferences.TernaryState
+import my.noveldokusha.core.appPreferences.LibrarySortMode
 import my.noveldokusha.core.domain.LibraryCategory
 import my.noveldokusha.core.utils.toState
 import javax.inject.Inject
@@ -38,11 +39,13 @@ internal class LibraryPageViewModel @Inject constructor(
                 TernaryState.Inverse -> list.filter { it.chaptersCount != it.chaptersReadCount }
                 TernaryState.Inactive -> list
             }
-        }.combine(preferences.LIBRARY_SORT_LAST_READ.flow()) { list, sortRead ->
-            when (sortRead) {
-                TernaryState.Active -> list.sortedByDescending { it.book.lastReadEpochTimeMilli }
-                TernaryState.Inverse -> list.sortedBy { it.book.lastReadEpochTimeMilli }
-                TernaryState.Inactive -> list
+        }.combine(preferences.LIBRARY_SORT_MODE.flow()) { list, sortMode ->
+            when (sortMode) {
+                LibrarySortMode.LastRead -> list.sortedByDescending { it.book.lastReadEpochTimeMilli }
+                LibrarySortMode.RecentlyUpdated -> list.sortedByDescending { it.book.lastUpdateEpochTimeMilli }
+                LibrarySortMode.LongestUnread -> list.sortedBy { it.book.lastReadEpochTimeMilli }
+                LibrarySortMode.Title -> list.sortedBy { it.book.title }
+                LibrarySortMode.ChaptersCount -> list.sortedByDescending { it.chaptersCount }
             }
         }
         .toState(viewModelScope, listOf())

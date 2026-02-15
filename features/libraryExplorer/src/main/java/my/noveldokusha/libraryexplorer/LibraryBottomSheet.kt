@@ -1,14 +1,13 @@
 package my.noveldokusha.libraryexplorer
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -18,11 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import my.noveldoksuha.coreui.components.PosNegCheckbox
-import my.noveldoksuha.coreui.components.TernaryStateToggle
-import my.noveldoksuha.coreui.theme.ColorAccent
+import my.noveldokusha.core.appPreferences.LibrarySortMode
 import my.noveldokusha.core.utils.toToggleableState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun LibraryBottomSheet(
     visible: Boolean,
@@ -56,15 +54,19 @@ internal fun LibraryBottomSheet(
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleMedium
             )
-            TernaryStateToggle(
-                text = stringResource(id = R.string.last_read),
-                state = model.readSort,
-                onStateChange = { model.readSortToggle() },
-                modifier = Modifier.fillMaxWidth(),
-                activeIcon = { Icon(imageVector = Icons.Filled.ArrowUpward, null) },
-                inverseIcon = { Icon(imageVector = Icons.Filled.ArrowDownward, null) },
-                inactiveIcon = { Icon(imageVector = Icons.Filled.SwapVert, null) },
-            )
+            
+            FlowRow(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                LibrarySortMode.entries.forEach { mode ->
+                    FilterChip(
+                        selected = model.sortMode == mode,
+                        onClick = { model.setSortMode(mode) },
+                        label = { Text(mode.name.replace("([a-z])([A-Z])".toRegex(), "$1 $2")) }
+                    )
+                }
+            }
         }
     }
 }

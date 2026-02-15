@@ -76,6 +76,8 @@ import my.noveldokusha.strings.R as StringsR
 internal fun StyleSettingDialog(
     state: ReaderScreenState.Settings.StyleSettingsData,
     onTextSizeChange: (Float) -> Unit,
+    onLineHeightChange: (Float) -> Unit,
+    onParagraphSpacingChange: (Float) -> Unit,
     onTextFontChange: (String) -> Unit,
     onFollowSystemChange: (Boolean) -> Unit,
     onThemeChange: (Themes) -> Unit,
@@ -178,17 +180,27 @@ internal fun StyleSettingDialog(
                     }
                 }
 
-                // Text Size Slider
-                var currentTextSize by remember { mutableFloatStateOf(state.textSize.value) }
-                MySlider(
-                    value = currentTextSize,
-                    valueRange = 8f..40f,
-                    onValueChange = {
-                        currentTextSize = it
-                        onTextSizeChange(currentTextSize)
-                    },
-                    text = stringResource(StringsR.string.text_size) + ": %.1f".format(currentTextSize),
-                )
+                // Sliders
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    MySlider(
+                        value = state.textSize.value,
+                        valueRange = 8f..40f,
+                        onValueChange = onTextSizeChange,
+                        text = stringResource(StringsR.string.text_size) + ": %.1f".format(state.textSize.value),
+                    )
+                    MySlider(
+                        value = state.lineHeightMultiplier.value,
+                        valueRange = 0.8f..2.5f,
+                        onValueChange = onLineHeightChange,
+                        text = "Line Height: %.2f".format(state.lineHeightMultiplier.value),
+                    )
+                    MySlider(
+                        value = state.paragraphSpacing.value,
+                        valueRange = 0f..48f,
+                        onValueChange = onParagraphSpacingChange,
+                        text = "Paragraph Spacing: %.0f".format(state.paragraphSpacing.value),
+                    )
+                }
             }
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))

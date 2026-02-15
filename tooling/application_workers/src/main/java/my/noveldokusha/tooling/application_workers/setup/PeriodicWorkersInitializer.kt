@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import my.noveldokusha.core.AppCoroutineScope
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.core.domain.LibraryCategory
+import my.noveldokusha.tooling.application_workers.CacheCleanupWorker
 import my.noveldokusha.tooling.application_workers.LibraryUpdatesWorker
 import my.noveldokusha.tooling.application_workers.UpdatesCheckerWorker
 import timber.log.Timber
@@ -21,6 +22,15 @@ class PeriodicWorkersInitializer @Inject constructor(
     private val workManager: WorkManager,
     private val appCoroutineScope: AppCoroutineScope
 ) {
+
+    private fun startCacheCleanup() {
+        Timber.d("startCacheCleanup: called")
+        workManager.enqueueUniquePeriodicWork(
+            CacheCleanupWorker.TAG,
+            ExistingPeriodicWorkPolicy.KEEP,
+            CacheCleanupWorker.createPeriodicRequest(),
+        )
+    }
 
     private fun startUpdatesChecker(enabled: Boolean) {
         Timber.d("startUpdatesChecker: called enabled=$enabled")
@@ -58,6 +68,7 @@ class PeriodicWorkersInitializer @Inject constructor(
     }
 
     fun init() {
+        startCacheCleanup()
         appCoroutineScope.launch {
             appPreferences.GLOBAL_APP_UPDATER_CHECKER_ENABLED
                 .flow()

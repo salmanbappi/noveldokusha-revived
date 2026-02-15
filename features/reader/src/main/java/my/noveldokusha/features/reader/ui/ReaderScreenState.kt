@@ -12,7 +12,8 @@ internal data class ReaderScreenState(
     val readerInfo: CurrentInfo,
     val settings: Settings,
     val showInvalidChapterDialog: MutableState<Boolean>,
-    val readingTimer: State<String> = mutableStateOf("00:00")
+    val readingTimer: State<String> = mutableStateOf("00:00"),
+    val lastSentencePosition: MutableState<Int?> = mutableStateOf(null)
 ) {
     data class CurrentInfo(
         val chapterTitle: State<String>,
@@ -37,10 +38,12 @@ internal data class ReaderScreenState(
             val currentTheme: State<Themes>,
             val textFont: State<String>,
             val textSize: State<Float>,
+            val lineHeightMultiplier: State<Float> = mutableStateOf(1.2f),
+            val paragraphSpacing: State<Float> = mutableStateOf(8f)
         )
 
         enum class Type {
-            None, LiveTranslation, TextToSpeech, Style, More
+            None, Tools, Style, More
         }
     }
 }

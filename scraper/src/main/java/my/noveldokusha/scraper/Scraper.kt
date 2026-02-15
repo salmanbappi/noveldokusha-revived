@@ -16,15 +16,20 @@ import my.noveldokusha.network.toDocument
 @Singleton
 class Scraper @Inject constructor(
     private val networkClient: NetworkClient,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val externalSourceManager: ExternalSourceManager,
+    private val repositoryManager: SourceRepositoryManager
 ) {
-    
+    val externalSourcesFlow = externalSourceManager.sources
+    val installedSourcesFlow = repositoryManager.installedSources
+
     val databasesList: Array<DatabaseInterface> = arrayOf(
         BakaUpdates(networkClient),
         NovelUpdates(networkClient)
     )
 
-    val sourcesCatalogsList: Array<SourceInterface.Catalog> = arrayOf(
+    private val builtInSources: List<SourceInterface.Catalog> = listOf(
+// ... rest of sources
         RoyalRoad(networkClient),
         WuxiaWorld(networkClient),
         NovelBin(networkClient),
@@ -36,7 +41,7 @@ class Scraper @Inject constructor(
         Wuxia(networkClient),
         IndoWebnovel(networkClient),
         LightNovelPub(networkClient),
-        NovelHall(networkClient),
+        Novelhall(networkClient),
         SakuraNovel(networkClient),
         ScribbleHub(networkClient),
         WbNovel(networkClient),
@@ -63,10 +68,25 @@ class Scraper @Inject constructor(
         LeYueDu(networkClient)
     )
 
-    val sourcesCatalogsLanguagesList: List<LanguageCode> = sourcesCatalogsList
-        .mapNotNull { it.language }
-        .distinct()
-        .sortedBy { it.iso639_1 }
+    val sourcesCatalogsList: List<SourceInterface.Catalog>
+        get() {
+            val external = externalSourceManager.sources.value
+            val installed = repositoryManager.installedSources.value
+            
+            val externalIds = external.map { it.id }.toSet()
+            val installedIds = installed.map { it.id }.toSet()
+            
+            // Priority: External > Installed (Repo) > Built-in
+            return external + 
+                   installed.filter { it.id !in externalIds } +
+                   builtInSources.filter { it.id !in externalIds && it.id !in installedIds }
+        }
+
+    val sourcesCatalogsLanguagesList: List<LanguageCode> 
+        get() = sourcesCatalogsList
+            .mapNotNull { it.language }
+            .distinct()
+            .sortedBy { it.iso639_1 }
 
     private fun normalizeUrl(url: String): String {
         return url.trim()
@@ -101,13 +121,16 @@ class Scraper @Inject constructor(
     }
 
     suspend fun getChapterTitle(url: String): String? {
-        val selectors = getSelectors(url) ?: return null
         val doc = tryFetch(url) ?: return null
         return getChapterTitle(doc)
     }
 
-    fun getChapterTitle(doc: Document): String? {
+    suspend fun getChapterTitle(doc: Document): String? {
         val url = doc.location()
+        val source = getCompatibleSource(url)
+        if (source != null) {
+            source.getChapterTitle(doc)?.let { return it }
+        }
         val selectors = getSelectors(url) ?: return null
         return doc.selectFirst(selectors["title"] ?: "")?.text()
     }
@@ -121,13 +144,16 @@ class Scraper @Inject constructor(
     }
 
     suspend fun getChapterText(url: String): String? {
-        val selectors = getSelectors(url) ?: return null
         val doc = tryFetch(url) ?: return null
         return getChapterText(doc)
     }
 
-    fun getChapterText(doc: Document): String? {
+    suspend fun getChapterText(doc: Document): String? {
         val url = doc.location()
+        val source = getCompatibleSource(url)
+        if (source != null) {
+            source.getChapterText(doc)?.let { return it }
+        }
         val selectors = getSelectors(url) ?: return null
         return doc.selectFirst(selectors["content"] ?: "")?.html()
     }

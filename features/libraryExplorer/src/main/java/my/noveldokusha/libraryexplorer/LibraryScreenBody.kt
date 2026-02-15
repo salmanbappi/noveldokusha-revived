@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import my.noveldoksuha.coreui.components.CollapsibleDivider
 import my.noveldoksuha.coreui.theme.colorApp
+import my.noveldokusha.core.appPreferences.ListLayoutMode
 import my.noveldokusha.core.domain.LibraryCategory
 import my.noveldokusha.feature.local_database.BookWithContext
 
@@ -50,6 +51,7 @@ internal fun LibraryScreenBody(
     topAppBarState: TopAppBarState,
     onBookClick: (BookWithContext) -> Unit,
     onBookLongClick: (BookWithContext) -> Unit,
+    layoutMode: ListLayoutMode,
     viewModel: LibraryPageViewModel = viewModel()
 ) {
     val tabsSizeUpdated = rememberUpdatedState(newValue = tabs.size)
@@ -127,6 +129,7 @@ internal fun LibraryScreenBody(
                 }
                 LibraryPageBody(
                     list = list,
+                    layoutMode = layoutMode,
                     onClick = onBookClick,
                     onLongClick = onBookLongClick
                 )

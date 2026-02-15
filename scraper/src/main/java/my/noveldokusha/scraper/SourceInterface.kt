@@ -13,7 +13,8 @@ sealed interface SourceInterface {
     val id: String
 
     @get:StringRes
-    val nameStrId: Int
+    val nameStrId: Int get() = 0
+    val name: String get() = ""
     val baseUrl: String
     val isLocalSource: Boolean get() = true
     val requiresLogin: Boolean get() = false
@@ -29,6 +30,11 @@ sealed interface SourceInterface {
         val catalogUrl: String
         val language: LanguageCode?
         val iconUrl: Any get() = "$baseUrl/favicon.ico"
+        val status: List<Status> get() = emptyList()
+
+        enum class Status {
+            FAST, STABLE, FORMATTING, EXPERIMENTAL
+        }
 
         suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> =
             Response.Success(null)
