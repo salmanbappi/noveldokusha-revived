@@ -17,6 +17,7 @@ import my.noveldokusha.core.appPreferences.TernaryState
 import my.noveldokusha.core.appPreferences.LibrarySortMode
 import my.noveldokusha.core.domain.LibraryCategory
 import my.noveldokusha.core.utils.toState
+import my.noveldokusha.feature.local_database.BookWithContext
 import javax.inject.Inject
 
 @HiltViewModel

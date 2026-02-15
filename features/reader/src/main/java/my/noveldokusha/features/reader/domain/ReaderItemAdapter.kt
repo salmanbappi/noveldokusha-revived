@@ -302,6 +302,27 @@ internal class ReaderItemAdapter(
         return bind.root
     }
 
+    private fun getItemReadingStateBackground(item: ReaderItem): Drawable? {
+        if (item !is ReaderItem.Position) return null
+
+        val currentActiveSpeaker = currentSpeakerActiveItem()
+        val itemUtteranceId = "${item.chapterItemPosition}-${item.chapterIndex}"
+        val isReadingAloud = currentActiveSpeaker.utteranceId == itemUtteranceId
+        if (isReadingAloud) {
+            return when (currentActiveSpeaker.playState) {
+                Utterance.PlayState.PLAYING -> currentReadingAloudDrawable
+                Utterance.PlayState.LOADING -> currentReadingAloudLoadingDrawable
+                else -> null
+            }
+        }
+
+        if (lastReadItemPosition() == item.chapterItemPosition) {
+            return currentResumeHighlightDrawable
+        }
+
+        return null
+    }
+
     private val currentReadingAloudDrawable by lazy {
         AppCompatResources.getDrawable(
             context,

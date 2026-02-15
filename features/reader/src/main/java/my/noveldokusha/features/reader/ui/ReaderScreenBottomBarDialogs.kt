@@ -13,6 +13,7 @@ import my.noveldoksuha.coreui.theme.Themes
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.ui.settingDialogs.MoreSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.StyleSettingDialog
+import my.noveldokusha.features.reader.ui.settingDialogs.ToolsSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.TranslatorSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.VoiceReaderSettingDialog
 

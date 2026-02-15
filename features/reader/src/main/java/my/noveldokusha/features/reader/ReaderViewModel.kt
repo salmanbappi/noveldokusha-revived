@@ -32,6 +32,7 @@ internal class ReaderViewModel @Inject constructor(
     appPreferences: AppPreferences,
     private val readerManager: ReaderManager,
     readerViewHandlersActions: ReaderViewHandlersActions,
+    private val appRepository: my.noveldoksuha.data.AppRepository,
 ) : BaseViewModel(), ReaderStateBundle {
 
     override var bookUrl by StateExtra_String(stateHandler)
@@ -47,6 +48,15 @@ internal class ReaderViewModel @Inject constructor(
     private val themeId = appPreferences.THEME_ID.state(viewModelScope)
 
     private val _readingTimer = mutableStateOf("00:00")
+
+    val items = readerSession.items
+    val chaptersLoader = readerSession.readerChaptersLoader
+    val readerSpeaker = readerSession.readerTextToSpeech
+    var readingCurrentChapter by Delegates.observable(readerSession.currentChapter) { _, _, new ->
+        readerSession.currentChapter = new
+    }
+    val ttsScrolledToTheTop = readerSession.readerTextToSpeech.scrolledToTheTop
+    val ttsScrolledToTheBottom = readerSession.readerTextToSpeech.scrolledToTheBottom
 
     val state = ReaderScreenState(
         showReaderInfo = mutableStateOf(false),
@@ -106,15 +116,7 @@ internal class ReaderViewModel @Inject constructor(
         }
     }
 
-    val items = readerSession.items
-    val chaptersLoader = readerSession.readerChaptersLoader
-    val readerSpeaker = readerSession.readerTextToSpeech
-    var readingCurrentChapter by Delegates.observable(readerSession.currentChapter) { _, _, new ->
-        readerSession.currentChapter = new
-    }
     val onTranslatorChanged = readerSession.readerLiveTranslation.onTranslatorChanged
-    val ttsScrolledToTheTop = readerSession.readerTextToSpeech.scrolledToTheTop
-    val ttsScrolledToTheBottom = readerSession.readerTextToSpeech.scrolledToTheBottom
 
     fun onCloseManually() {
         readerManager.close()
