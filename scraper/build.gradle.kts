@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.networking)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.documentfile)
     implementation(libs.jsoup)
     implementation(libs.gson)
     implementation(libs.okhttp)
