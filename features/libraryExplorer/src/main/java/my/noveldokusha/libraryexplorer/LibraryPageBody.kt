@@ -131,6 +131,7 @@ private fun LibraryGridItem(
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun LibraryListItem(
     it: BookWithContext,
@@ -138,7 +139,7 @@ private fun LibraryListItem(
     onLongClick: (BookWithContext) -> Unit,
 ) {
     ListItem(
-        modifier = Modifier.clickable(
+        modifier = Modifier.combinedClickable(
             onClick = { onClick(it) },
             onLongClick = { onLongClick(it) }
         ),
