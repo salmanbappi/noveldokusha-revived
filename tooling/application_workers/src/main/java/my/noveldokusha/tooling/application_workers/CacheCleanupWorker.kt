@@ -42,7 +42,7 @@ internal class CacheCleanupWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            val libraryBooks = libraryBooksRepository.getBooksInLibrary().map { 
+            val libraryBooks = libraryBooksRepository.getAllInLibrary().map { 
                 appFileResolver.getLocalBookFolderName(it.url) 
             }.toSet()
             

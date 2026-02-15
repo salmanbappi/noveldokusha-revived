@@ -13,7 +13,7 @@ data class SettingsScreenState(
     val followsSystemTheme: MutableState<Boolean>,
     val currentTheme: State<Themes>,
     val isTranslationSettingsVisible: MutableState<Boolean>,
-    val translationModelsStates: SnapshotStateList<TranslationManager.ModelStatus>,
+    val translationModelsStates: SnapshotStateList<TranslationModelState>,
     val updateAppSetting: UpdateApp,
     val libraryAutoUpdate: LibraryAutoUpdate,
     val externalSourcesDirectoryUri: MutableState<String>

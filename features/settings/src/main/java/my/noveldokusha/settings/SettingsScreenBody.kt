@@ -14,7 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +65,7 @@ internal fun SettingsScreenBody(
         )
         
         if (state.isTranslationSettingsVisible.value) {
-            HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
+            HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             SettingsTranslationModels(
                 translationModelsStates = state.translationModelsStates,
                 onDownloadTranslationModel = onDownloadTranslationModel,
@@ -78,7 +78,7 @@ internal fun SettingsScreenBody(
         // Section: Library
         SettingHeader("Library & Automation")
         LibraryAutoUpdate(state = state.libraryAutoUpdate)
-        HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
+        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         AppUpdates(
             state = state.updateAppSetting,
             onCheckForUpdatesManual = onCheckForUpdatesManual
@@ -92,7 +92,7 @@ internal fun SettingsScreenBody(
             onBackupData = onBackupData,
             onRestoreData = onRestoreData
         )
-        HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
+        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         SettingsData(
             databaseSize = state.databaseSize.value,
             imagesFolderSize = state.imageFolderSize.value,
@@ -109,7 +109,7 @@ internal fun SettingsScreenBody(
             onUriSelected = onExternalSourcesUriSelected,
             onManageRepositories = onManageRepositories
         )
-        HorizontalDivider(Modifier.padding(horizontal = 16.dp), alpha = 0.5f)
+        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         androidx.compose.material3.ListItem(
             headlineContent = { Text("Debug Logs", style = MaterialTheme.typography.bodyLarge) },
             supportingContent = { Text("View system logs for troubleshooting", style = MaterialTheme.typography.bodySmall) },
@@ -155,7 +155,7 @@ private fun Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             SettingsScreenBody(
                 state = SettingsScreenState(
-                    followsSystemTheme = remember { derivedStateOf { true } },
+                    followsSystemTheme = remember { mutableStateOf(true) },
                     currentTheme = theme,
                     databaseSize = remember { mutableStateOf("1 MB") },
                     imageFolderSize = remember { mutableStateOf("10 MB") },
@@ -174,6 +174,7 @@ private fun Preview() {
                     libraryAutoUpdate = SettingsScreenState.LibraryAutoUpdate(
                         autoUpdateEnabled = remember { mutableStateOf(true) },
                         autoUpdateIntervalHours = remember { mutableIntStateOf(24) },
+                        preFetchNextChapterEnabled = remember { mutableStateOf(true) }
                     ),
                     externalSourcesDirectoryUri = remember { mutableStateOf("") }
                 ),
