@@ -96,7 +96,7 @@ internal fun CatalogList(
                     ImageViewGlide(
                         imageModel = it.iconUrl,
                         modifier = Modifier.size(28.dp),
-                        error = R.drawable.default_icon
+                        error = my.noveldoksuha.coreui.R.drawable.default_icon
                     )
                 }
             )
@@ -183,7 +183,7 @@ internal fun CatalogList(
                         ImageViewGlide(
                             imageModel = icon,
                             modifier = Modifier.size(28.dp),
-                            error = R.drawable.default_icon
+                            error = my.noveldoksuha.coreui.R.drawable.default_icon
                         )
                     }
                 },

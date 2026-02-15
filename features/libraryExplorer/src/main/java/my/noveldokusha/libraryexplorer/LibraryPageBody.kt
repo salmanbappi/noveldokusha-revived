@@ -151,7 +151,7 @@ private fun LibraryListItem(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(RoundedCornerShape(8.dp)),
-                error = R.drawable.default_icon
+                error = my.noveldoksuha.coreui.R.drawable.default_icon
             )
         },
         headlineContent = {
