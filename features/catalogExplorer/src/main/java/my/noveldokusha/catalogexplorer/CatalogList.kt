@@ -277,27 +277,6 @@ private fun PreviewView() {
             onSourceSetPinned = { _, _ -> },
             onSourceSetDefault = { _, _ -> },
         )
+        }
     }
-}
-
-@PreviewThemes
-@Composable
-private fun PreviewView() {
-    val catalogItemsList = fixturesCatalogList().mapIndexed { index, it ->
-        CatalogItem(
-            catalog = it,
-            pinned = index % 2 == 0,
-        )
-    }
-
-    InternalTheme {
-        CatalogList(
-            innerPadding = PaddingValues(),
-            databasesList = fixturesDatabaseList(),
-            sourcesList = catalogItemsList,
-            onDatabaseClick = {},
-            onSourceClick = {},
-            onSourceSetPinned = { _, _ -> },
-        )
-    }
-}
+    
