@@ -25,7 +25,7 @@ def processAPK(path, fileName):
     
     # Try to match flavor from path if filename match fails
     # Paths are usually: app/build/outputs/apk/<flavor>/<buildType>
-    path_parts = path.replace("\", "/").split("/")
+    path_parts = path.replace("\\\\", "/").split("/")
     flavour = "unknown"
     if "full" in path_parts:
         flavour = "full"
