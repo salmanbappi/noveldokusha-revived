@@ -14,9 +14,15 @@
 
 		<item name="android:colorBackground">?colorPrimary</item>
 
+		<item name="colorControlHighlight">@color/colorAccent_transparent</item>
 		<item name="myColorControlNormalPale">@color/color_55</item>
 
 		<item name="bottomSheetDialogTheme">@style/myBottomSheetDialogStyle.BaseDark.Black</item>
+		<item name="myReaderTextStyle">@style/myReaderTextStyle.Black</item>
+	</style>
+
+	<style name="myReaderTextStyle.Black">
+		<item name="android:textColor">@color/color_ff</item>
 	</style>
 
 	<style name="myBottomSheetStyle.BaseDark.Black">

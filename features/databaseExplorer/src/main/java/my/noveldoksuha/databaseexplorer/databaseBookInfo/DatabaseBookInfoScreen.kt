@@ -65,7 +65,7 @@ internal fun DatabaseBookInfoScreen(
                 label = ""
             )
             val titleColor by animateColorAsState(
-                targetValue = MaterialTheme.colorScheme.onPrimary.copy(alpha = alpha),
+                targetValue = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
                 label = ""
             )
             Surface(color = backgroundColor) {

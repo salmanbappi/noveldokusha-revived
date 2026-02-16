@@ -90,7 +90,7 @@ internal fun LibraryScreenBody(
                             .tabIndicatorOffset(tabPos)
                             .fillMaxSize()
                             .padding(6.dp)
-                            .background(MaterialTheme.colorApp.tabSurface, CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), CircleShape)
                             .zIndex(-1f)
                     )
                 },
