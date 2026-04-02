@@ -172,21 +172,47 @@ class WtrLab(
             // Try to extract from __NEXT_DATA__
             val nextData = doc.selectFirst("script#__NEXT_DATA__")?.html()
             if (nextData != null) {
-                // Extract using Regex for simplicity, or we could parse the whole JSON
-                // Pattern for series in library: {"id":...,"raw_id":...,"slug":"...","data":{"title":"...","image":"..."}}
-                val serieRegex = Regex("""\{"id":[^,]+,"raw_id":(\d+),"slug":"([^"]+)","data":\{"title":"([^"]+)","image":"([^"]+)"\}""")
+                // Flexible pattern for series in library
+                val serieRegex = Regex("""\{"id":[^,]+,"raw_id":(\d+),"slug":"([^"]+)","status":([^,]+),"data":\{"title":"([^"]+)","author":"([^"]*)","image":"([^"]+)"""")
                 serieRegex.findAll(nextData).forEach { match ->
                     val rawId = match.groupValues[1]
                     val slug = match.groupValues[2]
-                    val title = match.groupValues[3]
-                    val image = match.groupValues[4]
+                    val status = if (match.groupValues[3] == "true") "Ongoing" else "Completed"
+                    val title = match.groupValues[4]
+                    val author = match.groupValues[5]
+                    val image = match.groupValues[6]
                     books.add(
                         BookResult(
                             title = title,
                             url = "$baseUrl/en/novel/$rawId/$slug",
-                            coverImageUrl = image
+                            coverImageUrl = image,
+                            description = "Author: $author | Status: $status"
                         )
                     )
+                }
+                
+                // Try another pattern if empty
+                if (books.isEmpty()) {
+                    val rawIdRegex = Regex(""""raw_id":(\d+)""")
+                    val slugRegex = Regex(""""slug":"([^"]+)"""")
+                    val titleRegex = Regex(""""title":"([^"]+)"""")
+                    val imageRegex = Regex(""""image":"([^"]+)"""")
+                    
+                    val rawIds = rawIdRegex.findAll(nextData).map { it.groupValues[1] }.toList()
+                    val slugs = slugRegex.findAll(nextData).map { it.groupValues[1] }.toList()
+                    val titles = titleRegex.findAll(nextData).map { it.groupValues[1] }.toList()
+                    val images = imageRegex.findAll(nextData).map { it.groupValues[1] }.toList()
+                    
+                    val minSize = listOf(rawIds.size, slugs.size, titles.size, images.size).minOrNull() ?: 0
+                    for (i in 0 until minSize) {
+                        books.add(
+                            BookResult(
+                                title = titles[i],
+                                url = "$baseUrl/en/novel/${rawIds[i]}/${slugs[i]}",
+                                coverImageUrl = images[i]
+                            )
+                        )
+                    }
                 }
             }
 

@@ -59,49 +59,69 @@ class CloudfareVerificationInterceptor @Inject constructor(
     }
 
     private fun resolveChallenge(url: String): BypassResult? {
-        val latch = CountDownLatch(1)
         var result: BypassResult? = null
+        val maxRetries = 2
+        
+        for (retry in 0..maxRetries) {
+            val latch = CountDownLatch(1)
+            var currentResult: BypassResult? = null
 
-        handler.post {
-            try {
-                val webView = WebView(context)
-                webView.settings.apply {
-                    javaScriptEnabled = true
-                    domStorageEnabled = true
-                    databaseEnabled = true
-                    useWideViewPort = true
-                    loadWithOverviewMode = true
-                    userAgentString = standardUserAgent
-                }
-                
-                cookieManager.setAcceptCookie(true)
-                cookieManager.setAcceptThirdPartyCookies(webView, true)
-
-                webView.webViewClient = object : WebViewClient() {
-                    override fun onPageFinished(view: WebView?, url: String?) {
-                        // Delay to allow JS challenges to finish
-                        handler.postDelayed({
-                            val cookies = cookieManager.getCookie(url)
-                            val title = view?.title?.lowercase() ?: ""
-                            // Check for clearance cookie or if we passed the challenge
-                            if (cookies != null && (cookies.contains("cf_clearance") || (!title.contains("just a moment") && !title.contains("verify")))) {
-                                result = BypassResult(cookies, view?.settings?.userAgentString ?: standardUserAgent)
-                                latch.countDown()
-                                webView.destroy()
-                            }
-                        }, 2000)
+            handler.post {
+                try {
+                    val webView = WebView(context)
+                    webView.settings.apply {
+                        javaScriptEnabled = true
+                        domStorageEnabled = true
+                        databaseEnabled = true
+                        useWideViewPort = true
+                        loadWithOverviewMode = true
+                        userAgentString = standardUserAgent
                     }
-                }
-                webView.loadUrl(url)
-            } catch (e: Exception) {
-                latch.countDown()
-            }
-        }
+                    
+                    cookieManager.setAcceptCookie(true)
+                    cookieManager.setAcceptThirdPartyCookies(webView, true)
 
-        try {
-            latch.await(30, TimeUnit.SECONDS)
-        } catch (e: InterruptedException) {
-            // Timed out
+                    webView.webViewClient = object : WebViewClient() {
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            // Increased delay to allow JS challenges to finish
+                            handler.postDelayed({
+                                val cookies = cookieManager.getCookie(url)
+                                val title = view?.title?.lowercase() ?: ""
+                                
+                                // Check for clearance cookie or if we passed the challenge
+                                val hasClearance = cookies?.contains("cf_clearance") == true
+                                val challengePassed = !title.contains("just a moment") && !title.contains("verify") && !title.contains("cloudflare")
+                                
+                                if (cookies != null && (hasClearance || challengePassed)) {
+                                    currentResult = BypassResult(cookies, view?.settings?.userAgentString ?: standardUserAgent)
+                                    latch.countDown()
+                                    webView.destroy()
+                                } else if (retry == maxRetries) {
+                                    // Last attempt failed
+                                    latch.countDown()
+                                    webView.destroy()
+                                }
+                            }, 5000)
+                        }
+                    }
+                    webView.loadUrl(url)
+                } catch (e: Exception) {
+                    latch.countDown()
+                }
+            }
+
+            try {
+                latch.await(45, TimeUnit.SECONDS)
+            } catch (e: InterruptedException) {
+                // Timed out
+            }
+            
+            if (currentResult != null) {
+                result = currentResult
+                break
+            }
+            // Small delay before retry
+            Thread.sleep(1000)
         }
         
         return result

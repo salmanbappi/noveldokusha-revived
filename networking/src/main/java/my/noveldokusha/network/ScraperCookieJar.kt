@@ -16,7 +16,27 @@ internal class ScraperCookieJar : CookieJar {
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
-        return getCookieList(url.toString()).mapNotNull { Cookie.parse(url, it) }
+        val cookies = mutableListOf<Cookie>()
+        
+        // Load for exact URL
+        getCookieList(url.toString()).forEach { 
+            Cookie.parse(url, it)?.let { cookie -> cookies.add(cookie) }
+        }
+        
+        // Also load for base URL (domain) if different
+        val baseUrl = "${url.scheme}://${url.host}/"
+        if (baseUrl != url.toString()) {
+            getCookieList(baseUrl).forEach {
+                Cookie.parse(url, it)?.let { cookie ->
+                    // Add only if not already present
+                    if (cookies.none { c -> c.name == cookie.name }) {
+                        cookies.add(cookie)
+                    }
+                }
+            }
+        }
+        
+        return cookies
     }
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
