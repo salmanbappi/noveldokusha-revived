@@ -79,14 +79,17 @@ class CloudfareVerificationInterceptor @Inject constructor(
 
                 webView.webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
-                        val cookies = cookieManager.getCookie(url)
-                        val title = view?.title?.lowercase() ?: ""
-                        // Check for clearance cookie or if we passed the challenge
-                        if (cookies != null && (cookies.contains("cf_clearance") || (!title.contains("just a moment") && !title.contains("verify")))) {
-                            result = BypassResult(cookies, view?.settings?.userAgentString ?: standardUserAgent)
-                            latch.countDown()
-                            webView.destroy()
-                        }
+                        // Delay to allow JS challenges to finish
+                        handler.postDelayed({
+                            val cookies = cookieManager.getCookie(url)
+                            val title = view?.title?.lowercase() ?: ""
+                            // Check for clearance cookie or if we passed the challenge
+                            if (cookies != null && (cookies.contains("cf_clearance") || (!title.contains("just a moment") && !title.contains("verify")))) {
+                                result = BypassResult(cookies, view?.settings?.userAgentString ?: standardUserAgent)
+                                latch.countDown()
+                                webView.destroy()
+                            }
+                        }, 2000)
                     }
                 }
                 webView.loadUrl(url)

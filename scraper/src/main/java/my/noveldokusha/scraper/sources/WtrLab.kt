@@ -167,20 +167,48 @@ class WtrLab(
             val url = "$baseUrl/en/library?page=$page"
 
             val doc = networkClient.get(url).toDocument()
-            val books = doc.select(".novel-item, .book-item, .library-card, .novel-card").mapNotNull {
-                val link = it.selectFirst("a[href*=\"/novel/\"], a[href*=\"/serie-\"]") ?: return@mapNotNull null
-                val title = it.selectFirst(".title, .book-title, .novel-title")?.text() ?: link.text()
-                val bookCover = it.selectFirst("img[src]")?.attr("src") ?: ""
-                
-                BookResult(
-                    title = title,
-                    url = link.attr("abs:href"),
-                    coverImageUrl = bookCover
-                )
+            val books = mutableListOf<BookResult>()
+
+            // Try to extract from __NEXT_DATA__
+            val nextData = doc.selectFirst("script#__NEXT_DATA__")?.html()
+            if (nextData != null) {
+                // Extract using Regex for simplicity, or we could parse the whole JSON
+                // Pattern for series in library: {"id":...,"raw_id":...,"slug":"...","data":{"title":"...","image":"..."}}
+                val serieRegex = Regex("""\{"id":[^,]+,"raw_id":(\d+),"slug":"([^"]+)","data":\{"title":"([^"]+)","image":"([^"]+)"\}""")
+                serieRegex.findAll(nextData).forEach { match ->
+                    val rawId = match.groupValues[1]
+                    val slug = match.groupValues[2]
+                    val title = match.groupValues[3]
+                    val image = match.groupValues[4]
+                    books.add(
+                        BookResult(
+                            title = title,
+                            url = "$baseUrl/en/novel/$rawId/$slug",
+                            coverImageUrl = image
+                        )
+                    )
+                }
+            }
+
+            // Fallback to HTML parsing if NEXT_DATA failed or returned few results
+            if (books.isEmpty()) {
+                doc.select(".novel-item, .book-item, .library-card, .novel-card").forEach {
+                    val link = it.selectFirst("a[href*=\"/novel/\"], a[href*=\"/serie-\"]") ?: return@forEach
+                    val title = it.selectFirst(".title, .book-title, .novel-title")?.text() ?: link.text()
+                    val bookCover = it.selectFirst("img[src]")?.attr("src") ?: ""
+                    
+                    books.add(
+                        BookResult(
+                            title = title,
+                            url = link.attr("abs:href"),
+                            coverImageUrl = bookCover
+                        )
+                    )
+                }
             }
 
             PagedList(
-                list = books,
+                list = books.distinctBy { it.url },
                 index = index,
                 isLastPage = books.isEmpty() || doc.selectFirst(".pagination .next, a[rel=next]") == null
             )
@@ -208,22 +236,26 @@ class WtrLab(
             
             val books = mutableListOf<BookResult>()
             dataArray?.forEach { item ->
-                val novel = item.asJsonObject
-                val data = novel.getAsJsonObject("data")
-                val rawId = novel.get("raw_id").asInt
-                val slug = novel.get("slug").asString
-                val title = data.get("title").asString
-                val author = data.get("author").asString
-                val status = if (novel.get("status").asBoolean) "Ongoing" else "Completed"
-                
-                books.add(
-                    BookResult(
-                        title = title,
-                        url = "$baseUrl/en/novel/$rawId/$slug",
-                        coverImageUrl = data.get("image")?.asString ?: "",
-                        description = "Author: $author | Status: $status"
+                try {
+                    val novel = item.asJsonObject
+                    val data = novel.getAsJsonObject("data") ?: return@forEach
+                    val rawId = novel.get("raw_id")?.asInt ?: return@forEach
+                    val slug = novel.get("slug")?.asString ?: ""
+                    val title = data.get("title")?.asString ?: "Unknown"
+                    val author = data.get("author")?.asString ?: "Unknown"
+                    val status = if (novel.get("status")?.asBoolean == true) "Ongoing" else "Completed"
+                    
+                    books.add(
+                        BookResult(
+                            title = title,
+                            url = "$baseUrl/en/novel/$rawId/$slug",
+                            coverImageUrl = data.get("image")?.asString ?: "",
+                            description = "Author: $author | Status: $status"
+                        )
                     )
-                )
+                } catch (e: Exception) {
+                    // Skip invalid entries
+                }
             }
 
             PagedList(
