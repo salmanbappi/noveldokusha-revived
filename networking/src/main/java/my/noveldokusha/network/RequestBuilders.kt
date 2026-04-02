@@ -7,14 +7,22 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import java.util.concurrent.TimeUnit
 
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+
 private val DEFAULT_CACHE_CONTROL = CacheControl.Builder().maxAge(10, TimeUnit.MINUTES).build()
 private val DEFAULT_HEADERS = Headers.Builder().build()
 private val DEFAULT_BODY: RequestBody = FormBody.Builder().build()
+private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
 
 fun Request.Builder.postPayload(scope: FormBody.Builder.() -> Unit): Request.Builder {
     val builder = FormBody.Builder()
     scope(builder)
     return post(builder.build())
+}
+
+fun Request.Builder.postJson(json: String): Request.Builder {
+    return post(json.toRequestBody(JSON_MEDIA_TYPE))
 }
 
 fun getRequest(

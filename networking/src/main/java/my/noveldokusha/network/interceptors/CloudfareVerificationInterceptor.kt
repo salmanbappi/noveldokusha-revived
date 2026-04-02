@@ -8,8 +8,10 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import dagger.hilt.android.qualifiers.ApplicationContext
+import my.noveldokusha.core.domain.CloudfareVerificationBypassFailedException
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.io.IOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -32,10 +34,12 @@ class CloudfareVerificationInterceptor @Inject constructor(
 
         // Check if blocked by Cloudflare or other bot protections (403, 503 OR 200 with challenge)
         val body = response.peekBody(1024 * 10).string().lowercase()
-        val isChallenge = response.code == 403 || response.code == 503 || 
-            (response.code == 200 && (body.contains("cf-challenge") || body.contains("just a moment") || body.contains("verify you are human") || body.contains("verification required") || body.contains("redirecting...") || body.contains("detecting if you are a bot")))
+        val isChallengeHeader = response.header("cf-mitigated") == "challenge" || response.header("server")?.lowercase() == "cloudflare"
+        val isChallengeBody = (body.contains("cf-challenge") || body.contains("just a moment") || body.contains("verify you are human") || body.contains("verification required") || body.contains("redirecting...") || body.contains("detecting if you are a bot"))
+        
+        val isChallenge = response.code == 403 || response.code == 503 || (response.code == 200 && isChallengeBody)
 
-        if (isChallenge && (body.contains("cloudflare") || body.contains("sucuri") || body.contains("parklogic") || body.contains("javascript") || body.contains("redirect"))) {
+        if (isChallenge && (isChallengeHeader || body.contains("cloudflare") || body.contains("sucuri") || body.contains("parklogic") || body.contains("javascript") || body.contains("redirect"))) {
             response.close()
             
             // Trigger WebView bypass
@@ -46,6 +50,8 @@ class CloudfareVerificationInterceptor @Inject constructor(
                     .header("User-Agent", bypassResult.userAgent)
                     .build()
                 return chain.proceed(newRequest)
+            } else {
+                throw CloudfareVerificationBypassFailedException()
             }
         }
 

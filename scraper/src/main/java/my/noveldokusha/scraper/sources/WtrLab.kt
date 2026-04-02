@@ -1,12 +1,13 @@
 package my.noveldokusha.scraper.sources
 
+import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.noveldokusha.core.LanguageCode
 import my.noveldokusha.core.PagedList
 import my.noveldokusha.core.Response
 import my.noveldokusha.network.NetworkClient
-import my.noveldokusha.network.postPayload
+import my.noveldokusha.network.postJson
 import my.noveldokusha.network.postRequest
 import my.noveldokusha.network.toDocument
 import my.noveldokusha.network.toJson
@@ -19,9 +20,9 @@ import org.jsoup.nodes.Document
 
 /**
  * Novel main page (chapter list) example:
- * https://wtr-lab.com/en/serie-123/novel-name
+ * https://wtr-lab.com/en/novel/123/novel-name
  * Chapter url example:
- * https://wtr-lab.com/en/serie-123/novel-name/chapter-1
+ * https://wtr-lab.com/en/novel/123/novel-name/chapter-1
  */
 class WtrLab(
     private val networkClient: NetworkClient
@@ -40,7 +41,7 @@ class WtrLab(
                 val titleMatch = Regex("\"title\":\"([^\"]+)\"").find(nextData)
                 titleMatch?.groupValues?.get(1)
             } else {
-                doc.selectFirst("h1, .chapter-title")?.text()
+                doc.selectFirst("h1, .chapter-title, .reader-title")?.text()
             }
         }
 
@@ -58,13 +59,15 @@ class WtrLab(
             
             try {
                 val apiUrl = "$baseUrl/api/reader/get"
+                val jsonPayload = JsonObject().apply {
+                    addProperty("language", "en")
+                    addProperty("raw_id", rawId.toInt())
+                    addProperty("chapter_no", chapterNo.toInt())
+                }.toString()
+                
                 val request = postRequest(apiUrl)
                     .addHeader("Content-Type", "application/json")
-                    .postPayload {
-                        add("language", "en")
-                        add("raw_id", rawId)
-                        add("chapter_no", chapterNo)
-                    }
+                    .postJson(jsonPayload)
                 
                 val jsonResponse = networkClient.call(request).toJson()
                 val bodyArray = jsonResponse.asJsonObject
@@ -83,8 +86,8 @@ class WtrLab(
         }
         
         // Fallback extraction from page
-        doc.selectFirst(".chapter-content, .reading-content")?.let { element ->
-            element.select("script").remove()
+        doc.selectFirst(".chapter-content, .reading-content, #reader-content")?.let { element ->
+            element.select("script, style, ins, .ads").remove()
             element.html()
         } ?: ""
     }
@@ -100,7 +103,7 @@ class WtrLab(
                 val imageMatch = Regex("\"image\":\"([^\"]+)\"").find(nextData)
                 imageMatch?.groupValues?.get(1)
             } else {
-                doc.selectFirst(".novel-cover img")?.attr("src")
+                doc.selectFirst(".novel-cover img, .book-cover img")?.attr("src")
             }
         }
     }
@@ -116,7 +119,7 @@ class WtrLab(
                 val descMatch = Regex("\"description\":\"([^\"]+)\"").find(nextData)
                 descMatch?.groupValues?.get(1)
             } else {
-                doc.selectFirst(".description, .novel-synopsis")?.text()
+                doc.selectFirst(".description, .novel-synopsis, .novel-description")?.text()
             }
         }
     }
@@ -141,11 +144,17 @@ class WtrLab(
                 (1..chapterCount).map { chapterNo ->
                     ChapterResult(
                         title = "Chapter $chapterNo",
-                        url = "$baseUrl/en/serie-$rawId/$slug/chapter-$chapterNo"
+                        url = "$baseUrl/en/novel/$rawId/$slug/chapter-$chapterNo"
                     )
                 }
             } else {
-                emptyList()
+                // Try fallback extraction from page
+                doc.select(".chapter-list a, .table-of-contents a").map {
+                    ChapterResult(
+                        title = it.text(),
+                        url = it.attr("abs:href")
+                    )
+                }
             }
         }
     }
@@ -158,9 +167,9 @@ class WtrLab(
             val url = "$baseUrl/en/library?page=$page"
 
             val doc = networkClient.get(url).toDocument()
-            val books = doc.select(".novel-item, .book-item").mapNotNull {
-                val link = it.selectFirst("a[href*=\"/serie-\"]") ?: return@mapNotNull null
-                val title = it.selectFirst(".title, .book-title")?.text() ?: link.text()
+            val books = doc.select(".novel-item, .book-item, .library-card, .novel-card").mapNotNull {
+                val link = it.selectFirst("a[href*=\"/novel/\"], a[href*=\"/serie-\"]") ?: return@mapNotNull null
+                val title = it.selectFirst(".title, .book-title, .novel-title")?.text() ?: link.text()
                 val bookCover = it.selectFirst("img[src]")?.attr("src") ?: ""
                 
                 BookResult(
@@ -173,7 +182,7 @@ class WtrLab(
             PagedList(
                 list = books,
                 index = index,
-                isLastPage = books.isEmpty() || doc.selectFirst(".pagination .next") == null
+                isLastPage = books.isEmpty() || doc.selectFirst(".pagination .next, a[rel=next]") == null
             )
         }
     }
@@ -186,11 +195,13 @@ class WtrLab(
             if (input.isBlank() || index > 0)
                 return@tryConnect PagedList.createEmpty(index = index)
 
+            val jsonPayload = JsonObject().apply {
+                addProperty("text", input)
+            }.toString()
+            
             val request = postRequest("$baseUrl/api/search")
                 .addHeader("Content-Type", "application/json")
-                .postPayload {
-                    add("text", input)
-                }
+                .postJson(jsonPayload)
 
             val jsonResponse = networkClient.call(request).toJson()
             val dataArray = jsonResponse.asJsonObject.getAsJsonArray("data")
@@ -208,7 +219,7 @@ class WtrLab(
                 books.add(
                     BookResult(
                         title = title,
-                        url = "$baseUrl/en/serie-$rawId/f$slug",
+                        url = "$baseUrl/en/novel/$rawId/$slug",
                         coverImageUrl = data.get("image")?.asString ?: "",
                         description = "Author: $author | Status: $status"
                     )
