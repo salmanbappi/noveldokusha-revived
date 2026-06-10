@@ -48,6 +48,9 @@ internal data class TextToSpeechSettingData(
     val setVoicePitch: (Float) -> Unit,
     val chapterWordCount: State<Int>,
     val remainingWordCount: State<Int>,
+    val estimatedWpm: State<Int>,
+    val estimatedTotalSeconds: State<Int>,
+    val estimatedRemainingSeconds: State<Int>,
 )
 
 internal data class TextSynthesis(
@@ -100,6 +103,8 @@ internal class ReaderTextToSpeech(
     val scrollToReaderItem = MutableSharedFlow<ReaderItem>()
     val scrollToChapterTop = MutableSharedFlow<ChapterIndex>()
 
+    private val baseCharactersPerSecond = mutableStateOf(13.0f)
+
     val chapterWordCount = derivedStateOf {
         val currentChapterIndex = currentTextPlaying.value.itemPos.chapterIndex
         if (isChapterIndexValid(currentChapterIndex)) {
@@ -118,6 +123,54 @@ internal class ReaderTextToSpeech(
             items.filterIsInstance<ReaderItem.Text>()
                 .filter { it.chapterIndex == currentChapterIndex && it.chapterItemPosition >= currentItemPos }
                 .sumOf { it.textToDisplay.wordCount() }
+        } else {
+            0
+        }
+    }
+
+    val chapterCharacterCount = derivedStateOf {
+        val currentChapterIndex = currentTextPlaying.value.itemPos.chapterIndex
+        if (isChapterIndexValid(currentChapterIndex)) {
+            items.filterIsInstance<ReaderItem.Text>()
+                .filter { it.chapterIndex == currentChapterIndex }
+                .sumOf { it.textToDisplay.length }
+        } else {
+            0
+        }
+    }
+
+    val remainingCharacterCount = derivedStateOf {
+        val currentChapterIndex = currentTextPlaying.value.itemPos.chapterIndex
+        val currentItemPos = currentTextPlaying.value.itemPos.chapterItemPosition
+        if (isChapterIndexValid(currentChapterIndex)) {
+            items.filterIsInstance<ReaderItem.Text>()
+                .filter { it.chapterIndex == currentChapterIndex && it.chapterItemPosition >= currentItemPos }
+                .sumOf { it.textToDisplay.length }
+        } else {
+            0
+        }
+    }
+
+    val estimatedWpm = derivedStateOf {
+        val currentSpeed = manager.voiceSpeed.floatValue
+        (baseCharactersPerSecond.value * currentSpeed * 12.0f).toInt().coerceAtLeast(30)
+    }
+
+    val estimatedTotalSeconds = derivedStateOf {
+        val currentSpeed = manager.voiceSpeed.floatValue
+        val cps = baseCharactersPerSecond.value * currentSpeed
+        if (cps > 0f) {
+            (chapterCharacterCount.value / cps).toInt()
+        } else {
+            0
+        }
+    }
+
+    val estimatedRemainingSeconds = derivedStateOf {
+        val currentSpeed = manager.voiceSpeed.floatValue
+        val cps = baseCharactersPerSecond.value * currentSpeed
+        if (cps > 0f) {
+            (remainingCharacterCount.value / cps).toInt()
         } else {
             0
         }
@@ -148,6 +201,9 @@ internal class ReaderTextToSpeech(
         setVoiceSpeed = ::setVoiceSpeed,
         chapterWordCount = chapterWordCount,
         remainingWordCount = remainingWordCount,
+        estimatedWpm = estimatedWpm,
+        estimatedTotalSeconds = estimatedTotalSeconds,
+        estimatedRemainingSeconds = estimatedRemainingSeconds,
     )
 
     val isActive = derivedStateOf { state.isThereActiveItem.value || state.isPlaying.value }
@@ -163,6 +219,47 @@ internal class ReaderTextToSpeech(
                     manager.trySetVoicePitch(getPreferredVoicePitch())
                     manager.trySetVoiceSpeed(getPreferredVoiceSpeed())
                 }
+        }
+
+        coroutineScope.launch {
+            val paragraphStartTimes = mutableMapOf<String, Long>()
+            manager.currentTextSpeakFlow.collect { utterance ->
+                val utteranceId = utterance.utteranceId
+                when (utterance.playState) {
+                    Utterance.PlayState.PLAYING -> {
+                        paragraphStartTimes[utteranceId] = System.currentTimeMillis()
+                    }
+                    Utterance.PlayState.FINISHED -> {
+                        val startTime = paragraphStartTimes.remove(utteranceId)
+                        if (startTime != null) {
+                            val durationMs = System.currentTimeMillis() - startTime
+                            val currentChapterIndex = utterance.itemPos.chapterIndex
+                            val currentItemPos = utterance.itemPos.chapterItemPosition
+                            
+                            val itemIndex = indexOfReaderItem(
+                                list = items,
+                                chapterIndex = currentChapterIndex,
+                                chapterItemPosition = currentItemPos,
+                            )
+                            val item = items.getOrNull(itemIndex) as? ReaderItem.Text
+                            val text = item?.textToDisplay ?: ""
+                            val charCount = text.length
+                            
+                            if (charCount > 10 && durationMs > 200) {
+                                val measuredCps = (charCount * 1000.0f) / durationMs
+                                val currentSpeed = manager.voiceSpeed.floatValue
+                                if (currentSpeed > 0f) {
+                                    val baseCps = measuredCps / currentSpeed
+                                    if (baseCps in 3.0f..40.0f) {
+                                        baseCharactersPerSecond.value = 0.2f * baseCps + 0.8f * baseCharactersPerSecond.value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else -> Unit
+                }
+            }
         }
     }
 

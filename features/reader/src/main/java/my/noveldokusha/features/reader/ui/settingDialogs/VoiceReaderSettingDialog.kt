@@ -305,13 +305,9 @@ internal fun VoiceReaderSettingDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Premium progress card
-                val voiceSpeed = state.voiceSpeed.value
-                val wpm = (160 * voiceSpeed).toInt()
-                val totalWords = state.chapterWordCount.value
-                val remainingWords = state.remainingWordCount.value
-
-                val totalSeconds = if (wpm > 0) (totalWords * 60f / wpm).toInt() else 0
-                val remainingSeconds = if (wpm > 0) (remainingWords * 60f / wpm).toInt() else 0
+                val wpm = state.estimatedWpm.value
+                val totalSeconds = state.estimatedTotalSeconds.value
+                val remainingSeconds = state.estimatedRemainingSeconds.value
 
                 val totalDurationStr = formatDuration(totalSeconds)
                 val remainingDurationStr = formatDuration(remainingSeconds)

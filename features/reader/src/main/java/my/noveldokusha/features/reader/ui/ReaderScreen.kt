@@ -430,6 +430,9 @@ private fun ViewsPreview(
         customSavedVoices = rememberMutableStateOf(value = listOf()),
         chapterWordCount = remember { mutableStateOf(1000) },
         remainingWordCount = remember { mutableStateOf(500) },
+        estimatedWpm = remember { mutableStateOf(160) },
+        estimatedTotalSeconds = remember { mutableStateOf(450) },
+        estimatedRemainingSeconds = remember { mutableStateOf(220) },
     )
 
     val style = ReaderScreenState.Settings.StyleSettingsData(
