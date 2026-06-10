@@ -302,14 +302,14 @@ internal fun ReaderScreen(
                                 settingType = Type.Translation,
                                 onClick = toggleOrSet,
                                 icon = Icons.Outlined.Translate,
-                                textId = R.string.live_translation,
+                                textId = R.string.translation,
                             )
                             SettingIconItem(
                                 currentType = state.settings.selectedSetting.value,
                                 settingType = Type.Audio,
                                 onClick = toggleOrSet,
                                 icon = Icons.Filled.RecordVoiceOver,
-                                textId = R.string.voice_reader,
+                                textId = R.string.audio,
                             )
                             SettingIconItem(
                                 currentType = state.settings.selectedSetting.value,

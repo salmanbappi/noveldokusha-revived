@@ -196,6 +196,8 @@
     <string name="local">Local</string>
     <string name="translator">Translator</string>
     <string name="voice_reader">Voice Reader</string>
+    <string name="translation">Translation</string>
+    <string name="audio">Audio</string>
     <string name="style">Style</string>
     <string name="more">More</string>
     <string name="tools">Tools</string>
