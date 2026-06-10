@@ -2,9 +2,9 @@ name: CI - Internal Debug Build
 
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: [ "preview" ]
   pull_request:
-    branches: [ "master", "main" ]
+    branches: [ "preview" ]
 
 jobs:
   build:

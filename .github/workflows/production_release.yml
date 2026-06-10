@@ -3,8 +3,8 @@ name: Production - Public Release
 on:
   workflow_dispatch:
   push:
-    tags:
-      - 'v*' # Trigger on version tags
+    branches:
+      - master
 
 permissions:
   contents: write
@@ -16,6 +16,17 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Auto-bump version
+        id: bump
+        run: python .github/build_scripts/auto_bump.py
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -28,8 +39,6 @@ jobs:
         run: |
           # Generate a temporary keystore for release if secrets are missing or invalid
           keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempStorePass -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
-          # Actually, the previous command used tempKeyPass for keypass. Let's make them same to be safe.
-          # Re-running with identical passwords:
           rm app/storeFile.jsk
           keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempPassword -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
           echo "storeFile=storeFile.jsk" > custom.properties
@@ -40,13 +49,15 @@ jobs:
       - name: Build app
         run: ./gradlew assembleFullRelease assembleFossRelease -PlocalPropertiesFilePath=custom.properties --parallel --stacktrace
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Create apk env info entries, move APK
         run: python .github/build_scripts/extract_info.py
+
+      - name: Commit and push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(release): bump version to ${{ steps.bump.outputs.new_version }} [skip ci]"
+          git push origin HEAD:master
 
       - name: Upload APKs as artifacts
         uses: actions/upload-artifact@v4
@@ -58,8 +69,8 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          name: NovelDokusha v${{ env.APP_VERSION }}
-          tag_name: v${{ env.APP_VERSION }}
+          name: NovelDokusha v${{ steps.bump.outputs.new_version }}
+          tag_name: v${{ steps.bump.outputs.new_version }}
           files: |
             ${{ env.APK_FILE_PATH_full }}
             ${{ env.APK_FILE_PATH_foss }}
