@@ -5,10 +5,16 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -98,14 +105,34 @@ internal fun ReaderScreen(
         state.showReaderInfo.value = false
     }
 
+    LaunchedEffect(state.showReaderInfo.value) {
+        if (!state.showReaderInfo.value) {
+            state.settings.selectedSetting.value = Type.None
+        }
+    }
+
     Scaffold(
         topBar = {
             AnimatedVisibility(
                 visible = state.showReaderInfo.value,
-                enter = expandVertically(initialHeight = { 0 }, expandFrom = Alignment.Top)
-                        + fadeIn(),
-                exit = shrinkVertically(targetHeight = { 0 }, shrinkTowards = Alignment.Top)
-                        + fadeOut(),
+                enter = slideInVertically(
+                    initialOffsetY = { -it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + scaleIn(
+                    initialScale = 0.9f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeIn(),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it }
+                ) + scaleOut(
+                    targetScale = 0.9f
+                ) + fadeOut(),
             ) {
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceContainer,
@@ -218,8 +245,24 @@ internal fun ReaderScreen(
             }
             AnimatedVisibility(
                 visible = state.showReaderInfo.value,
-                enter = expandVertically(initialHeight = { 0 }) + fadeIn(),
-                exit = shrinkVertically(targetHeight = { 0 }) + fadeOut(),
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + scaleIn(
+                    initialScale = 0.8f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeIn(),
+                exit = slideOutVertically(
+                    targetOffsetY = { it }
+                ) + scaleOut(
+                    targetScale = 0.8f
+                ) + fadeOut(),
             ) {
                 Column(
                     modifier = Modifier
@@ -256,10 +299,17 @@ internal fun ReaderScreen(
                         ) {
                             SettingIconItem(
                                 currentType = state.settings.selectedSetting.value,
-                                settingType = Type.Tools,
+                                settingType = Type.Translation,
                                 onClick = toggleOrSet,
                                 icon = Icons.Outlined.Translate,
-                                textId = R.string.tools,
+                                textId = R.string.live_translation,
+                            )
+                            SettingIconItem(
+                                currentType = state.settings.selectedSetting.value,
+                                settingType = Type.Audio,
+                                onClick = toggleOrSet,
+                                icon = Icons.Filled.RecordVoiceOver,
+                                textId = R.string.voice_reader,
                             )
                             SettingIconItem(
                                 currentType = state.settings.selectedSetting.value,
@@ -437,7 +487,8 @@ private class PreviewDataProvider : PreviewParameterProvider<PreviewDataProvider
 
     override val values = sequenceOf(
         Data(selectedSetting = Type.None),
-        Data(selectedSetting = Type.Tools),
+        Data(selectedSetting = Type.Translation),
+        Data(selectedSetting = Type.Audio),
         Data(selectedSetting = Type.Style),
         Data(selectedSetting = Type.More),
     )

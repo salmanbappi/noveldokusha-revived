@@ -13,7 +13,6 @@ import my.noveldoksuha.coreui.theme.Themes
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.ui.settingDialogs.MoreSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.StyleSettingDialog
-import my.noveldokusha.features.reader.ui.settingDialogs.ToolsSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.TranslatorSettingDialog
 import my.noveldokusha.features.reader.ui.settingDialogs.VoiceReaderSettingDialog
 
@@ -40,10 +39,18 @@ internal fun ReaderScreenBottomBarDialogs(
         Box(Modifier.padding(horizontal = 24.dp)) {
             AnimatedContent(targetState = settings.selectedSetting.value, label = "") { target ->
                 when (target) {
-                    ReaderScreenState.Settings.Type.Tools -> ToolsSettingDialog(
-                        ttsState = settings.textToSpeech,
-                        translationState = settings.liveTranslation
-                    )
+                    ReaderScreenState.Settings.Type.Translation -> {
+                        if (settings.liveTranslation.isAvailable) {
+                            TranslatorSettingDialog(
+                                state = settings.liveTranslation
+                            )
+                        }
+                    }
+                    ReaderScreenState.Settings.Type.Audio -> {
+                        VoiceReaderSettingDialog(
+                            state = settings.textToSpeech
+                        )
+                    }
                     ReaderScreenState.Settings.Type.Style -> {
                         StyleSettingDialog(
                             state = settings.style,

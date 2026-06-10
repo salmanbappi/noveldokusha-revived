@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import my.noveldoksuha.coreui.components.MySlider
 import my.noveldokusha.strings.R
 
 @Composable
@@ -97,6 +98,21 @@ internal fun MoreSettingDialog(
                     checked = autoScrollSpeed > 0,
                     onCheckedChange = { onAutoScrollChange(if (it) 5 else 0) }
                 )
+
+                androidx.compose.animation.AnimatedVisibility(visible = autoScrollSpeed > 0) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        MySlider(
+                            value = autoScrollSpeed.toFloat(),
+                            valueRange = 1f..30f,
+                            onValueChange = { onAutoScrollChange(it.toInt()) },
+                            text = "Speed: ${autoScrollSpeed}"
+                        )
+                    }
+                }
 
                 SettingsToggleItem(
                     title = stringResource(id = R.string.allow_text_selection),

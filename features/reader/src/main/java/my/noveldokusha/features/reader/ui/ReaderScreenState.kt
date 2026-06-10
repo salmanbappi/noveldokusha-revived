@@ -43,7 +43,7 @@ internal data class ReaderScreenState(
         )
 
         enum class Type {
-            None, Tools, Style, More
+            None, Translation, Audio, Style, More
         }
     }
 }

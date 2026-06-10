@@ -4,8 +4,10 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -304,50 +306,87 @@ internal fun VoiceReaderSettingDialog(
 
                 // Player playback buttons
                 Surface(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    shape = CircleShape,
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 72.dp)
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(28.dp),
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 88.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         val alpha by animateFloatAsState(
                             targetValue = if (state.isThereActiveItem.value) 1f else 0.5f,
                             label = ""
                         )
-                        IconButton(
+                        Surface(
                             onClick = debouncedAction(waitMillis = 1000) { state.playPreviousChapter() },
                             enabled = state.isThereActiveItem.value,
-                            modifier = Modifier.alpha(alpha),
+                            color = Color.Transparent,
+                            border = BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.8f)
+                            ),
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .size(38.dp)
+                                .alpha(alpha)
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.FastRewind,
-                                contentDescription = "Previous Chapter",
-                                modifier = Modifier.size(28.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Rounded.FastRewind,
+                                    contentDescription = "Previous Chapter",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
-                        IconButton(
+                        Surface(
                             onClick = debouncedAction(waitMillis = 100) { state.playPreviousItem() },
                             enabled = state.isThereActiveItem.value,
-                            modifier = Modifier.alpha(alpha),
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .size(46.dp)
+                                .alpha(alpha)
                         ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Rounded.NavigateBefore,
-                                contentDescription = "Previous Sentence",
-                                modifier = Modifier.size(32.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.NavigateBefore,
+                                    contentDescription = "Previous Sentence",
+                                    modifier = Modifier.size(26.dp),
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
                         }
                         
                         // Play/Pause Button
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .size(64.dp)
-                                .background(MaterialTheme.colorScheme.primary, CircleShape)
+                                .size(68.dp)
+                                .shadow(
+                                    elevation = 6.dp,
+                                    shape = CircleShape,
+                                    clip = false,
+                                    ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                    spotColor = MaterialTheme.colorScheme.primary
+                                )
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                        )
+                                    ),
+                                    shape = CircleShape
+                                )
                                 .clickable { state.setPlaying(!state.isPlaying.value) }
                         ) {
                             AnimatedContent(
@@ -358,34 +397,50 @@ internal fun VoiceReaderSettingDialog(
                                     imageVector = if (target) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                                     contentDescription = if (target) "Pause" else "Play",
                                     tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(36.dp)
+                                    modifier = Modifier.size(38.dp)
                                 )
                             }
                         }
 
-                        IconButton(
+                        Surface(
                             onClick = debouncedAction(waitMillis = 100) { state.playNextItem() },
                             enabled = state.isThereActiveItem.value,
-                            modifier = Modifier.alpha(alpha),
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .size(46.dp)
+                                .alpha(alpha)
                         ) {
-                            Icon(
-                                Icons.AutoMirrored.Rounded.NavigateNext,
-                                contentDescription = "Next Sentence",
-                                modifier = Modifier.size(32.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.NavigateNext,
+                                    contentDescription = "Next Sentence",
+                                    modifier = Modifier.size(26.dp),
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
                         }
-                        IconButton(
+                        Surface(
                             onClick = debouncedAction(waitMillis = 1000) { state.playNextChapter() },
                             enabled = state.isThereActiveItem.value,
-                            modifier = Modifier.alpha(alpha),
+                            color = Color.Transparent,
+                            border = BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.8f)
+                            ),
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .size(38.dp)
+                                .alpha(alpha)
                         ) {
-                            Icon(
-                                Icons.Rounded.FastForward,
-                                contentDescription = "Next Chapter",
-                                modifier = Modifier.size(28.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Rounded.FastForward,
+                                    contentDescription = "Next Chapter",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }

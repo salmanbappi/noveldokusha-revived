@@ -53,6 +53,14 @@ internal class ReaderItemAdapter(
     private val onBookmarkToggle: (item: ReaderItem.Position) -> Unit,
 ) : ArrayAdapter<ReaderItem>(ctx, 0, list) {
     private val appFileResolver = AppFileResolver(ctx)
+
+    var currentTextColor: Int = android.graphics.Color.BLACK
+        set(value) {
+            if (field != value) {
+                field = value
+                notifyDataSetChanged()
+            }
+        }
     override fun getCount() = super.getCount() + 2
     override fun getItem(position: Int): ReaderItem = when (position) {
         0 -> topPadding
@@ -139,6 +147,7 @@ internal class ReaderItemAdapter(
         bind.body.updateTextSelectability()
         bind.root.setupItemGestures(item)
         bind.root.background = getItemReadingStateBackground(item)
+        bind.body.setTextColor(currentTextColor)
         val paragraph = item.textToDisplay
         bind.body.text = paragraph
         bind.body.textSize = currentFontSize()
@@ -217,6 +226,7 @@ internal class ReaderItemAdapter(
         }
 
         bind.specialTitle.updateTextSelectability()
+        bind.specialTitle.setTextColor(currentTextColor)
         bind.specialTitle.text = ctx.getString(R.string.reader_no_more_chapters)
         bind.specialTitle.typeface = currentTypefaceBold()
         return bind.root
@@ -237,6 +247,7 @@ internal class ReaderItemAdapter(
         }
 
         bind.specialTitle.updateTextSelectability()
+        bind.specialTitle.setTextColor(currentTextColor)
         bind.specialTitle.text = ctx.getString(R.string.reader_first_chapter)
         bind.specialTitle.typeface = currentTypefaceBold()
         return bind.root
@@ -264,6 +275,7 @@ internal class ReaderItemAdapter(
                 .also { it.root.tag = it }
             else -> ActivityReaderListItemTranslatingBinding.bind(convertView)
         }
+        bind.text.setTextColor(currentTextColor)
         bind.text.text = context.getString(
             R.string.translating_from_lang_a_to_lang_b,
             item.sourceLang,
@@ -313,6 +325,7 @@ internal class ReaderItemAdapter(
         bind.title.updateTextSelectability()
         bind.root.setupItemGestures(item)
         bind.root.background = getItemReadingStateBackground(item)
+        bind.title.setTextColor(currentTextColor)
         bind.title.text = item.textToDisplay
         bind.title.typeface = currentTypefaceBold()
         return bind.root

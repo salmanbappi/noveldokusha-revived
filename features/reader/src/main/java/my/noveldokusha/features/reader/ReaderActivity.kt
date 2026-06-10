@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.widget.AbsListView
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.graphics.toArgb
 import androidx.activity.viewModels
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -277,6 +278,9 @@ class ReaderActivity : BaseActivity() {
         setContent {
             Theme(themeProvider) {
                 SetSystemBarTransparent()
+
+                val textColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.toArgb()
+                viewAdapter.listView.currentTextColor = textColor
                 
                 viewAdapter.listView.hapticFeedback = androidx.compose.ui.platform.LocalHapticFeedback.current
 
@@ -349,9 +353,13 @@ class ReaderActivity : BaseActivity() {
         }
 
         viewBind.listView.setOnItemLongClickListener { _, _, _, _ ->
-            viewModel.state.showReaderInfo.value = true
-            viewModel.state.settings.selectedSetting.value = my.noveldokusha.features.reader.ui.ReaderScreenState.Settings.Type.Tools
-            true
+            if (appPreferences.READER_SELECTABLE_TEXT.value) {
+                false
+            } else {
+                viewModel.state.showReaderInfo.value = true
+                viewModel.state.settings.selectedSetting.value = my.noveldokusha.features.reader.ui.ReaderScreenState.Settings.Type.Audio
+                true
+            }
         }
 
         viewBind.listView.setOnScrollListener(
@@ -395,15 +403,21 @@ class ReaderActivity : BaseActivity() {
 
         // Auto Scroll Logic
         lifecycleScope.launch {
+            var accumulator = 0f
             while (true) {
                 val speed = viewModel.state.settings.autoScrollSpeed.value
                 if (speed > 0 && !listIsScrolling) {
-                    // Scroll 'speed' pixels every 50ms
-                    // smoothScrollBy(distance, duration)
-                    viewBind.listView.smoothScrollBy(speed, 50)
-                    delay(50)
+                    val delta = speed * 0.12f // speed multiplier for smooth pixel scroll per 16ms
+                    accumulator += delta
+                    val pixelsToScroll = accumulator.toInt()
+                    if (pixelsToScroll > 0) {
+                        viewBind.listView.scrollListBy(pixelsToScroll)
+                        accumulator -= pixelsToScroll
+                    }
+                    delay(16)
                 } else {
-                    delay(200)
+                    accumulator = 0f
+                    delay(100)
                 }
             }
         }
