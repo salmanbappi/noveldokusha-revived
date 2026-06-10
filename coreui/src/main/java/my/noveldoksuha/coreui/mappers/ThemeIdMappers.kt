@@ -11,6 +11,7 @@ val PreferenceThemes.toTheme
         PreferenceThemes.Nord -> Themes.NORD
         PreferenceThemes.Sepia -> Themes.SEPIA
         PreferenceThemes.Custom -> Themes.CUSTOM
+        PreferenceThemes.Dynamic -> Themes.DYNAMIC
     }
 
 val Themes.toPreferenceTheme
@@ -21,4 +22,5 @@ val Themes.toPreferenceTheme
         Themes.NORD -> PreferenceThemes.Nord
         Themes.SEPIA -> PreferenceThemes.Sepia
         Themes.CUSTOM -> PreferenceThemes.Custom
+        Themes.DYNAMIC -> PreferenceThemes.Dynamic
     }

@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -83,91 +85,93 @@ internal fun ChaptersScreenHeader(
                     )
             )
         }
-        Column(
-            modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding())
-                .padding(horizontal = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onPrimary) {
+            Column(
+                modifier = Modifier
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .padding(horizontal = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                var showImageFullScreen by rememberSaveable { mutableStateOf(false) }
-                val interactionSource = remember { MutableInteractionSource() }
-                BookImageButtonView(
-                    title = "",
-                    coverImageModel = coverImageModel,
-                    onClick = { showImageFullScreen = true },
-                    onLongClick = onCoverLongClick,
-                    bookTitlePosition = BookTitlePosition.Hidden,
-                    interactionSource = interactionSource,
-                    modifier = Modifier
-                        .weight(1f)
-                        .bounceOnPressed(interactionSource)
-                )
-                if (showImageFullScreen) Dialog(
-                    onDismissRequest = { showImageFullScreen = false },
-                    properties = DialogProperties(
-                        usePlatformDefaultWidth = false,
-                        dismissOnBackPress = true,
-                        dismissOnClickOutside = true
-                    )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
-                    ImageView(
-                        imageModel = coverImageModel,
+                    var showImageFullScreen by rememberSaveable { mutableStateOf(false) }
+                    val interactionSource = remember { MutableInteractionSource() }
+                    BookImageButtonView(
+                        title = "",
+                        coverImageModel = coverImageModel,
+                        onClick = { showImageFullScreen = true },
+                        onLongClick = onCoverLongClick,
+                        bookTitlePosition = BookTitlePosition.Hidden,
+                        interactionSource = interactionSource,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .clickableNoIndicator { showImageFullScreen = false },
-                        contentScale = ContentScale.Fit
+                            .weight(1f)
+                            .bounceOnPressed(interactionSource)
+                    )
+                    if (showImageFullScreen) Dialog(
+                        onDismissRequest = { showImageFullScreen = false },
+                        properties = DialogProperties(
+                            usePlatformDefaultWidth = false,
+                            dismissOnBackPress = true,
+                            dismissOnClickOutside = true
+                        )
+                    ) {
+                        ImageView(
+                            imageModel = coverImageModel,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickableNoIndicator { showImageFullScreen = false },
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .fillMaxHeight()
+                            .weight(1f),
+                    ) {
+                        SelectionContainer {
+                            Text(
+                                text = bookState.title,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 5,
+                                modifier = Modifier.clickableNoIndicator {
+                                    onGlobalSearchClick(bookState.title)
+                                }
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        SelectionContainer {
+                            Text(
+                                text = sourceCatalogName,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = LocalContentColor.current.copy(alpha = 0.8f),
+                            )
+                        }
+                        SelectionContainer {
+                            Text(
+                                text = stringResource(id = R.string.chapters) + " " + numberOfChapters.toString(),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = LocalContentColor.current.copy(alpha = 0.8f),
+                            )
+                        }
+                    }
+                }
+                SelectionContainer {
+                    val text by remember(bookState.description) { derivedStateOf { bookState.description.trim() } }
+                    ExpandableText(
+                        text = text,
+                        linesForExpand = 4
                     )
                 }
-
-                Column(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxHeight()
-                        .weight(1f),
-                ) {
-                    SelectionContainer {
-                        Text(
-                            text = bookState.title,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 5,
-                            modifier = Modifier.clickableNoIndicator {
-                                onGlobalSearchClick(bookState.title)
-                            }
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    SelectionContainer {
-                        Text(
-                            text = sourceCatalogName,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onTertiary,
-                        )
-                    }
-                    SelectionContainer {
-                        Text(
-                            text = stringResource(id = R.string.chapters) + " " + numberOfChapters.toString(),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onTertiary,
-                        )
-                    }
-                }
-            }
-            SelectionContainer {
-                val text by remember(bookState.description) { derivedStateOf { bookState.description.trim() } }
-                ExpandableText(
-                    text = text,
-                    linesForExpand = 4
+                HorizontalDivider(
+                    Modifier
+                        .padding(horizontal = 40.dp)
+                        .alpha(0.5f), thickness = Dp.Hairline
                 )
             }
-            HorizontalDivider(
-                Modifier
-                    .padding(horizontal = 40.dp)
-                    .alpha(0.5f), thickness = Dp.Hairline
-            )
         }
     }
 }

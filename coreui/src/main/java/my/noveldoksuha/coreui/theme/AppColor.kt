@@ -42,6 +42,10 @@ fun custom_appColor(background: Color, text: Color): AppColor {
     return createAppColor(background, accent, text)
 }
 
+fun dynamic_appColor(surface: Color, primary: Color, onSurface: Color): AppColor {
+    return createAppColor(surface, primary, onSurface)
+}
+
 val LocalAppColor = compositionLocalOf { light_appColor }
 
 @Suppress("UnusedReceiverParameter")

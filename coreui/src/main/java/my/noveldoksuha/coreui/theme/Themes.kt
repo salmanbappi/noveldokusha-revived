@@ -38,5 +38,10 @@ enum class Themes(
         isLight = true, // Default to true, will be determined by custom bg
         nameId = R.string.theme_name_custom,
         themeId = R.style.AppTheme_Light,
+    ),
+    DYNAMIC(
+        isLight = true,
+        nameId = R.string.theme_name_dynamic,
+        themeId = R.style.AppTheme_Light,
     );
 }

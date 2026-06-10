@@ -152,6 +152,7 @@
     <string name="theme_name_nord">Nord</string>
     <string name="theme_name_sepia">Sepia</string>
     <string name="theme_name_custom">Custom Theme</string>
+    <string name="theme_name_dynamic">Material You</string>
     <string name="source_name_local">Local</string>
     <string name="updating_library">Updating library (%1$d/%2$d)</string>
     <string name="notification_channel_name_reader_narrator">Reader narrator</string>

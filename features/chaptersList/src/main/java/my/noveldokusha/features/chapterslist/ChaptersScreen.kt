@@ -121,8 +121,12 @@ internal fun ChaptersScreen(
                 targetValue = MaterialTheme.colorScheme.background.copy(alpha = alpha),
                 label = ""
             )
+            val appBarContentColor by animateColorAsState(
+                targetValue = if (isAtTop) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                label = ""
+            )
             val titleColor by animateColorAsState(
-                targetValue = MaterialTheme.colorScheme.onPrimary.copy(alpha = alpha),
+                targetValue = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
                 label = ""
             )
             Surface(color = backgroundColor) {
@@ -146,7 +150,11 @@ internal fun ChaptersScreen(
                             IconButton(
                                 onClick = onPressBack
                             ) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = null,
+                                    tint = appBarContentColor
+                                )
                             }
                         },
                         actions = {
@@ -154,24 +162,25 @@ internal fun ChaptersScreen(
                                 onClick = onLibraryToggle
                             ) {
                                 Icon(
-                                    if (state.book.value.inLibrary) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
-                                    stringResource(R.string.open_the_web_view),
-                                    tint = ColorLike
+                                    imageVector = if (state.book.value.inLibrary) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                                    contentDescription = stringResource(R.string.open_the_web_view),
+                                    tint = if (state.book.value.inLibrary) ColorLike else appBarContentColor
                                 )
                             }
                             IconButton(
                                 onClick = { showBottomSheet = !showBottomSheet }
                             ) {
                                 Icon(
-                                    Icons.Filled.FilterList,
-                                    stringResource(R.string.filter),
-                                    tint = ColorNotice
+                                    imageVector = Icons.Filled.FilterList,
+                                    contentDescription = stringResource(R.string.filter),
+                                    tint = appBarContentColor
                                 )
                             }
                             IconButton(onClick = { showDropDown = !showDropDown }) {
                                 Icon(
-                                    Icons.Filled.MoreVert,
-                                    stringResource(R.string.options_panel)
+                                    imageVector = Icons.Filled.MoreVert,
+                                    contentDescription = stringResource(R.string.options_panel),
+                                    tint = appBarContentColor
                                 )
                                 DropdownMenu(
                                     expanded = showDropDown,
