@@ -62,7 +62,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import my.noveldoksuha.coreui.theme.InternalTheme
 import my.noveldoksuha.coreui.theme.Themes
-import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldoksuha.coreui.theme.rememberMutableStateOf
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.domain.ReaderItem
@@ -109,14 +108,14 @@ internal fun ReaderScreen(
                         + fadeOut(),
             ) {
                 Surface(
-                    color = MaterialTheme.colorApp.tintedSurface,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     modifier = Modifier.animateContentSize(),
                 ) {
                     Column {
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorApp.tintedSurface,
-                                scrolledContainerColor = MaterialTheme.colorApp.tintedSurface,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                             ),
                             // Safe window insets handling
                             windowInsets = TopAppBarDefaults.windowInsets,
@@ -247,7 +246,7 @@ internal fun ReaderScreen(
                             .padding(8.dp) // Extra padding for shadows
                             .animateContentSize(),
                         shape = RoundedCornerShape(32.dp),
-                        color = MaterialTheme.colorApp.tintedSurface,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         tonalElevation = 8.dp,
                         shadowElevation = 12.dp
                     ) {

@@ -55,6 +55,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -102,7 +103,6 @@ import my.noveldoksuha.coreui.components.MyOutlinedTextField
 import my.noveldoksuha.coreui.components.MySlider
 import my.noveldoksuha.coreui.composableActions.debouncedAction
 import my.noveldoksuha.coreui.theme.InternalTheme
-import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldoksuha.coreui.theme.rememberMutableStateOf
 import my.noveldokusha.core.appPreferences.VoicePredefineState
 import my.noveldokusha.features.reader.features.TextToSpeechSettingData
@@ -137,7 +137,7 @@ internal fun VoiceReaderSettingDialog(
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorApp.tintedSurface
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
         ) {
             Column(
@@ -201,35 +201,29 @@ internal fun VoiceReaderSettingDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         // Presets
-                        InputChip(
+                        FilterChip(
                             selected = state.voiceSpeed.value == 0.8f && state.voicePitch.value == 0.9f,
                             onClick = {
                                 state.setVoiceSpeed(0.8f)
                                 state.setVoicePitch(0.9f)
                             },
-                            label = { Text("Calm") },
-                            border = null,
-                            shape = RoundedCornerShape(12.dp)
+                            label = { Text("Calm") }
                         )
-                        InputChip(
+                        FilterChip(
                             selected = state.voiceSpeed.value == 1.0f && state.voicePitch.value == 1.0f,
                             onClick = {
                                 state.setVoiceSpeed(1.0f)
                                 state.setVoicePitch(1.0f)
                             },
-                            label = { Text("Natural") },
-                            border = null,
-                            shape = RoundedCornerShape(12.dp)
+                            label = { Text("Natural") }
                         )
-                        InputChip(
+                        FilterChip(
                             selected = state.voiceSpeed.value == 1.5f && state.voicePitch.value == 1.1f,
                             onClick = {
                                 state.setVoiceSpeed(1.5f)
                                 state.setVoicePitch(1.1f)
                             },
-                            label = { Text("Fast") },
-                            border = null,
-                            shape = RoundedCornerShape(12.dp)
+                            label = { Text("Fast") }
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
@@ -243,14 +237,7 @@ internal fun VoiceReaderSettingDialog(
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                    alpha = 0.7f
-                                ),
-                                labelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                            ),
-                            border = null
+                            }
                         )
                         AssistChip(
                             label = { Text(text = stringResource(id = R.string.focus)) },
@@ -261,14 +248,7 @@ internal fun VoiceReaderSettingDialog(
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                    alpha = 0.7f
-                                ),
-                                labelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                            ),
-                            border = null
+                            }
                         )
                         AssistChip(
                             label = { Text(text = "Voices") },
@@ -279,32 +259,19 @@ internal fun VoiceReaderSettingDialog(
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                    alpha = 0.7f
-                                ),
-                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            border = null
+                            }
                         )
-                        AssistChip(
-                            label = { Text(text = stringResource(R.string.saved)) },
+                        FilterChip(
+                            selected = showSavedVoices,
                             onClick = { showSavedVoices = !showSavedVoices },
+                            label = { Text(text = stringResource(R.string.saved)) },
                             leadingIcon = {
                                 Icon(
                                     Icons.Filled.Bookmarks,
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = if (showSavedVoices) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer.copy(
-                                    alpha = 0.7f
-                                ),
-                                labelColor = if (showSavedVoices) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiaryContainer
-                            ),
-                            border = null
+                            }
                         )
                     }
                 }

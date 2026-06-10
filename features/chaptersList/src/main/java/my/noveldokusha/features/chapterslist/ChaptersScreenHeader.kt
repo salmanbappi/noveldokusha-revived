@@ -79,99 +79,97 @@ internal fun ChaptersScreenHeader(
                     .align(Alignment.BottomCenter)
                     .background(
                         Brush.verticalGradient(
-                            0f to MaterialTheme.colorScheme.primary.copy(alpha = 0f),
-                            1f to MaterialTheme.colorScheme.primary,
+                            0f to MaterialTheme.colorScheme.background.copy(alpha = 0f),
+                            1f to MaterialTheme.colorScheme.background,
                         )
                     )
             )
         }
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onPrimary) {
-            Column(
-                modifier = Modifier
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .padding(horizontal = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(18.dp)
+        Column(
+            modifier = Modifier
+                .padding(top = paddingValues.calculateTopPadding())
+                .padding(horizontal = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                var showImageFullScreen by rememberSaveable { mutableStateOf(false) }
+                val interactionSource = remember { MutableInteractionSource() }
+                BookImageButtonView(
+                    title = "",
+                    coverImageModel = coverImageModel,
+                    onClick = { showImageFullScreen = true },
+                    onLongClick = onCoverLongClick,
+                    bookTitlePosition = BookTitlePosition.Hidden,
+                    interactionSource = interactionSource,
+                    modifier = Modifier
+                        .weight(1f)
+                        .bounceOnPressed(interactionSource)
+                )
+                if (showImageFullScreen) Dialog(
+                    onDismissRequest = { showImageFullScreen = false },
+                    properties = DialogProperties(
+                        usePlatformDefaultWidth = false,
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true
+                    )
                 ) {
-                    var showImageFullScreen by rememberSaveable { mutableStateOf(false) }
-                    val interactionSource = remember { MutableInteractionSource() }
-                    BookImageButtonView(
-                        title = "",
-                        coverImageModel = coverImageModel,
-                        onClick = { showImageFullScreen = true },
-                        onLongClick = onCoverLongClick,
-                        bookTitlePosition = BookTitlePosition.Hidden,
-                        interactionSource = interactionSource,
+                    ImageView(
+                        imageModel = coverImageModel,
                         modifier = Modifier
-                            .weight(1f)
-                            .bounceOnPressed(interactionSource)
+                            .fillMaxWidth()
+                            .clickableNoIndicator { showImageFullScreen = false },
+                        contentScale = ContentScale.Fit
                     )
-                    if (showImageFullScreen) Dialog(
-                        onDismissRequest = { showImageFullScreen = false },
-                        properties = DialogProperties(
-                            usePlatformDefaultWidth = false,
-                            dismissOnBackPress = true,
-                            dismissOnClickOutside = true
-                        )
-                    ) {
-                        ImageView(
-                            imageModel = coverImageModel,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickableNoIndicator { showImageFullScreen = false },
-                            contentScale = ContentScale.Fit
-                        )
-                    }
+                }
 
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                            .fillMaxHeight()
-                            .weight(1f),
-                    ) {
-                        SelectionContainer {
-                            Text(
-                                text = bookState.title,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 5,
-                                modifier = Modifier.clickableNoIndicator {
-                                    onGlobalSearchClick(bookState.title)
-                                }
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        SelectionContainer {
-                            Text(
-                                text = sourceCatalogName,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = LocalContentColor.current.copy(alpha = 0.8f),
-                            )
-                        }
-                        SelectionContainer {
-                            Text(
-                                text = stringResource(id = R.string.chapters) + " " + numberOfChapters.toString(),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = LocalContentColor.current.copy(alpha = 0.8f),
-                            )
-                        }
+                Column(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxHeight()
+                        .weight(1f),
+                ) {
+                    SelectionContainer {
+                        Text(
+                            text = bookState.title,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 5,
+                            modifier = Modifier.clickableNoIndicator {
+                                onGlobalSearchClick(bookState.title)
+                            }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    SelectionContainer {
+                        Text(
+                            text = sourceCatalogName,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    SelectionContainer {
+                        Text(
+                            text = stringResource(id = R.string.chapters) + " " + numberOfChapters.toString(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
-                SelectionContainer {
-                    val text by remember(bookState.description) { derivedStateOf { bookState.description.trim() } }
-                    ExpandableText(
-                        text = text,
-                        linesForExpand = 4
-                    )
-                }
-                HorizontalDivider(
-                    Modifier
-                        .padding(horizontal = 40.dp)
-                        .alpha(0.5f), thickness = Dp.Hairline
+            }
+            SelectionContainer {
+                val text by remember(bookState.description) { derivedStateOf { bookState.description.trim() } }
+                ExpandableText(
+                    text = text,
+                    linesForExpand = 4
                 )
             }
+            HorizontalDivider(
+                Modifier
+                    .padding(horizontal = 40.dp)
+                    .alpha(0.5f), thickness = Dp.Hairline
+            )
         }
     }
 }

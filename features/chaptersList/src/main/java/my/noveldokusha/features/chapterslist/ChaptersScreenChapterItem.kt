@@ -26,7 +26,6 @@ import my.noveldoksuha.coreui.components.AnimatedTransition
 import my.noveldoksuha.coreui.theme.ColorNotice
 import my.noveldoksuha.coreui.theme.InternalTheme
 import my.noveldoksuha.coreui.theme.PreviewThemes
-import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldokusha.chapterslist.R
 import my.noveldokusha.feature.local_database.ChapterWithContext
 import my.noveldokusha.feature.local_database.tables.Chapter
@@ -84,7 +83,7 @@ internal fun ChaptersScreenChapterItem(
         colors = ListItemDefaults.colors(
             supportingColor = MaterialTheme.colorScheme.onTertiary,
             containerColor =
-            if (selected) MaterialTheme.colorApp.tintedSelectedSurface
+            if (selected) MaterialTheme.colorScheme.secondaryContainer
             else MaterialTheme.colorScheme.surface
         ),
         modifier = modifier

@@ -51,7 +51,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import my.noveldoksuha.coreui.theme.clickableWithUnboundedIndicator
-import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldoksuha.coreui.theme.ifCase
 import my.noveldokusha.features.reader.features.LiveTranslationSettingData
 import androidx.compose.ui.unit.dp
@@ -74,7 +73,7 @@ internal fun TranslatorSettingDialog(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorApp.tintedSurface
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column(
@@ -91,7 +90,7 @@ internal fun TranslatorSettingDialog(
                     Icon(
                         Icons.Filled.Translate, 
                         contentDescription = null, 
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(end = 8.dp).size(20.dp)
                     )
                     Text(
@@ -157,7 +156,7 @@ internal fun TranslatorSettingDialog(
                                     text = state.source.value?.locale?.displayLanguage
                                         ?: stringResource(R.string.language_source_empty_text),
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.ifCase(state.source.value == null) { alpha(0.5f) },
                                 )
                             }
@@ -183,7 +182,7 @@ internal fun TranslatorSettingDialog(
                                     text = state.target.value?.locale?.displayLanguage
                                         ?: stringResource(R.string.language_target_empty_text),
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.ifCase(state.target.value == null) { alpha(0.5f) },
                                 )
                             }

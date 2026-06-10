@@ -65,7 +65,6 @@ import androidx.compose.ui.unit.toSize
 import my.noveldoksuha.coreui.components.MySlider
 import my.noveldoksuha.coreui.theme.Themes
 import my.noveldoksuha.coreui.theme.collectAsStateInitial
-import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldokusha.core.appPreferences.AppPreferences
 import my.noveldokusha.features.reader.tools.FontsLoader
 import my.noveldokusha.features.reader.ui.ReaderScreenState
@@ -87,7 +86,7 @@ internal fun StyleSettingDialog(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 12.dp),
         shape = RoundedCornerShape(32.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorApp.tintedSurface
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column(
@@ -276,7 +275,7 @@ private fun LabelText(text: String) {
         style = MaterialTheme.typography.labelLarge.copy(
             fontWeight = FontWeight.Bold
         ),
-        color = MaterialTheme.colorScheme.primary,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(bottom = 4.dp)
     )
 }
@@ -288,11 +287,11 @@ private fun ThemeChip(
     label: String
 ) {
     val containerColor by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
+        targetValue = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
         label = ""
     )
     val contentColor by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+        targetValue = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
         label = ""
     )
 

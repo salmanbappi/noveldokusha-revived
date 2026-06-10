@@ -64,7 +64,6 @@ import my.nanihadesuka.compose.InternalLazyColumnScrollbar
 import my.noveldoksuha.coreui.theme.ColorAccent
 import my.noveldoksuha.coreui.theme.ColorLike
 import my.noveldoksuha.coreui.theme.ColorNotice
-import my.noveldoksuha.coreui.theme.colorApp
 import my.noveldoksuha.coreui.theme.isAtTop
 import my.noveldoksuha.coreui.theme.textPadding
 import my.noveldokusha.chapterslist.R
@@ -113,7 +112,7 @@ internal fun ChaptersScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = MaterialTheme.colorScheme.primary,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             val isAtTop by lazyListState.isAtTop(threshold = 40.dp)
             val alpha by animateFloatAsState(targetValue = if (isAtTop) 0f else 1f, label = "")
@@ -121,10 +120,7 @@ internal fun ChaptersScreen(
                 targetValue = MaterialTheme.colorScheme.background.copy(alpha = alpha),
                 label = ""
             )
-            val appBarContentColor by animateColorAsState(
-                targetValue = if (isAtTop) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                label = ""
-            )
+            val appBarContentColor = MaterialTheme.colorScheme.onSurface
             val titleColor by animateColorAsState(
                 targetValue = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
                 label = ""
@@ -210,12 +206,12 @@ internal fun ChaptersScreen(
                 exit = shrinkVertically(targetHeight = { it / 2 }, shrinkTowards = Alignment.Top)
                         + fadeOut(),
             ) {
-                Surface(color = MaterialTheme.colorApp.tintedSurface) {
+                Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
                     TopAppBar(
                         scrollBehavior = scrollBehavior,
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorApp.tintedSurface,
-                            scrolledContainerColor = MaterialTheme.colorApp.tintedSurface,
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                         ),
                         title = {
                             Text(
@@ -276,7 +272,7 @@ internal fun ChaptersScreen(
             ) {
                 BottomAppBar(
                     modifier = Modifier.clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                    containerColor = MaterialTheme.colorApp.tintedSurface,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
