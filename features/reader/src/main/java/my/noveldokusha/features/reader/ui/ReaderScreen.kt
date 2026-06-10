@@ -427,7 +427,9 @@ private fun ViewsPreview(
         setVoiceSpeed = {},
         setVoicePitch = {},
         setCustomSavedVoices = {},
-        customSavedVoices = rememberMutableStateOf(value = listOf())
+        customSavedVoices = rememberMutableStateOf(value = listOf()),
+        chapterWordCount = remember { mutableStateOf(1000) },
+        remainingWordCount = remember { mutableStateOf(500) },
     )
 
     val style = ReaderScreenState.Settings.StyleSettingsData(

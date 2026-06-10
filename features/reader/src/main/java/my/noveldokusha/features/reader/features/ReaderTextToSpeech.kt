@@ -46,6 +46,8 @@ internal data class TextToSpeechSettingData(
     val setVoiceId: (voiceId: String) -> Unit,
     val setVoiceSpeed: (Float) -> Unit,
     val setVoicePitch: (Float) -> Unit,
+    val chapterWordCount: State<Int>,
+    val remainingWordCount: State<Int>,
 )
 
 internal data class TextSynthesis(
@@ -98,6 +100,29 @@ internal class ReaderTextToSpeech(
     val scrollToReaderItem = MutableSharedFlow<ReaderItem>()
     val scrollToChapterTop = MutableSharedFlow<ChapterIndex>()
 
+    val chapterWordCount = derivedStateOf {
+        val currentChapterIndex = currentTextPlaying.value.itemPos.chapterIndex
+        if (isChapterIndexValid(currentChapterIndex)) {
+            items.filterIsInstance<ReaderItem.Text>()
+                .filter { it.chapterIndex == currentChapterIndex }
+                .sumOf { it.textToDisplay.wordCount() }
+        } else {
+            0
+        }
+    }
+
+    val remainingWordCount = derivedStateOf {
+        val currentChapterIndex = currentTextPlaying.value.itemPos.chapterIndex
+        val currentItemPos = currentTextPlaying.value.itemPos.chapterItemPosition
+        if (isChapterIndexValid(currentChapterIndex)) {
+            items.filterIsInstance<ReaderItem.Text>()
+                .filter { it.chapterIndex == currentChapterIndex && it.chapterItemPosition >= currentItemPos }
+                .sumOf { it.textToDisplay.wordCount() }
+        } else {
+            0
+        }
+    }
+
     val state = TextToSpeechSettingData(
         isPlaying = mutableStateOf(false),
         isLoadingChapter = mutableStateOf(false),
@@ -121,6 +146,8 @@ internal class ReaderTextToSpeech(
         scrollToActiveItem = ::scrollToActiveItem,
         setVoicePitch = ::setVoicePitch,
         setVoiceSpeed = ::setVoiceSpeed,
+        chapterWordCount = chapterWordCount,
+        remainingWordCount = remainingWordCount,
     )
 
     val isActive = derivedStateOf { state.isThereActiveItem.value || state.isPlaying.value }
@@ -529,4 +556,9 @@ internal class ReaderTextToSpeech(
             else -> Unit
         }
     }
+}
+
+private fun String.wordCount(): Int {
+    if (this.isEmpty()) return 0
+    return this.split(Regex("\\s+")).count { it.isNotEmpty() }
 }

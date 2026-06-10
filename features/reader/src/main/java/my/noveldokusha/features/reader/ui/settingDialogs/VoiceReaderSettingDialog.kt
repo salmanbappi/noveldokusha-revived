@@ -302,7 +302,71 @@ internal fun VoiceReaderSettingDialog(
                     setDialogOpen = { openVoicesDialog = it }
                 )
 
-                Spacer(modifier = Modifier.heightIn(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Premium progress card
+                val voiceSpeed = state.voiceSpeed.value
+                val wpm = (160 * voiceSpeed).toInt()
+                val totalWords = state.chapterWordCount.value
+                val remainingWords = state.remainingWordCount.value
+
+                val totalSeconds = if (wpm > 0) (totalWords * 60f / wpm).toInt() else 0
+                val remainingSeconds = if (wpm > 0) (remainingWords * 60f / wpm).toInt() else 0
+
+                val totalDurationStr = formatDuration(totalSeconds)
+                val remainingDurationStr = formatDuration(remainingSeconds)
+
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = "Estimated Time Left",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                            Text(
+                                text = remainingDurationStr,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(
+                                text = "$wpm WPM",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Total Chapter: $totalDurationStr",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Player playback buttons
                 Surface(
@@ -810,4 +874,16 @@ private fun VoiceSelectorDialogContentPreview() {
             isDialogOpen = true
         )
     }
+}
+
+private fun formatDuration(seconds: Int): String {
+    if (seconds <= 0) return "0s"
+    val h = seconds / 3600
+    val m = (seconds % 3600) / 60
+    val s = seconds % 60
+    return buildString {
+        if (h > 0) append("${h}h ")
+        if (m > 0 || h > 0) append("${m}m ")
+        if (s > 0 || (h == 0 && m == 0)) append("${s}s")
+    }.trim()
 }

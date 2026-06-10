@@ -66,19 +66,35 @@ internal class NarratorMediaControlsNotification @Inject constructor(
             context,
             PlaybackStateCompat.ACTION_PLAY_PAUSE
         )
-        val mediaSession = MediaSessionCompat(
+        val session = MediaSessionCompat(
             context,
             mediaTagDebug,
             ComponentName(context, MediaButtonReceiver::class.java),
             mbrIntent
-        ).also {
+        ).apply {
             // https://stackoverflow.com/questions/59443133/disable-or-hide-seekbar-in-mediastyle-notifications
             val mediaMetadata = MediaMetadataCompat.Builder().putLong(MediaMetadataCompat.METADATA_KEY_DURATION, -1L).build()
-            it.setMetadata(mediaMetadata)
+            setMetadata(mediaMetadata)
 
-            it.setCallback(NarratorMediaControlsCallback(readerSession.readerTextToSpeech))
-            mediaSession = it
+            setCallback(NarratorMediaControlsCallback(readerSession.readerTextToSpeech))
+            isActive = true
+
+            val initialIsPlaying = readerSession.readerTextToSpeech.state.isPlaying.value
+            val state = if (initialIsPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+            val stateBuilder = PlaybackStateCompat.Builder()
+                .setActions(
+                    PlaybackStateCompat.ACTION_PLAY or
+                    PlaybackStateCompat.ACTION_PAUSE or
+                    PlaybackStateCompat.ACTION_STOP or
+                    PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                    PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+                    PlaybackStateCompat.ACTION_REWIND or
+                    PlaybackStateCompat.ACTION_FAST_FORWARD
+                )
+                .setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1.0f)
+            setPlaybackState(stateBuilder.build())
         }
+        this.mediaSession = session
 
         val cancelButton = MediaButtonReceiver.buildMediaButtonPendingIntent(
             context,
@@ -89,7 +105,7 @@ internal class NarratorMediaControlsNotification @Inject constructor(
             .setShowCancelButton(true)
             .setShowActionsInCompactView(0, 2, 4)
             .setCancelButtonIntent(cancelButton)
-            .setMediaSession(mediaSession.sessionToken)
+            .setMediaSession(session.sessionToken)
 
         val readerIntent = ReaderActivity.IntentData(
             ctx = context,
@@ -210,6 +226,19 @@ internal class NarratorMediaControlsNotification @Inject constructor(
                     ) {
                         defineActions(isPlaying = isPlaying)
                     }
+                    val state = if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+                    val stateBuilder = PlaybackStateCompat.Builder()
+                        .setActions(
+                            PlaybackStateCompat.ACTION_PLAY or
+                            PlaybackStateCompat.ACTION_PAUSE or
+                            PlaybackStateCompat.ACTION_STOP or
+                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+                            PlaybackStateCompat.ACTION_REWIND or
+                            PlaybackStateCompat.ACTION_FAST_FORWARD
+                        )
+                        .setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1.0f)
+                    this@NarratorMediaControlsNotification.mediaSession?.setPlaybackState(stateBuilder.build())
                 }
         }
 
