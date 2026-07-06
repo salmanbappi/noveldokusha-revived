@@ -44,8 +44,8 @@ android {
         applicationId = "my.noveldokusha"
         minSdk = 26
         targetSdk = 34
-        versionCode = 94
-        versionName = "2.4.70"
+        versionCode = 95
+        versionName = "2.4.71"
         setProperty("archivesBaseName", "NovelDokusha_v$versionName")
 
         testInstrumentationRunner = "my.noveldokusha.HiltTestRunner"
