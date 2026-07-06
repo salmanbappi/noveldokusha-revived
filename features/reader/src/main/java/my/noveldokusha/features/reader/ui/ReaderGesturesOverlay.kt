@@ -68,7 +68,7 @@ fun ReaderGesturesOverlay(
 
     // State for UI Feedback
     var feedbackVisible by remember { mutableStateOf(false) }
-    var feedbackIcon by remember { mutableStateOf(Icons.Default.BrightnessMedium) }
+    var feedbackIcon by remember { mutableStateOf(Icons.Outlined.BrightnessMedium) }
     var feedbackText by remember { mutableStateOf("") }
     
     // Auto-hide feedback
@@ -99,7 +99,7 @@ fun ReaderGesturesOverlay(
             layoutParams.screenBrightness = newBrightness
             act.window.attributes = layoutParams
 
-            feedbackIcon = Icons.Default.BrightnessMedium
+            feedbackIcon = Icons.Outlined.BrightnessMedium
             feedbackText = "${(newBrightness * 100).toInt()}%"
             feedbackVisible = true
         }
@@ -120,7 +120,7 @@ fun ReaderGesturesOverlay(
              val newVolume = (currentVolume + direction).coerceIn(0, maxVolume)
              if (newVolume != currentVolume) {
                  audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
-                 feedbackIcon = Icons.Default.VolumeUp
+                 feedbackIcon = Icons.Outlined.VolumeUp
                  feedbackText = "$newVolume / $maxVolume"
                  feedbackVisible = true
              }
@@ -169,7 +169,7 @@ fun ReaderGesturesOverlay(
             exit = fadeOut(),
             modifier = Modifier.fillMaxSize()
         ) {
-            val isBrightness = feedbackIcon == Icons.Default.BrightnessMedium
+            val isBrightness = feedbackIcon == Icons.Outlined.BrightnessMedium
             Box(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier

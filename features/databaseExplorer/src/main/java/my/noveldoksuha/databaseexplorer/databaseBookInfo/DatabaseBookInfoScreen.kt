@@ -90,7 +90,7 @@ internal fun DatabaseBookInfoScreen(
                         },
                         actions = {
                             IconButton(onClick = onOpenInWeb) {
-                                Icon(Icons.Filled.Public, stringResource(R.string.open_in_browser))
+                                Icon(Icons.Outlined.Public, stringResource(R.string.open_in_browser))
                             }
                         }
                     )

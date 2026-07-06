@@ -184,31 +184,31 @@ private fun PreviewCards() {
                     selected = false,
                     onClick = {},
                     label = { Text(text = "FilterChip false") },
-                    leadingIcon = { Icon(Icons.Filled.Phone, null) },
+                    leadingIcon = { Icon(Icons.Outlined.Phone, null) },
                 )
                 Text(text = "-")
                 FilterChip(
                     selected = true,
                     onClick = {},
                     label = { Text(text = "FilterChip true ") },
-                    leadingIcon = { Icon(Icons.Filled.Phone, null) },
+                    leadingIcon = { Icon(Icons.Outlined.Phone, null) },
                 )
             }
             AssistChip(
                 onClick = {},
                 label = { Text(text = "AssistChip") },
-                leadingIcon = { Icon(Icons.Filled.Phone, null) },
+                leadingIcon = { Icon(Icons.Outlined.Phone, null) },
             )
             ElevatedAssistChip(
                 onClick = {},
                 label = { Text(text = "ElevatedAssistChip") },
-                leadingIcon = { Icon(Icons.Filled.Phone, null) },
+                leadingIcon = { Icon(Icons.Outlined.Phone, null) },
             )
             ElevatedFilterChip(
                 selected = false,
                 onClick = {},
                 label = { Text(text = "ElevatedFilterChip") },
-                leadingIcon = { Icon(Icons.Filled.Phone, null) },
+                leadingIcon = { Icon(Icons.Outlined.Phone, null) },
             )
             ElevatedSuggestionChip(
                 onClick = {},
@@ -219,14 +219,14 @@ private fun PreviewCards() {
                     selected = false,
                     onClick = {},
                     label = { Text(text = "InputChip false") },
-                    leadingIcon = { Icon(Icons.Filled.Phone, null) },
+                    leadingIcon = { Icon(Icons.Outlined.Phone, null) },
                 )
                 Text(text = "-")
                 InputChip(
                     selected = true,
                     onClick = {},
                     label = { Text(text = "InputChip true") },
-                    leadingIcon = { Icon(Icons.Filled.Phone, null) },
+                    leadingIcon = { Icon(Icons.Outlined.Phone, null) },
                 )
             }
         }
@@ -241,25 +241,25 @@ private fun PreviewMiscellaneous() {
     InternalTheme {
         Column {
             BottomAppBar {
-                IconButton(onClick = { }) { Icon(Icons.Filled.Home, null) }
-                IconButton(onClick = { }) { Icon(Icons.Filled.Home, null) }
-                IconButton(onClick = { }) { Icon(Icons.Filled.Home, null) }
+                IconButton(onClick = { }) { Icon(Icons.Outlined.Home, null) }
+                IconButton(onClick = { }) { Icon(Icons.Outlined.Home, null) }
+                IconButton(onClick = { }) { Icon(Icons.Outlined.Home, null) }
             }
             CenterAlignedTopAppBar(
                 title = { Text(text = "CenterAlignedTopAppBar") },
-                navigationIcon = { Icon(Icons.Filled.Menu, null) },
-                actions = { Icon(Icons.Filled.Person, null) }
+                navigationIcon = { Icon(Icons.Outlined.Menu, null) },
+                actions = { Icon(Icons.Outlined.Person, null) }
             )
 
             LargeTopAppBar(
                 title = { Text(text = "LargeTopAppBar") },
-                navigationIcon = { Icon(Icons.Filled.Menu, null) },
-                actions = { Icon(Icons.Filled.Person, null) }
+                navigationIcon = { Icon(Icons.Outlined.Menu, null) },
+                actions = { Icon(Icons.Outlined.Person, null) }
             )
             MediumTopAppBar(
                 title = { Text(text = "MediumTopAppBar") },
-                navigationIcon = { Icon(Icons.Filled.Menu, null) },
-                actions = { Icon(Icons.Filled.Person, null) }
+                navigationIcon = { Icon(Icons.Outlined.Menu, null) },
+                actions = { Icon(Icons.Outlined.Person, null) }
             )
             TabRow(selectedTabIndex = 1) {
                 Tab(selected = true, onClick = {}) { Text(text = "1") }
@@ -287,8 +287,8 @@ private fun PreviewMiscellaneous() {
                 overlineContent = { Text(text = "over-line content") },
                 headlineContent = { Text(text = "Headline") },
                 supportingContent = { Text(text = "supporting content") },
-                leadingContent = { Icon(Icons.Filled.Face, null) },
-                trailingContent = { Icon(Icons.Filled.Face, null) },
+                leadingContent = { Icon(Icons.Outlined.Face, null) },
+                trailingContent = { Icon(Icons.Outlined.Face, null) },
             )
             // Other stuff
             Snackbar {
@@ -319,8 +319,8 @@ private fun PreviewTextFields() {
                 onValueChange = {},
                 label = { Text("label") },
                 placeholder = { Text("placeholder") },
-                leadingIcon = { Icon(Icons.Filled.Person, null) },
-                trailingIcon = { Icon(Icons.Filled.Person, null) },
+                leadingIcon = { Icon(Icons.Outlined.Person, null) },
+                trailingIcon = { Icon(Icons.Outlined.Person, null) },
                 isError = false,
             )
             TextField(
@@ -328,8 +328,8 @@ private fun PreviewTextFields() {
                 onValueChange = {},
                 label = { Text("label") },
                 placeholder = { Text("placeholder") },
-                leadingIcon = { Icon(Icons.Filled.Person, null) },
-                trailingIcon = { Icon(Icons.Filled.Person, null) },
+                leadingIcon = { Icon(Icons.Outlined.Person, null) },
+                trailingIcon = { Icon(Icons.Outlined.Person, null) },
                 isError = true,
             )
             OutlinedTextField(
@@ -337,8 +337,8 @@ private fun PreviewTextFields() {
                 onValueChange = {},
                 label = { Text("label") },
                 placeholder = { Text("placeholder") },
-                leadingIcon = { Icon(Icons.Filled.Person, null) },
-                trailingIcon = { Icon(Icons.Filled.Person, null) },
+                leadingIcon = { Icon(Icons.Outlined.Person, null) },
+                trailingIcon = { Icon(Icons.Outlined.Person, null) },
                 isError = false,
             )
             OutlinedTextField(
@@ -346,8 +346,8 @@ private fun PreviewTextFields() {
                 onValueChange = {},
                 label = { Text("label") },
                 placeholder = { Text("placeholder") },
-                leadingIcon = { Icon(Icons.Filled.Person, null) },
-                trailingIcon = { Icon(Icons.Filled.Person, null) },
+                leadingIcon = { Icon(Icons.Outlined.Person, null) },
+                trailingIcon = { Icon(Icons.Outlined.Person, null) },
                 isError = true,
             )
             BasicTextField(

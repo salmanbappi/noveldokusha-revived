@@ -26,7 +26,7 @@ internal fun LibraryDropDown(
     ) {
         DropdownMenuItem(
             leadingIcon = {
-                Icon(Icons.Filled.FileOpen, stringResource(id = R.string.import_epub))
+                Icon(Icons.Outlined.FileOpen, stringResource(id = R.string.import_epub))
             },
             text = { Text(stringResource(id = R.string.import_epub)) },
             onClick = onDoImportEPUB()
@@ -35,7 +35,7 @@ internal fun LibraryDropDown(
         DropdownMenuItem(
             leadingIcon = {
                 Icon(
-                    if (layoutMode == ListLayoutMode.VerticalGrid) Icons.Filled.ViewList else Icons.Filled.GridView,
+                    if (layoutMode == ListLayoutMode.VerticalGrid) Icons.Outlined.ViewList else Icons.Outlined.GridView,
                     null
                 )
             },

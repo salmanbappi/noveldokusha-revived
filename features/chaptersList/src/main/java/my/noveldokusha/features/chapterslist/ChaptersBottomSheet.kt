@@ -44,9 +44,9 @@ internal fun ChaptersBottomSheet(
                 state = state.settingChapterSort.value,
                 onStateChange = { state.settingChapterSort.value = it.next() },
                 modifier = Modifier.fillMaxWidth(),
-                activeIcon = { Icon(imageVector = Icons.Filled.ArrowUpward, null) },
-                inverseIcon = { Icon(imageVector = Icons.Filled.ArrowDownward, null) },
-                inactiveIcon = { Icon(imageVector = Icons.Filled.SortByAlpha, null) },
+                activeIcon = { Icon(imageVector = Icons.Outlined.ArrowUpward, null) },
+                inverseIcon = { Icon(imageVector = Icons.Outlined.ArrowDownward, null) },
+                inactiveIcon = { Icon(imageVector = Icons.Outlined.SortByAlpha, null) },
             )
         }
     }

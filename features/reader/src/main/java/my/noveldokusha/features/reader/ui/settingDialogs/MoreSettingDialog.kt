@@ -94,7 +94,7 @@ internal fun MoreSettingDialog(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 SettingsToggleItem(
                     title = "Auto Scroll",
-                    icon = Icons.Default.ArrowDownward,
+                    icon = Icons.Outlined.ArrowDownward,
                     checked = autoScrollSpeed > 0,
                     onCheckedChange = { onAutoScrollChange(if (it) 5 else 0) }
                 )

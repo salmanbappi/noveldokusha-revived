@@ -48,7 +48,7 @@ internal fun ChaptersDropDown(
         },
         leadingIcon = {
             Icon(
-                Icons.Filled.PlayArrow,
+                Icons.Outlined.PlayArrow,
                 stringResource(R.string.resume_reading),
             )
         }
@@ -60,7 +60,7 @@ internal fun ChaptersDropDown(
         },
         leadingIcon = {
             Icon(
-                Icons.Filled.Image,
+                Icons.Outlined.Image,
                 stringResource(R.string.change_cover),
             )
         }

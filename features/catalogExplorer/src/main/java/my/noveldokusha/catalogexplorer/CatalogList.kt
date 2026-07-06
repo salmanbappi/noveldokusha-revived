@@ -129,7 +129,7 @@ internal fun CatalogList(
                         )
                         if (item.isDefault) {
                             Icon(
-                                imageVector = Icons.Filled.Star,
+                                imageVector = Icons.Outlined.Star,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.padding(start = 4.dp).size(14.dp)
@@ -196,7 +196,7 @@ internal fun CatalogList(
                                 onClick = { openConfig = !openConfig },
                             ) {
                                 Icon(
-                                    imageVector = Icons.Filled.Settings,
+                                    imageVector = Icons.Outlined.Settings,
                                     contentDescription = stringResource(R.string.configuration),
                                 )
                             }
@@ -211,7 +211,7 @@ internal fun CatalogList(
                                     text = { catalog.ScreenConfig() },
                                     icon = {
                                         Icon(
-                                            Icons.Filled.Settings,
+                                            Icons.Outlined.Settings,
                                             stringResource(id = R.string.configuration),
                                             tint = MaterialTheme.colorScheme.onPrimary
                                         )
@@ -224,7 +224,7 @@ internal fun CatalogList(
                             onClick = { onSourceClick(item.catalog) },
                         ) {
                             Icon(
-                                imageVector = androidx.compose.material.icons.Icons.Default.Visibility,
+                                imageVector = androidx.compose.material.icons.Icons.Outlined.Visibility,
                                 contentDescription = "Preview Source",
                                 tint = MaterialTheme.colorScheme.primary
                             )
@@ -234,7 +234,7 @@ internal fun CatalogList(
                             onClick = { onSourceSetDefault(item.catalog.id, !item.isDefault) },
                         ) {
                             Icon(
-                                imageVector = if (item.isDefault) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                                imageVector = if (item.isDefault) Icons.Outlined.Star else Icons.Outlined.StarOutline,
                                 contentDescription = "Set Default",
                                 tint = if (item.isDefault) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -245,7 +245,7 @@ internal fun CatalogList(
                         ) {
                             AnimatedTransition(targetState = item.pinned) { pinned ->
                                 Icon(
-                                    imageVector = if (pinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                                    imageVector = if (pinned) Icons.Outlined.PushPin else Icons.Outlined.PushPin,
                                     contentDescription = stringResource(R.string.pin_or_unpin_source),
                                 )
                             }

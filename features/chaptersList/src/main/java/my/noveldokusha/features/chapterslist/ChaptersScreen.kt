@@ -167,14 +167,14 @@ internal fun ChaptersScreen(
                                 onClick = { showBottomSheet = !showBottomSheet }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Filled.FilterList,
+                                    imageVector = Icons.Outlined.FilterList,
                                     contentDescription = stringResource(R.string.filter),
                                     tint = appBarContentColor
                                 )
                             }
                             IconButton(onClick = { showDropDown = !showDropDown }) {
                                 Icon(
-                                    imageVector = Icons.Filled.MoreVert,
+                                    imageVector = Icons.Outlined.MoreVert,
                                     contentDescription = stringResource(R.string.options_panel),
                                     tint = appBarContentColor
                                 )
@@ -296,14 +296,14 @@ internal fun ChaptersScreen(
                         if (areSelectedChaptersRead) {
                             IconButton(onClick = onSelectedSetUnread) {
                                 Icon(
-                                    Icons.Filled.DoneOutline,
+                                    Icons.Outlined.DoneOutline,
                                     stringResource(id = R.string.set_as_not_read_selected_chapters)
                                 )
                             }
                         } else {
                             IconButton(onClick = onSelectedSetRead) {
                                 Icon(
-                                    Icons.Filled.Done,
+                                    Icons.Outlined.Done,
                                     stringResource(id = R.string.set_as_read_selected_chapters)
                                 )
                             }
@@ -312,14 +312,14 @@ internal fun ChaptersScreen(
                             if (areSelectedChaptersRead) {
                                 IconButton(onClick = onSelectedSetReadUpToChapterUnread) {
                                     Icon(
-                                        Icons.Filled.RemoveDone,
+                                        Icons.Outlined.RemoveDone,
                                         stringResource(id = R.string.set_as_Unread_up_to_selected_chapter)
                                     )
                                 }
                             } else {
                                 IconButton(onClick = onSelectedSetReadUpToChapterRead) {
                                     Icon(
-                                        Icons.Filled.DoneAll,
+                                        Icons.Outlined.DoneAll,
                                         stringResource(id = R.string.set_as_read_up_to_selected_chapter)
                                     )
 
@@ -342,7 +342,7 @@ internal fun ChaptersScreen(
                     modifier = Modifier.textPadding()
                 ) {
                     Icon(
-                        Icons.Filled.PlayArrow,
+                        Icons.Outlined.PlayArrow,
                         contentDescription = stringResource(id = R.string.open_last_read_chapter),
                         tint = Color.White
                     )

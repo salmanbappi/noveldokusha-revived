@@ -75,7 +75,7 @@ internal fun SettingsTranslationModelsDialog(
                                             enabled = it.language != "en"
                                         ) {
                                             Icon(
-                                                Icons.Filled.Delete,
+                                                Icons.Outlined.Delete,
                                                 contentDescription = null,
                                             )
                                         }
@@ -92,7 +92,7 @@ internal fun SettingsTranslationModelsDialog(
                                 else -> IconButton(
                                     onClick = { onDownloadTranslationModel(it.language) }) {
                                     Icon(
-                                        Icons.Filled.CloudDownload,
+                                        Icons.Outlined.CloudDownload,
                                         contentDescription = null,
                                         tint = if (it.downloadingFailed) Color.Red
                                         else LocalContentColor.current

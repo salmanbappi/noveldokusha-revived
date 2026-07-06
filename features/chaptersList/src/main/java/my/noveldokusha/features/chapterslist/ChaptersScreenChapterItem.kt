@@ -72,7 +72,7 @@ internal fun ChaptersScreenChapterItem(
                 ) { downloaded ->
                     IconButton(onClick = onDownload) {
                         Icon(
-                            if (downloaded) Icons.Filled.CloudDownload
+                            if (downloaded) Icons.Outlined.CloudDownload
                             else Icons.Outlined.CloudDownload,
                             null
                         )

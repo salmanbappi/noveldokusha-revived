@@ -162,7 +162,7 @@ internal fun ReaderScreen(
                             },
                             actions = {
                                 IconButton(onClick = onOpenChapterInWeb) {
-                                    Icon(Icons.Filled.Public, null)
+                                    Icon(Icons.Outlined.Public, null)
                                 }
                             }
                         )
@@ -308,7 +308,7 @@ internal fun ReaderScreen(
                                 currentType = state.settings.selectedSetting.value,
                                 settingType = Type.Audio,
                                 onClick = toggleOrSet,
-                                icon = Icons.Filled.RecordVoiceOver,
+                                icon = Icons.Outlined.RecordVoiceOver,
                                 textId = R.string.audio,
                             )
                             SettingIconItem(

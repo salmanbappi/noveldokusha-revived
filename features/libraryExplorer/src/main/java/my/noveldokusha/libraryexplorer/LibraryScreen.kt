@@ -63,7 +63,7 @@ fun LibraryScreen(
                         onClick = { libraryModel.showBottomSheet = !libraryModel.showBottomSheet }
                     ) {
                         Icon(
-                            Icons.Filled.FilterList,
+                            Icons.Outlined.FilterList,
                             stringResource(R.string.filter),
                             tint = ColorNotice
                         )
@@ -72,7 +72,7 @@ fun LibraryScreen(
                         onClick = { showDropDown = !showDropDown }
                     ) {
                         Icon(
-                            Icons.Filled.MoreVert,
+                            Icons.Outlined.MoreVert,
                             stringResource(R.string.options_panel)
                         )
                         LibraryDropDown(

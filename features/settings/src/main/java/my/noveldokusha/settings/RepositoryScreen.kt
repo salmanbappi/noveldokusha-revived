@@ -28,17 +28,17 @@ fun RepositoryScreen(onBack: () -> Unit) {
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(androidx.compose.material.icons.Icons.Default.ArrowBack, "Back")
+                        Icon(androidx.compose.material.icons.Icons.Outlined.ArrowBack, "Back")
                     }
                 },
                 title = { Text("Source Repositories") },
 // ...
                 actions = {
                     IconButton(onClick = { viewModel.refreshAll() }) {
-                        Icon(Icons.Default.Refresh, "Refresh")
+                        Icon(Icons.Outlined.Refresh, "Refresh")
                     }
                     IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, "Add Repo")
+                        Icon(Icons.Outlined.Add, "Add Repo")
                     }
                 }
             )
@@ -59,7 +59,7 @@ fun RepositoryScreen(onBack: () -> Unit) {
                     headlineContent = { Text(url) },
                     trailingContent = {
                         IconButton(onClick = { viewModel.removeRepo(url) }) {
-                            Icon(Icons.Default.Delete, "Remove")
+                            Icon(Icons.Outlined.Delete, "Remove")
                         }
                     }
                 )
@@ -94,7 +94,7 @@ fun RepositoryScreen(onBack: () -> Unit) {
                                 }
                             } else {
                                 IconButton(onClick = { viewModel.installSource(source) }) {
-                                    Icon(Icons.Default.Download, "Install")
+                                    Icon(Icons.Outlined.Download, "Install")
                                 }
                             }
                         }

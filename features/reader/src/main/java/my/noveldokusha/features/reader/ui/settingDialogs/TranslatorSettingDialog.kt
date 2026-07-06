@@ -88,7 +88,7 @@ internal fun TranslatorSettingDialog(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        Icons.Filled.Translate, 
+                        Icons.Outlined.Translate, 
                         contentDescription = null, 
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(end = 8.dp).size(20.dp)
@@ -247,7 +247,7 @@ internal fun TranslatorSettingDialog(
                                             item.available -> IconButton(
                                                 onClick = { state.onDownloadTranslationModel(item.language) },
                                             ) {
-                                                Icon(Icons.Filled.CloudDownload, null, tint = MaterialTheme.colorScheme.primary)
+                                                Icon(Icons.Outlined.CloudDownload, null, tint = MaterialTheme.colorScheme.primary)
                                             }
                                             else -> IconButton(
                                                 onClick = { state.onDownloadTranslationModel(item.language) },

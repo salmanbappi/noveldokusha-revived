@@ -52,7 +52,7 @@ internal fun <T : View> WebViewScreen(
                     },
                     navigationIcon = {
                         IconButton(onClick = onBackClicked) {
-                            Icon(Icons.Default.Close, null)
+                            Icon(Icons.Outlined.Close, null)
                         }
                     },
                     actions = {

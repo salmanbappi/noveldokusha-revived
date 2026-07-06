@@ -108,7 +108,7 @@ internal fun SourceCatalogScreen(
                                 }
                                 IconButton(onClick = { optionsExpanded = !optionsExpanded }) {
                                     Icon(
-                                        Icons.Filled.MoreVert,
+                                        Icons.Outlined.MoreVert,
                                         contentDescription = stringResource(R.string.open_for_more_options)
                                     )
                                     SourceCatalogDropDown(

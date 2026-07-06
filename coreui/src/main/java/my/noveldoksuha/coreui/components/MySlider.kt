@@ -34,6 +34,12 @@ import my.noveldoksuha.coreui.theme.InternalTheme
 import my.noveldoksuha.coreui.theme.mix
 import my.noveldoksuha.coreui.theme.selectableMinHeight
 
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import my.noveldoksuha.coreui.theme.SpaceMonoFontFamily
+
 @Composable
 fun MySlider(
     value: Float,
@@ -49,9 +55,15 @@ fun MySlider(
         modifier = modifier,
     ) {
         Text(
-            text = text,
+            text = text.uppercase(),
+            style = TextStyle(
+                fontFamily = SpaceMonoFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                letterSpacing = 0.08.em
+            ),
             modifier = Modifier.align(Alignment.Center),
-            color = MaterialTheme.colorScheme.contentColorFor(ColorAccent)
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -80,8 +92,8 @@ private fun MySliderBase(
     value: Float,
     onValueChange: (Float) -> Unit,
     height: Dp = selectableMinHeight,
-    backgroundColor: Color = ColorAccent.mix(MaterialTheme.colorScheme.primary, 0.5f),
-    trackColor: Color = ColorAccent,
+    backgroundColor: Color = MaterialTheme.colorScheme.outlineVariant,
+    trackColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     val currentValue by rememberUpdatedState(newValue = value)
     BoxWithConstraints {

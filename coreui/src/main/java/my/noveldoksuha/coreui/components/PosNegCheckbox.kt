@@ -63,7 +63,7 @@ fun PosNegCheckbox(
             state = updatedState,
             onClick = null,
             colors = CheckboxDefaults.colors(
-                checkmarkColor = MaterialTheme.colorScheme.primary,
+                checkmarkColor = MaterialTheme.colorScheme.surface,
                 checkedColor = checkedColor,
                 uncheckedColor = MaterialTheme.colorScheme.outline,
                 disabledCheckedColor = checkedColor.copy(alpha = 0.25f),

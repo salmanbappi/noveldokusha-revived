@@ -108,7 +108,7 @@ internal fun StyleSettingDialog(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Icon(
-                    Icons.Default.FormatPaint,
+                    Icons.Outlined.FormatPaint,
                     null,
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                 )
@@ -143,7 +143,7 @@ internal fun StyleSettingDialog(
                                 modifier = Modifier.size(40.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
-                                    Icon(Icons.Filled.TextFields, null, modifier = Modifier.size(20.dp))
+                                    Icon(Icons.Outlined.TextFields, null, modifier = Modifier.size(20.dp))
                                 }
                             }
                         },
@@ -257,10 +257,6 @@ internal fun StyleSettingDialog(
                                 )
                             }
                         }
-
-                        AnimatedVisibility(visible = state.currentTheme.value == Themes.CUSTOM) {
-                            CustomThemeEditor(appPreferences)
-                        }
                     }
                 }
             }
@@ -309,7 +305,7 @@ private fun ThemeChip(
             horizontalArrangement = Arrangement.Center
         ) {
             if (selected) {
-                Icon(Icons.Default.Check, null, modifier = Modifier.size(16.dp))
+                Icon(Icons.Outlined.Check, null, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(6.dp))
             }
             Text(

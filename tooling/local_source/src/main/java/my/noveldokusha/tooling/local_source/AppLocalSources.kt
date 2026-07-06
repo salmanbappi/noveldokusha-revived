@@ -62,7 +62,7 @@ class AppLocalSources @Inject constructor(
     override val baseUrl = "local://"
     override val catalogUrl = "local://"
     override val language = null
-    override val iconUrl = Icons.Filled.Folder
+    override val iconUrl = Icons.Outlined.Folder
 
     override suspend fun getChapterList(bookUrl: String): Response<List<ChapterResult>> {
         // This should always fail as is local
@@ -246,7 +246,7 @@ class AppLocalSources @Inject constructor(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(Icons.Filled.CreateNewFolder, null, tint = Grey25)
+                    Icon(Icons.Outlined.CreateNewFolder, null, tint = Grey25)
                     Text(text = stringResource(R.string.add_local_directory))
                 }
             }
@@ -264,11 +264,11 @@ class AppLocalSources @Inject constructor(
                         Text(text = item?.name ?: "** Access denied **")
                     },
                     leadingContent = {
-                        Icon(Icons.Filled.Folder, null)
+                        Icon(Icons.Outlined.Folder, null)
                     },
                     trailingContent = {
                         IconButton(onClick = { localSourcesDirectories.remove(it) }) {
-                            Icon(Icons.Filled.Delete, stringResource(id = R.string.delete))
+                            Icon(Icons.Outlined.Delete, stringResource(id = R.string.delete))
                         }
                     }
                 )

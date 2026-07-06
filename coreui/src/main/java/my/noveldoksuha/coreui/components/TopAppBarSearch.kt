@@ -130,7 +130,7 @@ fun TopAppBarSearch(
                                 focusRequester.requestFocus()
                             }) {
                                 Icon(
-                                    Icons.Filled.Close,
+                                    Icons.Outlined.Close,
                                     contentDescription = null
                                 )
                             }

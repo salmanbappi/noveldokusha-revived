@@ -109,10 +109,10 @@ internal fun DatabaseSearchBottomSheet(
                     ),
                     leadingIcon = {
                         when (genreItem.state) {
-                            ToggleableState.On -> Icon(Icons.Filled.CheckCircle, null)
-                            ToggleableState.Indeterminate -> Icon(Icons.Filled.RemoveCircle, null)
+                            ToggleableState.On -> Icon(Icons.Outlined.CheckCircle, null)
+                            ToggleableState.Indeterminate -> Icon(Icons.Outlined.RemoveCircle, null)
                             ToggleableState.Off -> Icon(
-                                Icons.Filled.Add,
+                                Icons.Outlined.Add,
                                 null,
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )

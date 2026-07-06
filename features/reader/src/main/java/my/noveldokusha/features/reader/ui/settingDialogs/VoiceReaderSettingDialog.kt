@@ -235,7 +235,7 @@ internal fun VoiceReaderSettingDialog(
                             onClick = debouncedAction { state.playFirstVisibleItem() },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Filled.CenterFocusWeak,
+                                    Icons.Outlined.CenterFocusWeak,
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -246,7 +246,7 @@ internal fun VoiceReaderSettingDialog(
                             onClick = debouncedAction { state.scrollToActiveItem() },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Filled.CenterFocusStrong,
+                                    Icons.Outlined.CenterFocusStrong,
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -257,7 +257,7 @@ internal fun VoiceReaderSettingDialog(
                             onClick = { openVoicesDialog = true },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Filled.RecordVoiceOver,
+                                    Icons.Outlined.RecordVoiceOver,
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -269,7 +269,7 @@ internal fun VoiceReaderSettingDialog(
                             label = { Text(text = stringResource(R.string.saved)) },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Filled.Bookmarks,
+                                    Icons.Outlined.Bookmarks,
                                     null,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -535,7 +535,7 @@ private fun SavedVoicesSection(
                         .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                 ) {
                     Icon(
-                        Icons.Default.Add, 
+                        Icons.Outlined.Add, 
                         null, 
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(20.dp)
@@ -559,7 +559,7 @@ private fun SavedVoicesSection(
                     },
                     trailingIcon = {
                         Icon(
-                            Icons.Default.Close,
+                            Icons.Outlined.Close,
                             null,
                             modifier = Modifier
                                 .size(16.dp)
@@ -745,7 +745,7 @@ private fun VoiceSelectorDialog(
                                     fontWeight = FontWeight.Bold
                                 )
                                 IconButton(onClick = { setDialogOpen(false) }) {
-                                    Icon(Icons.Default.Close, null)
+                                    Icon(Icons.Outlined.Close, null)
                                 }
                             }
                             Spacer(Modifier.height(8.dp))
@@ -797,7 +797,7 @@ private fun VoiceSelectorDialog(
                                 for (star in 0..4) {
                                     val yay = voice.quality > star * 100
                                     Icon(
-                                        imageVector = if (yay) Icons.Filled.StarRate else Icons.Outlined.StarBorder,
+                                        imageVector = if (yay) Icons.Outlined.StarRate else Icons.Outlined.StarBorder,
                                         contentDescription = null,
                                         tint = if (yay) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline,
                                         modifier = Modifier.size(14.dp)
@@ -822,7 +822,7 @@ private fun VoiceSelectorDialog(
                         trailingContent = {
                             if (selected) {
                                 Icon(
-                                    Icons.Default.RecordVoiceOver, 
+                                    Icons.Outlined.RecordVoiceOver, 
                                     null, 
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(24.dp)

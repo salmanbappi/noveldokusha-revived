@@ -28,7 +28,7 @@ fun Modifier.ifCase(condition: Boolean, fn: @Composable Modifier.() -> Modifier)
 
 @Composable
 fun Modifier.drawBottomLine(
-    color: Color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
+    color: Color = MaterialTheme.colorScheme.outlineVariant,
     thickness: Dp = Dp.Hairline
 ) = drawBehind {
     val thicknessPx = thickness.toPx()
@@ -42,7 +42,7 @@ fun Modifier.drawBottomLine(
 
 @Composable
 fun Modifier.drawTopLine(
-    color: Color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
+    color: Color = MaterialTheme.colorScheme.outlineVariant,
     thickness: Dp = Dp.Hairline
 ) = drawBehind {
     drawLine(
@@ -53,13 +53,11 @@ fun Modifier.drawTopLine(
     )
 }
 
-
 /**
  * Blocks any input from passing this composable down the event tree.
  * Effectively acts as a surface.
  */
 fun Modifier.blockInteraction() = this.pointerInput(Unit) {}
-
 
 fun Modifier.clickableWithUnboundedIndicator(onClick: () -> Unit) = composed {
     then(
@@ -93,7 +91,7 @@ fun Modifier.outlineCircle(width: Dp = 1.dp): Modifier = composed {
     then(
         border(
             width = width,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
+            color = MaterialTheme.colorScheme.outline,
             shape = CircleShape
         ).clip(CircleShape)
     )
@@ -103,7 +101,7 @@ fun Modifier.outlineRounded(width: Dp = 1.dp): Modifier = composed {
     then(
         border(
             width = width,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
+            color = MaterialTheme.colorScheme.outline,
             shape = MaterialTheme.shapes.medium
         ).clip(MaterialTheme.shapes.medium)
     )
@@ -112,7 +110,7 @@ fun Modifier.outlineRounded(width: Dp = 1.dp): Modifier = composed {
 fun Modifier.backgroundCircle(): Modifier = composed {
     then(
         background(
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.surface,
             shape = CircleShape
         )
     )
@@ -121,10 +119,31 @@ fun Modifier.backgroundCircle(): Modifier = composed {
 fun Modifier.backgroundRounded(): Modifier = composed {
     then(
         background(
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.medium
         )
     )
 }
 
 fun Modifier.textPadding() = then(padding(vertical = 8.dp, horizontal = 16.dp))
+
+@Composable
+fun Modifier.dotGrid(
+    color: Color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f),
+    dotRadius: Dp = 1.dp,
+    gridSize: Dp = 16.dp
+) = drawBehind {
+    val dotRadiusPx = dotRadius.toPx()
+    val gridSizePx = gridSize.toPx()
+    val cols = (size.width / gridSizePx).toInt()
+    val rows = (size.height / gridSizePx).toInt()
+    for (i in 0..cols) {
+        for (j in 0..rows) {
+            drawCircle(
+                color = color,
+                radius = dotRadiusPx,
+                center = Offset(i * gridSizePx, j * gridSizePx)
+            )
+        }
+    }
+}

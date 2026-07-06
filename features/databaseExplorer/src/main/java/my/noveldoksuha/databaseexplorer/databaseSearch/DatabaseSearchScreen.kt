@@ -120,7 +120,7 @@ internal fun DatabaseSearchScreen(
                             focusRequester.requestFocus() // Doesn't work
                         },
                         label = { Text(text = stringResource(R.string.filter_title)) },
-                        leadingIcon = { Icon(Icons.Filled.Title, null) },
+                        leadingIcon = { Icon(Icons.Outlined.Title, null) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedLeadingIconColor = Grey25,
                             disabledLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
@@ -137,7 +137,7 @@ internal fun DatabaseSearchScreen(
                             Text(text = stringResource(R.string.filter_genres))
                         },
                         leadingIcon = {
-                            Icon(Icons.Filled.FilterList, null, tint = ColorNotice)
+                            Icon(Icons.Outlined.FilterList, null, tint = ColorNotice)
                         }
                     )
                 }

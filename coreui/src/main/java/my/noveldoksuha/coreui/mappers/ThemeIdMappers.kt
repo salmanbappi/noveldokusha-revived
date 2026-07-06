@@ -7,20 +7,10 @@ val PreferenceThemes.toTheme
     get() = when (this) {
         PreferenceThemes.Light -> Themes.LIGHT
         PreferenceThemes.Dark -> Themes.DARK
-        PreferenceThemes.Black -> Themes.BLACK
-        PreferenceThemes.Nord -> Themes.NORD
-        PreferenceThemes.Sepia -> Themes.SEPIA
-        PreferenceThemes.Custom -> Themes.CUSTOM
-        PreferenceThemes.Dynamic -> Themes.DYNAMIC
     }
 
 val Themes.toPreferenceTheme
     get() = when (this) {
         Themes.LIGHT -> PreferenceThemes.Light
         Themes.DARK -> PreferenceThemes.Dark
-        Themes.BLACK -> PreferenceThemes.Black
-        Themes.NORD -> PreferenceThemes.Nord
-        Themes.SEPIA -> PreferenceThemes.Sepia
-        Themes.CUSTOM -> PreferenceThemes.Custom
-        Themes.DYNAMIC -> PreferenceThemes.Dynamic
     }
