@@ -9,7 +9,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton

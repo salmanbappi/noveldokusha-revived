@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowRightAlt
-import androidx.compose.material.icons.filled.CloudDownload
-import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material.icons.outlined.CloudDownload
+import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
