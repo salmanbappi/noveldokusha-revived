@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.LibraryBooks
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -106,7 +106,7 @@ internal fun DatabaseSearchScreen(
                             onSearchCatalogSubmit()
                         },
                         label = { Text(text = stringResource(R.string.filter_catalog)) },
-                        leadingIcon = { Icon(Icons.AutoMirrored.Filled.LibraryBooks, null) },
+                        leadingIcon = { Icon(Icons.AutoMirrored.Outlined.LibraryBooks, null) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedLeadingIconColor = Grey25,
                             disabledLeadingIconColor = MaterialTheme.colorScheme.onPrimary,

@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.outlined.ColorLens
@@ -157,7 +157,7 @@ internal fun ReaderScreen(
                             },
                             navigationIcon = {
                                 IconButton(onClick = onPressBack) {
-                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, null)
                                 }
                             },
                             actions = {
