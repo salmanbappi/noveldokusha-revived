@@ -45,6 +45,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -333,7 +335,10 @@ internal fun ChaptersScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                containerColor = ColorAccent,
+                containerColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.surface,
+                elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                shape = CircleShape,
                 onClick = onResumeReading
             ) {
                 Row(
@@ -343,12 +348,12 @@ internal fun ChaptersScreen(
                 ) {
                     Icon(
                         Icons.Outlined.PlayArrow,
-                        contentDescription = stringResource(id = R.string.open_last_read_chapter),
-                        tint = Color.White
+                        contentDescription = stringResource(id = R.string.open_last_read_chapter)
                     )
                     AnimatedVisibility(visible = lazyListState.isAtTop(threshold = 100.dp).value) {
                         Text(
-                            text = stringResource(id = R.string.read),
+                            text = stringResource(id = R.string.read).uppercase(),
+                            style = MaterialTheme.typography.labelLarge,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                     }
