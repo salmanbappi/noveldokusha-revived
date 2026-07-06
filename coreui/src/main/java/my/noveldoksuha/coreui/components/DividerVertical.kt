@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DividerVertical(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.onSurface,
+    color: Color = MaterialTheme.colorScheme.outlineVariant,
     thickness: Dp = 1.dp,
     topIndent: Dp = 0.dp
 ) {

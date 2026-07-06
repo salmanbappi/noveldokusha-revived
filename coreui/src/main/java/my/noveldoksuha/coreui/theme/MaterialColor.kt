@@ -13,32 +13,32 @@ private fun createColorScheme(
     onPrimary: Color,
     surface: Color,
     onSurface: Color,
-    secondary: Color = primary,
-    onSecondary: Color = onPrimary,
-    tertiary: Color = surface,
-    onTertiary: Color = onSurface,
-    error: Color = Error600,
+    border: Color,
+    borderVisible: Color,
+    textSecondary: Color,
+    textDisabled: Color,
+    error: Color = Color(0xFFD71921),
     onError: Color = Color.White
 ) = ColorScheme(
     primary = primary,
     onPrimary = onPrimary,
-    primaryContainer = surface.mix(primary, 0.9f),
+    primaryContainer = surface,
     onPrimaryContainer = onSurface,
     inversePrimary = onPrimary,
-    secondary = secondary,
-    onSecondary = onSecondary,
-    secondaryContainer = surface.mix(secondary, 0.85f),
+    secondary = primary,
+    onSecondary = onPrimary,
+    secondaryContainer = surface,
     onSecondaryContainer = onSurface,
-    tertiary = tertiary,
-    onTertiary = onTertiary,
-    tertiaryContainer = surface.mix(tertiary, 0.85f),
+    tertiary = primary,
+    onTertiary = onPrimary,
+    tertiaryContainer = surface,
     onTertiaryContainer = onSurface,
     background = surface,
     onBackground = onSurface,
     surface = surface,
     onSurface = onSurface,
-    surfaceVariant = surface.mix(onSurface, 0.9f),
-    onSurfaceVariant = onSurface.copy(alpha = 0.8f),
+    surfaceVariant = surface,
+    onSurfaceVariant = textSecondary,
     surfaceTint = primary,
     inverseSurface = onSurface,
     inverseOnSurface = surface,
@@ -46,27 +46,83 @@ private fun createColorScheme(
     onError = onError,
     errorContainer = error.copy(alpha = 0.1f),
     onErrorContainer = error,
-    outline = onSurface.copy(alpha = 0.6f),
-    outlineVariant = onSurface.copy(alpha = 0.3f),
+    outline = borderVisible,
+    outlineVariant = border,
     scrim = Color.Black,
-    surfaceBright = surface.mix(Color.White, 0.95f),
-    surfaceDim = surface.mix(Color.Black, 0.95f),
+    surfaceBright = surface,
+    surfaceDim = surface,
     surfaceContainerLowest = surface,
-    surfaceContainerLow = surface.mix(onSurface, 0.96f),
-    surfaceContainer = surface.mix(onSurface, 0.92f),
-    surfaceContainerHigh = surface.mix(onSurface, 0.88f),
-    surfaceContainerHighest = surface.mix(onSurface, 0.84f),
+    surfaceContainerLow = surface,
+    surfaceContainer = surface,
+    surfaceContainerHigh = surface,
+    surfaceContainerHighest = surface,
 )
 
-val light_colorScheme = createColorScheme(ColorAccent, Color.White, Grey25, Grey900, secondary = ColorAccent, tertiary = ColorNotice)
-val dark_colorScheme = createColorScheme(ColorAccent, Grey25, Grey900, Grey50, secondary = ColorAccent, tertiary = ColorNotice)
-val black_colorScheme = createColorScheme(ColorAccent, Grey25, Grey1000, Grey50, secondary = ColorAccent, tertiary = ColorNotice)
+val light_colorScheme = createColorScheme(
+    primary = NDAccent,
+    onPrimary = NDLightTextDisplay,
+    surface = NDLightSurface,
+    onSurface = NDLightTextPrimary,
+    border = NDLightBorder,
+    borderVisible = NDLightBorderVisible,
+    textSecondary = NDLightTextSecondary,
+    textDisabled = NDLightTextDisabled
+)
 
-val nord_colorScheme = createColorScheme(Nord8, Nord0, Nord0, Nord4, secondary = Nord9, tertiary = Nord10)
-val sepia_colorScheme = createColorScheme(SepiaAccent, SepiaBg, SepiaBg, SepiaFg, secondary = SepiaAccent)
+val dark_colorScheme = createColorScheme(
+    primary = NDAccent,
+    onPrimary = NDTextDisplay,
+    surface = NDSurface,
+    onSurface = NDTextPrimary,
+    border = NDBorder,
+    borderVisible = NDBorderVisible,
+    textSecondary = NDTextSecondary,
+    textDisabled = NDTextDisabled
+)
+
+val black_colorScheme = createColorScheme(
+    primary = NDAccent,
+    onPrimary = NDTextDisplay,
+    surface = NDBlack,
+    onSurface = NDTextPrimary,
+    border = NDBorder,
+    borderVisible = NDBorderVisible,
+    textSecondary = NDTextSecondary,
+    textDisabled = NDTextDisabled
+)
+
+val nord_colorScheme = createColorScheme(
+    primary = NDAccent,
+    onPrimary = Nord4,
+    surface = Nord0,
+    onSurface = Nord4,
+    border = Nord0.mix(Nord4, 0.15f),
+    borderVisible = Nord0.mix(Nord4, 0.3f),
+    textSecondary = Nord4.copy(alpha = 0.7f),
+    textDisabled = Nord4.copy(alpha = 0.4f)
+)
+
+val sepia_colorScheme = createColorScheme(
+    primary = NDAccent,
+    onPrimary = SepiaFg,
+    surface = SepiaBg,
+    onSurface = SepiaFg,
+    border = SepiaBg.mix(SepiaFg, 0.15f),
+    borderVisible = SepiaBg.mix(SepiaFg, 0.3f),
+    textSecondary = SepiaFg.copy(alpha = 0.7f),
+    textDisabled = SepiaFg.copy(alpha = 0.4f)
+)
 
 fun custom_colorScheme(background: Color, text: Color): ColorScheme {
     val isLight = background.luminance() > 0.5
-    val primary = if (isLight) ColorAccent else Sky400
-    return createColorScheme(primary, background, background, text)
+    return createColorScheme(
+        primary = NDAccent,
+        onPrimary = text,
+        surface = background,
+        onSurface = text,
+        border = if (isLight) NDLightBorder else NDBorder,
+        borderVisible = if (isLight) NDLightBorderVisible else NDBorderVisible,
+        textSecondary = text.copy(alpha = 0.7f),
+        textDisabled = text.copy(alpha = 0.4f)
+    )
 }

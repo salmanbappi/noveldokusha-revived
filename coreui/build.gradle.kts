@@ -28,6 +28,7 @@ dependencies {
     implementation(libs.compose.androidx.constraintlayout)
     implementation(libs.compose.androidx.material.icons.extended)
     implementation(libs.compose.material3.android)
+    implementation(libs.compose.androidx.ui.text.google.fonts)
     implementation(libs.compose.accompanist.systemuicontroller)
     implementation(libs.compose.landscapist.glide)
     implementation(libs.compose.coil)

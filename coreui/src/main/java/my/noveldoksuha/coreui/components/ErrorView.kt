@@ -23,7 +23,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.em
 import my.noveldoksuha.coreui.R
+
+import my.noveldoksuha.coreui.theme.SpaceMonoFontFamily
 
 @Composable
 fun ErrorView(
@@ -34,21 +37,24 @@ fun ErrorView(
     @Composable
     fun Modifier.click(onClick: () -> Unit) = clickable(
         interactionSource = remember { MutableInteractionSource() },
-        indication = ripple(color = MaterialTheme.colorScheme.onError),
+        indication = ripple(color = MaterialTheme.colorScheme.error),
         onClick = onClick
     )
 
     Column(
         Modifier
             .padding(4.dp)
-            .border(0.5.dp, Color.Red, RoundedCornerShape(4.dp))
+            .border(1.dp, MaterialTheme.colorScheme.error, RoundedCornerShape(8.dp))
     ) {
         if (onReload != null || onCopyError != null) {
             Row(Modifier.height(IntrinsicSize.Min)) {
                 if (onReload != null)
                     Text(
-                        text = stringResource(R.string.reload),
-                        color = MaterialTheme.colorScheme.onError,
+                        text = stringResource(R.string.reload).uppercase(),
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = SpaceMonoFontFamily,
+                        fontSize = 11.sp,
+                        letterSpacing = 0.08.em,
                         modifier = Modifier
                             .click(onReload)
                             .weight(1f)
@@ -57,13 +63,16 @@ fun ErrorView(
                     )
                 if (onReload != null && onCopyError != null)
                     DividerVertical(
-                        color = MaterialTheme.colorScheme.onError,
-                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.error,
+                        thickness = 1.dp,
                     )
                 if (onCopyError != null)
                     Text(
-                        text = stringResource(R.string.copy_error),
-                        color = MaterialTheme.colorScheme.onError,
+                        text = stringResource(R.string.copy_error).uppercase(),
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = SpaceMonoFontFamily,
+                        fontSize = 11.sp,
+                        letterSpacing = 0.08.em,
                         modifier = Modifier
                             .click(onClick = { onCopyError(error) })
                             .weight(1f)
@@ -71,15 +80,15 @@ fun ErrorView(
                         textAlign = TextAlign.Center,
                     )
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.onError)
+            HorizontalDivider(color = MaterialTheme.colorScheme.error, thickness = 1.dp)
         }
         SelectionContainer {
             Text(
-                text = error,
-                fontFamily = FontFamily.Monospace,
-                fontSize = 10.sp,
-                letterSpacing = 0.sp,
-                color = MaterialTheme.colorScheme.onError,
+                text = "[ERROR] $error",
+                fontFamily = SpaceMonoFontFamily,
+                fontSize = 11.sp,
+                letterSpacing = 0.04.em,
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(8.dp)
             )
         }

@@ -4,10 +4,38 @@ package my.noveldoksuha.coreui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val ColorAccent = Color(0xFF2A59B6)
-val ColorLike = Color(0xFFF44336)
-val ColorNotice = Color(0xFFE48800)
+val ColorAccent = Color(0xFFD71921)
+val ColorLike = Color(0xFFD71921)
+val ColorNotice = Color(0xFFD4A843)
 
+// Nothing Design Tokens - Dark Mode
+val NDBlack = Color(0xFF000000)
+val NDSurface = Color(0xFF111111)
+val NDSurfaceRaised = Color(0xFF1A1A1A)
+val NDBorder = Color(0xFF222222)
+val NDBorderVisible = Color(0xFF333333)
+val NDTextDisabled = Color(0xFF666666)
+val NDTextSecondary = Color(0xFF999999)
+val NDTextPrimary = Color(0xFFE8E8E8)
+val NDTextDisplay = Color(0xFFFFFFFF)
+val NDAccent = Color(0xFFD71921)
+val NDSuccess = Color(0xFF4A9E5C)
+val NDWarning = Color(0xFFD4A843)
+val NDInteractive = Color(0xFF5B9BF6)
+
+// Nothing Design Tokens - Light Mode
+val NDLightBlack = Color(0xFFF5F5F5)
+val NDLightSurface = Color(0xFFFFFFFF)
+val NDLightSurfaceRaised = Color(0xFFF0F0F0)
+val NDLightBorder = Color(0xFFE8E8E8)
+val NDLightBorderVisible = Color(0xFFCCCCCC)
+val NDLightTextDisabled = Color(0xFF999999)
+val NDLightTextSecondary = Color(0xFF666666)
+val NDLightTextPrimary = Color(0xFF1A1A1A)
+val NDLightTextDisplay = Color(0xFF000000)
+val NDLightInteractive = Color(0xFF007AFF)
+
+// Legacy Grey tokens mapped to Nothing colors for backwards compatibility
 val Grey0 = Color(0xFFFFFFFF)
 val Grey25 = Color(0xFFFEFEFE)
 val Grey50 = Color(0xFFF8F8F8)
@@ -65,16 +93,16 @@ val Info800 = Color(0xFF5F6D0C)
 val Info900 = Color(0xFF48550A)
 val Info1000 = Color(0xFF333E07)
 
-val Sky400 = Color(0xFF38BDF8) // Used for custom theme logic
+val Sky400 = Color(0xFF38BDF8)
 
 // Nord
 val Nord0 = Color(0xFF2E3440)
 val Nord4 = Color(0xFFD8DEE9)
 val Nord8 = Color(0xFF88C0D0)
-val Nord9 = Color(0xFF81A1C1) // Secondary
-val Nord10 = Color(0xFF5E81AC) // Tertiary
+val Nord9 = Color(0xFF81A1C1)
+val Nord10 = Color(0xFF5E81AC)
 
 // Sepia
 val SepiaBg = Color(0xFFF4ECD8)
 val SepiaFg = Color(0xFF5B4636)
-val SepiaAccent = Color(0xFFB04A00) // More vibrant orange-brown for UI elements
+val SepiaAccent = Color(0xFFB04A00)

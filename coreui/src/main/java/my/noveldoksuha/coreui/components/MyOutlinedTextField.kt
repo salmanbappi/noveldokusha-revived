@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import my.noveldoksuha.coreui.theme.InternalTheme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+
 @Composable
 fun MyOutlinedTextField(
     value: String,
@@ -30,16 +32,20 @@ fun MyOutlinedTextField(
             Text(
                 text = placeHolderText,
                 modifier = Modifier.alpha(0.7f),
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.bodyMedium
             )
         },
         modifier = modifier
             .heightIn(min = 42.dp)
             .fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+            focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
         ),
+        textStyle = MaterialTheme.typography.bodyMedium,
         interactionSource = remember { MutableInteractionSource() }
     )
 }

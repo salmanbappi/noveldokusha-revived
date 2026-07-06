@@ -42,21 +42,32 @@ import my.noveldoksuha.coreui.theme.Themes
 import my.noveldoksuha.coreui.theme.ifCase
 import my.noveldoksuha.coreui.theme.selectableMinHeight
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import my.noveldoksuha.coreui.theme.SpaceMonoFontFamily
+
 @Composable
 fun MyButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     animate: Boolean = true,
-    textAlign: TextAlign = TextAlign.Start,
+    textAlign: TextAlign = TextAlign.Center,
     outerPadding: Dp = 4.dp,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-    minHeight: Dp = selectableMinHeight,
-    shape: Shape = MaterialTheme.shapes.small,
-    borderWidth: Dp = 1.dp,
-    borderColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-    backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    textStyle: TextStyle = LocalTextStyle.current,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+    minHeight: Dp = 44.dp,
+    shape: Shape = RoundedCornerShape(999.dp),
+    borderWidth: Dp = 0.dp,
+    borderColor: Color = Color.Transparent,
+    backgroundColor: Color = MaterialTheme.colorScheme.onSurface,
+    textStyle: TextStyle = TextStyle(
+        fontFamily = SpaceMonoFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 13.sp,
+        letterSpacing = 0.06.em
+    ),
     selected: Boolean = false,
     selectedBackgroundColor: Color = ColorAccent,
     onClick: () -> Unit,
@@ -64,13 +75,18 @@ fun MyButton(
     indication: Indication = LocalIndication.current,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable BoxScope.() -> Unit = {
-
+        val defaultTextColor = if (backgroundColor == MaterialTheme.colorScheme.onSurface) {
+            MaterialTheme.colorScheme.surface
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        }
         val color = when {
-            selected && (textStyle.color.luminance() < 0.5) -> Color.White
-            else -> textStyle.color
+            selected -> Color.White
+            textStyle.color != Color.Unspecified -> textStyle.color
+            else -> defaultTextColor
         }
         Text(
-            text = text,
+            text = text.uppercase(),
             style = textStyle,
             color = color,
             textAlign = textAlign,
