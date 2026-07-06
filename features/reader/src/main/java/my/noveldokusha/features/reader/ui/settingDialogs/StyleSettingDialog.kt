@@ -28,7 +28,7 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -82,7 +82,7 @@ internal fun StyleSettingDialog(
     onThemeChange: (Themes) -> Unit,
     appPreferences: AppPreferences
 ) {
-    ElevatedCard(
+    OutlinedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 12.dp),
         shape = RoundedCornerShape(32.dp),
         colors = CardDefaults.elevatedCardColors(

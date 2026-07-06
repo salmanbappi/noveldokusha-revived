@@ -22,7 +22,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -161,11 +161,11 @@ private fun PreviewCards() {
             Card(onClick = {}) {
                 Text(text = "Card clickable")
             }
-            ElevatedCard {
-                Text(text = "ElevatedCard")
+            OutlinedCard {
+                Text(text = "OutlinedCard")
             }
-            ElevatedCard(onClick = {}) {
-                Text(text = "ElevatedCard clickable")
+            OutlinedCard(onClick = {}) {
+                Text(text = "OutlinedCard clickable")
             }
             OutlinedCard {
                 Text(text = "OutlinedCard")

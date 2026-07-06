@@ -55,7 +55,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -135,7 +135,7 @@ internal fun VoiceReaderSettingDialog(
                 )
             }
         }
-        ElevatedCard(
+        OutlinedCard(
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.elevatedCardColors(

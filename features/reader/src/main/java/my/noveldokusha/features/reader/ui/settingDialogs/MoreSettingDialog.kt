@@ -14,7 +14,7 @@ import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.TouchApp
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -45,7 +45,7 @@ internal fun MoreSettingDialog(
     autoScrollSpeed: Int,
     onAutoScrollChange: (Int) -> Unit,
 ) {
-    ElevatedCard(
+    OutlinedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(

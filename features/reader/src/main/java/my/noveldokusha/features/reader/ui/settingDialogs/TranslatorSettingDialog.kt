@@ -22,7 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -69,7 +69,7 @@ internal fun TranslatorSettingDialog(
     var modelSelectorExpandedForTarget by rememberSaveable { mutableStateOf(false) }
     var rowSize by remember { mutableStateOf(Size.Zero) }
     
-    ElevatedCard(
+    OutlinedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
