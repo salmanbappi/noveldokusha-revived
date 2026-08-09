@@ -23,6 +23,7 @@
     <string name="opens_the_file_explorer_to_select_the_backup_file">Opens the file explorer to select the backup file</string>
     <string name="added_to_library">Added to library</string>
     <string name="removed_from_library">Removed from library</string>
+    <string name="library_is_empty">Your library is empty</string>
     <string name="permissions_denied">Permissions denied</string>
     <string name="no_chapters_found">No chapters found</string>
     <string name="backup_saved">Backup saved</string>
