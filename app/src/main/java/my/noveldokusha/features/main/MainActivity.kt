@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,7 +86,7 @@ open class MainActivity : BaseActivity() {
                     NavigationBar(
                         containerColor = androidx.compose.ui.graphics.Color(0xFF000000),
                         contentColor = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
-                        tonalElevation = androidx.compose.ui.unit.dp(0)
+                        tonalElevation = 0.dp
                     ) {
                         pages.forEachIndexed { pageIndex, page ->
                             NavigationBarItem(
