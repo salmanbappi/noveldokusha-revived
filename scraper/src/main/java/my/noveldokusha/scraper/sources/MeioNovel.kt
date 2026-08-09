@@ -81,13 +81,19 @@ class MeioNovel(
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = if (page == 1) "$baseUrl?s=$input" else "$baseUrl/page/$page/?s=$input"
+            val url = baseUrl.toUrlBuilderSafe()
+                .ifCase(page > 1) { addPath("page", page.toString()) }
+                .add("s", input)
+                .toString()
             val doc = networkClient.get(url).toDocument()
-            doc.select(".listupd .bs")
+            doc.select(".listupd .bs, .c-tabs-item__content")
                 .mapNotNull {
                     val link = it.selectFirst("a") ?: return@mapNotNull null
+                    val title = it.selectFirst(".tt, h3, .title, .post-title")?.text()?.takeIf { t -> t.isNotBlank() }
+                        ?: link.attr("title").takeIf { t -> t.isNotBlank() }
+                        ?: link.text()
                     BookResult(
-                        title = it.selectFirst(".tt")?.text() ?: "",
+                        title = title,
                         url = link.attr("abs:href"),
                         coverImageUrl = it.selectFirst("img")?.attr("abs:src") ?: ""
                     )

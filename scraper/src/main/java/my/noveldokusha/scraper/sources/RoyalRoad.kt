@@ -76,7 +76,11 @@ class RoyalRoad(
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = "https://www.royalroad.com/fictions/search?title=$input&page=$page"
+            val url = baseUrl.toUrlBuilderSafe()
+                .addPath("fictions", "search")
+                .add("title", input)
+                .add("page", page)
+                .toString()
             val doc = networkClient.get(url).toDocument()
             doc.select(".fiction-list-item")
                 .mapNotNull {

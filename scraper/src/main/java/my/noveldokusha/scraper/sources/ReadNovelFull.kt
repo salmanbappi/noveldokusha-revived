@@ -113,8 +113,11 @@ class ReadNovelFull(
                 return@tryFlatConnect Response.Success(PagedList.createEmpty(index = index))
 
             val page = index + 1
-            // Use standard search path
-            val url = "https://readnovelfull.com/novel-list/search?keyword=$input&page=$page"
+            val url = baseUrl.toUrlBuilderSafe()
+                .addPath("novel-list", "search")
+                .add("keyword", input)
+                .add("page", page)
+                .toString()
             val doc = networkClient.get(url).toDocument()
             parseToBooks(doc, index)
         }

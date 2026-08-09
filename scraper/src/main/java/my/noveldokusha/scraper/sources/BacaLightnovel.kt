@@ -24,7 +24,7 @@ class BacaLightnovel(
 ) : SourceInterface.Catalog {
     override val id = "bacalightnovel"
     override val nameStrId = R.string.source_name_baca_lightnovel
-    override val baseUrl = "https://bacalightnovel.id/"
+    override val baseUrl = "https://bacalightnovel.co/"
     override val catalogUrl = "https://bacalightnovel.co/series/"
     override val iconUrl =
         "https://bacalightnovel.co/wp-content/uploads/2022/09/cropped-fav-32x32.png"
@@ -38,10 +38,14 @@ class BacaLightnovel(
         withContext(Dispatchers.Default) {
             tryConnect {
                 val doc = networkClient.get(url).toDocument()
-                doc.select(".listupd > .maindet .mdthumb a")
+                doc.select(".listupd > .maindet .mdthumb a, .listupd .bs a")
                     .mapNotNull {
+                        val title = it.selectFirst("img")?.attr("alt")?.takeIf { t -> t.isNotBlank() }
+                            ?: it.selectFirst("img")?.attr("title")?.takeIf { t -> t.isNotBlank() }
+                            ?: it.attr("title").takeIf { t -> t.isNotBlank() }
+                            ?: it.text()
                         BookResult(
-                            title = it.selectFirst("img")?.attr("title") ?: "",
+                            title = title,
                             url = it.attr("href") ?: "",
                             coverImageUrl = it.selectFirst("img")?.attr("src") ?: "",
                         )

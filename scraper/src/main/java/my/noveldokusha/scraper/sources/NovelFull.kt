@@ -97,7 +97,12 @@ class NovelFull(
 
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
-            val url = "https://novelfull.com/search?keyword=$input&page=${index + 1}"
+            val page = index + 1
+            val url = baseUrl.toUrlBuilderSafe()
+                .addPath("search")
+                .add("keyword", input)
+                .add("page", page)
+                .toString()
             networkClient.get(url).toDocument().select(".list-novel .row, .list-truyen .row")
                 .mapNotNull {
                     val link = it.selectFirst("h3.title a, h3.truyen-title a, h3.novel-title a") ?: return@mapNotNull null

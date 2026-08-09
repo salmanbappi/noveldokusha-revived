@@ -35,12 +35,15 @@ class SakuraNovel(private val networkClient: NetworkClient) : SourceInterface.Ca
         withContext(Dispatchers.Default) {
             tryConnect {
                 val doc = networkClient.get(url).toDocument()
-                doc.select(".flexbox2-item > .flexbox2-content")
+                doc.select(".flexbox2-item > .flexbox2-content, .listupd .bs")
                     .mapNotNull {
                         val link = it.selectFirst("a") ?: return@mapNotNull null
-                        val bookCover = it.selectFirst(".flexbox2-thumb > img")?.attr("src") ?: ""
+                        val bookCover = it.selectFirst(".flexbox2-thumb > img, .thumb img")?.attr("src") ?: ""
+                        val title = link.attr("title").takeIf { t -> t.isNotBlank() }
+                            ?: it.selectFirst(".tt")?.text()?.takeIf { t -> t.isNotBlank() }
+                            ?: link.text()
                         BookResult(
-                            title = link.attr("title"),
+                            title = title,
                             url = link.attr("href"),
                             coverImageUrl = bookCover,
                         )

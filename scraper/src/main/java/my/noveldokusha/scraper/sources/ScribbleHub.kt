@@ -76,7 +76,11 @@ class ScribbleHub(
     override suspend fun getCatalogSearch(index: Int, input: String): Response<PagedList<BookResult>> = withContext(Dispatchers.Default) {
         tryConnect {
             val page = index + 1
-            val url = "https://www.scribblehub.com/?s=$input&post_type=fictionposts&paged=$page"
+            val url = baseUrl.toUrlBuilderSafe()
+                .add("s", input)
+                .add("post_type", "fictionposts")
+                .add("paged", page)
+                .toString()
             val doc = networkClient.get(url).toDocument()
             doc.select(".search_main_box")
                 .mapNotNull {

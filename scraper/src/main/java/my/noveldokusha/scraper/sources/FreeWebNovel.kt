@@ -25,7 +25,7 @@ class FreeWebNovel(
     override val id = "freewebnovel"
     override val nameStrId = R.string.source_name_freewebnovel
     override val baseUrl = "https://freewebnovel.com"
-    override val catalogUrl = "https://freewebnovel.com/completed-novel/"
+    override val catalogUrl = "https://freewebnovel.com/genre/all/"
     override val iconUrl = "https://freewebnovel.com/favicon.ico"
     override val language = LanguageCode.ENGLISH
 
@@ -88,7 +88,7 @@ class FreeWebNovel(
         withContext(Dispatchers.Default) {
             tryConnect("index=$index") {
                 val page = index + 1
-                val url = "$baseUrl/completed-novel/$page"
+                val url = if (page == 1) "$baseUrl/genre/all/" else "$baseUrl/genre/all/$page"
 
                 val doc = networkClient.get(url).toDocument()
                 val books = doc.select(".ul-list1 .li-row")
@@ -121,12 +121,8 @@ class FreeWebNovel(
             tryConnect {
                 if (input.isBlank() || index > 0)
                     return@tryConnect PagedList.createEmpty(index = index)
-                val url = "https://freewebnovel.com/search"
-                val doc: Document = Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
-                    .data("searchkey", input)
-                    .timeout(10000)
-                    .post()
+                val url = "$baseUrl/search"
+                val doc: Document = networkClient.post(url, mapOf("searchkey" to input)).toDocument()
                 val books = doc.select(".ul-list1 .li-row")
                     .mapNotNull { element ->
                         val link = element.selectFirst(".tit a") ?: return@mapNotNull null
