@@ -57,6 +57,9 @@ class App : Application(), ImageLoaderFactory, Configuration.Provider {
         Configuration.Builder()
             .setMinimumLoggingLevel(if (BuildConfig.DEBUG) Log.DEBUG else Log.INFO)
             .setWorkerFactory(appWorkerFactory)
+            .build()
+    }
+
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         when (level) {
