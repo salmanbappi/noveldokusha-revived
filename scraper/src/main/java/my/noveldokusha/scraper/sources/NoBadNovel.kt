@@ -39,14 +39,10 @@ class NoBadNovel(
         }
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
-        doc.selectFirst("div.text-base.sm\\:text-lg, div[class*=text-base]")!!.let {
-            // Remove ads and scripts
-            it.select("script").remove()
-            it.select("ins").remove()
-            it.select("a").remove()
-            it.select(".hidden").remove()
+        doc.selectFirst("div.text-base.sm\\:text-lg, div[class*=text-base], .chapter-content, .reading-content")?.let {
+            it.select("script, ins, a, .hidden, .ads").remove()
             TextExtractor.get(it)
-        }
+        } ?: ""
     }
 
     override suspend fun getBookCoverImageUrl(

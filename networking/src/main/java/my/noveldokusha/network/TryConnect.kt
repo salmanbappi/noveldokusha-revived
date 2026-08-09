@@ -6,15 +6,52 @@ import my.noveldokusha.core.flatten
 import my.noveldokusha.core.tryAsResponse
 import java.net.SocketTimeoutException
 
+import kotlinx.coroutines.delay
+import java.io.IOException
+
 suspend fun <T> tryFlatConnect(
     extraErrorInfo: String = "",
+    maxRetries: Int = 2,
     call: suspend () -> Response<T>
-): Response<T> = tryAsResponse { call() }.flatten().specifyNetworkErrors(extraErrorInfo)
+): Response<T> {
+    var attempt = 0
+    var currentDelay = 500L
+    while (true) {
+        val result = tryAsResponse { call() }.flatten().specifyNetworkErrors(extraErrorInfo)
+        if (result is Response.Success || attempt >= maxRetries) {
+            return result
+        }
+        val isTransient = result is Response.Error && (result.exception is SocketTimeoutException || result.exception is IOException)
+        if (!isTransient) {
+            return result
+        }
+        attempt++
+        delay(currentDelay)
+        currentDelay *= 2
+    }
+}
 
 suspend fun <T> tryConnect(
     extraErrorInfo: String = "",
+    maxRetries: Int = 2,
     call: suspend () -> T
-): Response<T> = tryAsResponse { call() }.specifyNetworkErrors(extraErrorInfo)
+): Response<T> {
+    var attempt = 0
+    var currentDelay = 500L
+    while (true) {
+        val result = tryAsResponse { call() }.specifyNetworkErrors(extraErrorInfo)
+        if (result is Response.Success || attempt >= maxRetries) {
+            return result
+        }
+        val isTransient = result is Response.Error && (result.exception is SocketTimeoutException || result.exception is IOException)
+        if (!isTransient) {
+            return result
+        }
+        attempt++
+        delay(currentDelay)
+        currentDelay *= 2
+    }
+}
 
 
 private suspend fun <T> Response<T>.specifyNetworkErrors(extraErrorInfo: String = "") =

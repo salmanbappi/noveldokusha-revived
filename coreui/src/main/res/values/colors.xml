@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="red">#ff0000</color>
-	<color name="dark_green">#71A30E</color>
-	<color name="dark_red">#C81414</color>
-	<color name="light_blue">#3D504D</color>
-	<color name="dark_orange">#A3593C</color>
-	<color name="pink">#BB00FF</color>
+	<color name="red">#ffffff</color>
+	<color name="dark_green">#ffffff</color>
+	<color name="dark_red">#ffffff</color>
+	<color name="light_blue">#a0a0a0</color>
+	<color name="dark_orange">#a0a0a0</color>
+	<color name="pink">#ffffff</color>
 
 	<color name="color_ff">#ffffff</color>
 	<color name="color_fb">#fbfbfb</color>
@@ -35,7 +35,7 @@
 	<color name="color_20_transparent">#00202020</color>
 	<color name="color_00_transparent">#00000000</color>
 
-	<color name="colorError">#EC4427</color>
-	<color name="colorAccent">#2A59B6</color>
-	<color name="colorAccent_transparent">#332A59B6</color>
+	<color name="colorError">#ffffff</color>
+	<color name="colorAccent">#ffffff</color>
+	<color name="colorAccent_transparent">#33ffffff</color>
 </resources>

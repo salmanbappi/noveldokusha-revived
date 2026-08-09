@@ -57,7 +57,7 @@ fun MyButton(
     textAlign: TextAlign = TextAlign.Center,
     outerPadding: Dp = 4.dp,
     contentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-    minHeight: Dp = 44.dp,
+    minHeight: Dp = 48.dp,
     shape: Shape = RoundedCornerShape(999.dp),
     borderWidth: Dp = 0.dp,
     borderColor: Color = Color.Transparent,
@@ -69,7 +69,8 @@ fun MyButton(
         letterSpacing = 0.06.em
     ),
     selected: Boolean = false,
-    selectedBackgroundColor: Color = ColorAccent,
+    selectedBackgroundColor: Color = Color.White,
+    textAllCaps: Boolean = false,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     indication: Indication = LocalIndication.current,
@@ -81,12 +82,12 @@ fun MyButton(
             MaterialTheme.colorScheme.onSurface
         }
         val color = when {
-            selected -> Color.White
+            selected -> Color.Black
             textStyle.color != Color.Unspecified -> textStyle.color
             else -> defaultTextColor
         }
         Text(
-            text = text.uppercase(),
+            text = if (textAllCaps) text.uppercase() else text,
             style = textStyle,
             color = color,
             textAlign = textAlign,
@@ -144,6 +145,7 @@ private fun InternalButton(
     )
     Surface(
         modifier = modifier
+            .my.noveldoksuha.coreui.modifiers.bounceOnPressed(interactionSource)
             .ifCase(animate) { animateContentSize() }
             .padding(outerPadding)
             .heightIn(min = minHeight)

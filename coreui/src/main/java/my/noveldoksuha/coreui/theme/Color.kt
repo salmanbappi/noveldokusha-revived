@@ -4,36 +4,36 @@ package my.noveldoksuha.coreui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val ColorAccent = Color(0xFFD71921)
-val ColorLike = Color(0xFFD71921)
-val ColorNotice = Color(0xFFD4A843)
+val ColorAccent = Color(0xFFFFFFFF)
+val ColorLike = Color(0xFFFFFFFF)
+val ColorNotice = Color(0xFFA0A0A0)
 
-// Nothing Design Tokens - Dark Mode
+// AMOLED Black, Grey, and White Tokens
 val NDBlack = Color(0xFF000000)
-val NDSurface = Color(0xFF111111)
-val NDSurfaceRaised = Color(0xFF1A1A1A)
-val NDBorder = Color(0xFF222222)
-val NDBorderVisible = Color(0xFF333333)
-val NDTextDisabled = Color(0xFF666666)
-val NDTextSecondary = Color(0xFF999999)
-val NDTextPrimary = Color(0xFFE8E8E8)
+val NDSurface = Color(0xFF121212)
+val NDSurfaceRaised = Color(0xFF1E1E1E)
+val NDBorder = Color(0xFF262626)
+val NDBorderVisible = Color(0xFF383838)
+val NDTextDisabled = Color(0xFF767676)
+val NDTextSecondary = Color(0xFFA0A0A0)
+val NDTextPrimary = Color(0xFFFFFFFF)
 val NDTextDisplay = Color(0xFFFFFFFF)
-val NDAccent = Color(0xFFD71921)
-val NDSuccess = Color(0xFF4A9E5C)
-val NDWarning = Color(0xFFD4A843)
-val NDInteractive = Color(0xFF5B9BF6)
+val NDAccent = Color(0xFFFFFFFF)
+val NDSuccess = Color(0xFFFFFFFF)
+val NDWarning = Color(0xFFA0A0A0)
+val NDInteractive = Color(0xFFFFFFFF)
 
-// Nothing Design Tokens - Light Mode
-val NDLightBlack = Color(0xFFF5F5F5)
-val NDLightSurface = Color(0xFFFFFFFF)
-val NDLightSurfaceRaised = Color(0xFFF0F0F0)
-val NDLightBorder = Color(0xFFE8E8E8)
-val NDLightBorderVisible = Color(0xFFCCCCCC)
-val NDLightTextDisabled = Color(0xFF999999)
-val NDLightTextSecondary = Color(0xFF666666)
-val NDLightTextPrimary = Color(0xFF1A1A1A)
-val NDLightTextDisplay = Color(0xFF000000)
-val NDLightInteractive = Color(0xFF007AFF)
+// AMOLED Light/Dark compatibility mapping
+val NDLightBlack = Color(0xFF000000)
+val NDLightSurface = Color(0xFF121212)
+val NDLightSurfaceRaised = Color(0xFF1E1E1E)
+val NDLightBorder = Color(0xFF262626)
+val NDLightBorderVisible = Color(0xFF383838)
+val NDLightTextDisabled = Color(0xFF555555)
+val NDLightTextSecondary = Color(0xFFA0A0A0)
+val NDLightTextPrimary = Color(0xFFFFFFFF)
+val NDLightTextDisplay = Color(0xFFFFFFFF)
+val NDLightInteractive = Color(0xFFFFFFFF)
 
 // Legacy Grey tokens mapped to Nothing colors for backwards compatibility
 val Grey0 = Color(0xFFFFFFFF)

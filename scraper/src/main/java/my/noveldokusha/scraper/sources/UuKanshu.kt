@@ -33,8 +33,8 @@ class UuKanshu(
 ) : SourceInterface.Catalog {
     override val id = "uukanshu"
     override val nameStrId = R.string.source_name_uukanshu
-    override val baseUrl = "https://www.uukanshu.net/"
-    override val catalogUrl = "https://www.uukanshu.net/"
+    override val baseUrl = "https://www.uukanshu.com/"
+    override val catalogUrl = "https://www.uukanshu.com/"
     override val language = LanguageCode.CHINESE
 
     override suspend fun getChapterTitle(doc: Document): String? =

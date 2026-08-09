@@ -76,39 +76,54 @@ internal fun CatalogList(
         }
 
         items(databasesList) {
-            ListItem(
+            Surface(
                 modifier = Modifier
-                    .clickable { onDatabaseClick(it) },
-                headlineContent = {
-                    Text(
-                        text = stringResource(id = it.nameStrId),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                },
-                supportingContent = {
-                    Text(
-                        text = stringResource(R.string.english),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                },
-                leadingContent = {
-                    ImageViewGlide(
-                        imageModel = it.iconUrl,
-                        modifier = Modifier.size(28.dp),
-                        error = my.noveldoksuha.coreui.R.drawable.default_icon
-                    )
-                }
-            )
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = Color(0xFF121212),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF262626))
+            ) {
+                ListItem(
+                    modifier = Modifier.clickable { onDatabaseClick(it) },
+                    colors = androidx.compose.material3.ListItemDefaults.colors(
+                        containerColor = Color.Transparent
+                    ),
+                    headlineContent = {
+                        Text(
+                            text = stringResource(id = it.nameStrId),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            text = stringResource(R.string.english),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFFA0A0A0)
+                        )
+                    },
+                    leadingContent = {
+                        ImageViewGlide(
+                            imageModel = it.iconUrl,
+                            modifier = Modifier.size(32.dp).clip(CircleShape),
+                            error = my.noveldoksuha.coreui.R.drawable.default_icon
+                        )
+                    }
+                )
+            }
         }
 
         item {
             Text(
                 text = stringResource(id = R.string.sources),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp),
+                    .padding(top = 16.dp, bottom = 4.dp),
             )
         }
 
@@ -116,26 +131,38 @@ internal fun CatalogList(
             items = sourcesList,
             key = { it.catalog.id }
         ) { item ->
-            ListItem(
+            Surface(
                 modifier = Modifier
-                    .clickable { onSourceClick(item.catalog) }
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
                     .animateItemPlacement(),
-                headlineContent = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = stringResource(id = item.catalog.nameStrId),
-                            style = MaterialTheme.typography.titleSmall,
-                        )
-                        if (item.isDefault) {
-                            Icon(
-                                imageVector = Icons.Outlined.Star,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.padding(start = 4.dp).size(14.dp)
+                shape = RoundedCornerShape(12.dp),
+                color = Color(0xFF121212),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF262626))
+            ) {
+                ListItem(
+                    modifier = Modifier.clickable { onSourceClick(item.catalog) },
+                    colors = androidx.compose.material3.ListItemDefaults.colors(
+                        containerColor = Color.Transparent
+                    ),
+                    headlineContent = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = stringResource(id = item.catalog.nameStrId),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
                             )
+                            if (item.isDefault) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Star,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(start = 6.dp).size(14.dp)
+                                )
+                            }
                         }
-                    }
-                },
+                    },
                 supportingContent = {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         val langResId = item.catalog.language?.nameResId
@@ -149,10 +176,10 @@ internal fun CatalogList(
                         ) {
                             item.catalog.status.forEach { status ->
                                 val color = when(status) {
-                                    SourceInterface.Catalog.Status.FAST -> MaterialTheme.colorScheme.primary
-                                    SourceInterface.Catalog.Status.STABLE -> Color(0xFF4CAF50)
-                                    SourceInterface.Catalog.Status.FORMATTING -> MaterialTheme.colorScheme.secondary
-                                    SourceInterface.Catalog.Status.EXPERIMENTAL -> MaterialTheme.colorScheme.error
+                                    SourceInterface.Catalog.Status.FAST -> Color.White
+                                    SourceInterface.Catalog.Status.STABLE -> Color(0xFFE0E0E0)
+                                    SourceInterface.Catalog.Status.FORMATTING -> Color(0xFFA0A0A0)
+                                    SourceInterface.Catalog.Status.EXPERIMENTAL -> Color(0xFF707070)
                                 }
                                 Surface(
                                     color = color.copy(alpha = 0.1f),
@@ -253,6 +280,7 @@ internal fun CatalogList(
                 }
             )
         }
+    }
     }
 }
 

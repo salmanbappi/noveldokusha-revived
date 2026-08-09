@@ -49,9 +49,13 @@ class NovelHall(
                 .toDocument()
                 .select(selectChapterList)
                 .map {
+                    val href = it.attr("abs:href").ifEmpty {
+                        val h = it.attr("href") ?: ""
+                        if (h.startsWith("http")) h else if (h.startsWith("/")) baseUrl.trimEnd('/') + h else baseUrl.trimEnd('/') + "/" + h
+                    }
                     ChapterResult(
                         title = it.text() ?: "",
-                        url = (baseUrl + it.attr("href"))
+                        url = href
                     )
                 }
         }

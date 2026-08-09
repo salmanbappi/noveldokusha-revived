@@ -35,6 +35,19 @@ class LightNovelsTranslations(
         "https://c10.patreonusercontent.com/4/patreon-media/p/campaign/458169/797a2e9b03094435947635c4da0fc683/eyJ3IjoyMDB9/1.jpeg?token-time=2145916800&token-hash=2gkkI3EgQqRPh5dQe9uxrULjURfQVm60BHKUdh91MtE%3D"
     override val language = LanguageCode.ENGLISH
 
+    override suspend fun getChapterTitle(doc: org.jsoup.nodes.Document): String? =
+        withContext(Dispatchers.Default) {
+            doc.selectFirst("h1.entry-title, .entry-title, .chapter-title, h1")?.text()
+        }
+
+    override suspend fun getChapterText(doc: org.jsoup.nodes.Document): String =
+        withContext(Dispatchers.Default) {
+            doc.selectFirst(".entry-content, .reading-content, .text-left, .chapter-content")?.let { element ->
+                element.select("script, style, ins, .ads").remove()
+                TextExtractor.get(element).trim()
+            } ?: ""
+        }
+
     override suspend fun getBookCoverImageUrl(
         bookUrl: String
     ): Response<String?> = withContext(Dispatchers.Default) {
@@ -54,8 +67,8 @@ class LightNovelsTranslations(
     ): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst(".novel_text")!!
-                .let {
+                .selectFirst(".novel_text")
+                ?.let {
                     it.select(".alternate_titles").remove()
                     TextExtractor.get(it).trim()
                 }

@@ -1,9 +1,15 @@
 package my.noveldokusha.feature.local_database.tables
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(
+    indices = [
+        Index(value = ["bookUrl"]),
+        Index(value = ["bookUrl", "position"])
+    ]
+)
 data class Chapter(
     val title: String,
     @PrimaryKey val url: String,

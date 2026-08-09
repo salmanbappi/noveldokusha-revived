@@ -14,33 +14,34 @@ import org.jsoup.nodes.Document
 import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 
-private suspend fun Call.await(): Response = withContext(Dispatchers.IO) {
-    suspendCoroutine { continuation ->
-        enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                continuation.resumeWithException(e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                continuation.resume(response)
-            }
-        })
+private suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation ->
+    continuation.invokeOnCancellation {
+        cancel()
     }
+    enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            if (continuation.isActive) continuation.resumeWithException(e)
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (continuation.isActive) continuation.resume(response)
+        }
+    })
 }
 
 suspend fun OkHttpClient.call(builder: Request.Builder) = newCall(builder.build()).await()
 
-fun Response.toDocument(): Document {
-    return Jsoup.parse(body?.string() ?: "", request.url.toString())
+fun Response.toDocument(): Document = use { resp ->
+    Jsoup.parse(resp.body?.string() ?: "", resp.request.url.toString())
 }
 
-fun Response.toDocument(charset: String): Document {
-    val bytes = body?.bytes() ?: return Jsoup.parse("", request.url.toString())
-    return Jsoup.parse(String(bytes, charset(charset)), request.url.toString())
+fun Response.toDocument(charset: String): Document = use { resp ->
+    val bytes = resp.body?.bytes() ?: return@use Jsoup.parse("", resp.request.url.toString())
+    Jsoup.parse(String(bytes, charset(charset)), resp.request.url.toString())
 }
 
-fun Response.toJson(): JsonElement {
-    return JsonParser.parseString(body?.string() ?: "{}")
+fun Response.toJson(): JsonElement = use { resp ->
+    JsonParser.parseString(resp.body?.string() ?: "{}")
 }

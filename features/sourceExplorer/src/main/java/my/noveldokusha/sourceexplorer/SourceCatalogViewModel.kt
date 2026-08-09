@@ -34,7 +34,9 @@ internal class SourceCatalogViewModel @Inject constructor(
 ) : BaseViewModel(), SourceCatalogStateBundle {
 
     override var sourceBaseUrl by StateExtra_String(stateHandle)
-    private val source = scraper.getCompatibleSourceCatalog(sourceBaseUrl)!!
+    private val source = checkNotNull(scraper.getCompatibleSourceCatalog(sourceBaseUrl)) {
+        "Unsupported or invalid source URL: $sourceBaseUrl"
+    }
 
     val state = SourceCatalogScreenState(
         sourceCatalogNameStrId = mutableIntStateOf(source.nameStrId),

@@ -26,13 +26,11 @@ fun ImageViewGlide(
     contentScale: ContentScale = ContentScale.Crop,
     @DrawableRes error: Int = R.drawable.default_book_cover
 ) {
-    val model by remember(imageModel, error) {
-        derivedStateOf {
-            when (imageModel) {
-                is String -> imageModel.ifBlank { error }
-                null -> run { error }
-                else -> imageModel
-            }
+    val model = remember(imageModel, error) {
+        when (imageModel) {
+            is String -> imageModel.ifBlank { error }
+            null -> error
+            else -> imageModel
         }
     }
     if (LocalInspectionMode.current) {
@@ -57,7 +55,12 @@ fun ImageViewGlide(
             ),
             modifier = modifier,
             failure = {
-                GlideImage(imageModel = { error })
+                Image(
+                    painter = painterResource(error),
+                    contentDescription = contentDescription,
+                    contentScale = contentScale,
+                    modifier = modifier
+                )
             }
         )
     }

@@ -74,11 +74,14 @@ class FreeWebNovel(
         tryConnect {
             networkClient.get(bookUrl)
                 .toDocument()
-                .select("#idData li a")
-                .map {
+                .select("#idData li a, .ul-list5 li a")
+                .map { element ->
+                    val title = element.attr("title").ifEmpty { element.text().trim() }
+                    val href = element.attr("href")
+                    val url = if (href.startsWith("http")) href else if (href.startsWith("/")) baseUrl + href else "$baseUrl/$href"
                     ChapterResult(
-                        title = it.selectFirst("a")?.attr("title") ?: "",
-                        url = (baseUrl + it.selectFirst("a")?.attr("href"))
+                        title = title,
+                        url = url
                     )
                 }
         }

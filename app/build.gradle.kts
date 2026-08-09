@@ -51,19 +51,30 @@ android {
         testInstrumentationRunner = "my.noveldokusha.HiltTestRunner"
     }
 
+    val releaseKeystoreFile = rootProject.file("release.keystore")
+
     signingConfigs {
-        if (hasDefaultSigningConfigData) create("default") {
-            storeFile = file(defaultSigningConfigData.getProperty("storeFile"))
-            storePassword = defaultSigningConfigData.getProperty("storePassword")
-            keyAlias = defaultSigningConfigData.getProperty("keyAlias")
-            keyPassword = defaultSigningConfigData.getProperty("keyPassword")
+        create("releaseConfig") {
+            if (hasDefaultSigningConfigData) {
+                storeFile = file(defaultSigningConfigData.getProperty("storeFile"))
+                storePassword = defaultSigningConfigData.getProperty("storePassword")
+                keyAlias = defaultSigningConfigData.getProperty("keyAlias")
+                keyPassword = defaultSigningConfigData.getProperty("keyPassword")
+            } else if (releaseKeystoreFile.exists()) {
+                storeFile = releaseKeystoreFile
+                storePassword = System.getenv("RELEASE_STORE_PASSWORD") ?: "noveldokusha"
+                keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: "noveldokusha"
+                keyPassword = System.getenv("RELEASE_KEY_PASSWORD") ?: "noveldokusha"
+            }
         }
     }
 
     buildTypes {
-        signingConfigs.asMap["default"]?.let {
-            all {
-                signingConfig = it
+        signingConfigs.asMap["releaseConfig"]?.let { config ->
+            if (config.storeFile?.exists() == true) {
+                named("release") {
+                    signingConfig = config
+                }
             }
         }
 
@@ -76,8 +87,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFile("proguard-rules.pro")
-            // Use postprocessing for more granular release control if needed, 
-            // but standard isMinifyEnabled handles shrinking/obfuscation/optimization.
         }
     }
 

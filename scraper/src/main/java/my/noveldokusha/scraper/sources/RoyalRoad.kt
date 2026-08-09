@@ -31,7 +31,7 @@ class RoyalRoad(
     override suspend fun getBookCoverImageUrl(bookUrl: String): Response<String?> = withContext(Dispatchers.Default) {
         tryConnect {
             networkClient.get(bookUrl).toDocument()
-                .selectFirst(".thumbnail")?.attr("abs:src")
+                .selectFirst(".thumbnail, .fiction-cover img, .cover-art-container img, .cover-art img")?.attr("abs:src")
         }
     }
 
@@ -47,8 +47,9 @@ class RoyalRoad(
             networkClient.get(bookUrl).toDocument()
                 .select("tr[data-url]")
                 .map {
+                    val titleText = it.selectFirst("td:first-child a, td a, a")?.text()?.trim() ?: it.text().trim()
                     ChapterResult(
-                        title = it.text().trim(),
+                        title = titleText,
                         url = it.attr("abs:data-url")
                     )
                 }

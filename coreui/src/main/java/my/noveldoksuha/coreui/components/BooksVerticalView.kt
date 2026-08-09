@@ -108,14 +108,14 @@ fun BooksVerticalView(
             ) {
                 when (loadState) {
                     IteratorState.LOADING -> CircularProgressIndicator(
-                        color = ColorAccent
+                        color = Color.White
                     )
                     IteratorState.CONSUMED -> Text(
                         text = when {
                             list.isEmpty() -> stringResource(R.string.no_results_found)
                             else -> stringResource(R.string.no_more_results)
                         },
-                        color = ColorAccent
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     else -> Unit
                 }

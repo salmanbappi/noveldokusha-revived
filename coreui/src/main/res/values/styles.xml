@@ -5,8 +5,8 @@
 	<attr name="myColorControlNormalPale" format="color|reference" />
 
 	<attr name="noneStateTint" format="color">#fff</attr>
-	<attr name="positiveStateTint" format="color">#71A30E</attr>
-	<attr name="negativeStateTint" format="color">#C81414</attr>
+	<attr name="positiveStateTint" format="color">#fff</attr>
+	<attr name="negativeStateTint" format="color">#fff</attr>
 
 	<style name="myReaderTextStyle" />
 

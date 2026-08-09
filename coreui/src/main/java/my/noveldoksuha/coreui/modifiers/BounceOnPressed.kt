@@ -49,7 +49,7 @@ private fun PreviewView() {
             modifier = Modifier
                 .bounceOnPressed(interactionSource)
                 .size(120.dp, 40.dp)
-                .background(Color.Red)
+                .background(Color.White)
                 .clickable(interactionSource = interactionSource, onClick = {}, indication = null)
         )
     }

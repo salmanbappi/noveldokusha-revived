@@ -37,9 +37,8 @@ class Shuba69(
 
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
         doc.selectFirst(".txtnav")?.let { element ->
-            // Remove navigation and ads
-            element.select("h1, .top_navigation, .bottom_navigation, script").remove()
-            element.html()
+            element.select("h1, .top_navigation, .bottom_navigation, script, style, .txtright, div.ad_content, .inline-ad").remove()
+            TextExtractor.get(element).trim()
         } ?: ""
     }
 

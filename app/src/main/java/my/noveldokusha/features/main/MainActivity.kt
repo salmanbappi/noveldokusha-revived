@@ -83,8 +83,9 @@ open class MainActivity : BaseActivity() {
                         }
                     }
                     NavigationBar(
-                        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                        containerColor = androidx.compose.ui.graphics.Color(0xFF000000),
+                        contentColor = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
+                        tonalElevation = androidx.compose.ui.unit.dp(0)
                     ) {
                         pages.forEachIndexed { pageIndex, page ->
                             NavigationBarItem(
@@ -96,6 +97,13 @@ open class MainActivity : BaseActivity() {
                                 },
                                 label = { Text(stringResource(id = page.stringRes)) },
                                 selected = activePageIndex == pageIndex,
+                                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                                    selectedIconColor = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
+                                    selectedTextColor = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
+                                    unselectedIconColor = androidx.compose.ui.graphics.Color(0xFF707070),
+                                    unselectedTextColor = androidx.compose.ui.graphics.Color(0xFF707070),
+                                    indicatorColor = androidx.compose.ui.graphics.Color(0xFF262626)
+                                ),
                                 onClick = {
                                     activePageIndex = pageIndex
                                 },

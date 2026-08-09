@@ -1,12 +1,16 @@
 package my.noveldokusha.feature.local_database.tables
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.Index
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity
+@Entity(
+    indices = [
+        Index(value = ["inLibrary"]),
+        Index(value = ["lastReadChapter"])
+    ]
+)
 data class Book(
     val title: String,
     @PrimaryKey val url: String,

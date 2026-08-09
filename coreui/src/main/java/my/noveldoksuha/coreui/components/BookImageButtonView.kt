@@ -55,7 +55,17 @@ fun BookImageButtonView(
     onClick: () -> Unit,
     onLongClick: () -> Unit = { },
 ) {
-    Column(modifier = modifier.testTag(AppTestTags.BOOK_IMAGE_BUTTON_VIEW)) {
+    Column(
+        modifier = modifier
+            .testTag(AppTestTags.BOOK_IMAGE_BUTTON_VIEW)
+            .combinedClickable(
+                indication = indication,
+                interactionSource = interactionSource,
+                role = Role.Button,
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+    ) {
         Box(
             Modifier
                 .padding(4.dp)
@@ -63,13 +73,6 @@ fun BookImageButtonView(
                 .aspectRatio(1 / 1.45f)
                 .clip(ImageBorderShape)
                 .background(MaterialTheme.colorApp.bookSurface)
-                .combinedClickable(
-                    indication = indication,
-                    interactionSource = interactionSource,
-                    role = Role.Button,
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                )
         ) {
             ImageView(
                 imageModel = coverImageModel,
@@ -81,21 +84,23 @@ fun BookImageButtonView(
                 Text(
                     text = title,
                     textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
                         .background(
                             Brush.verticalGradient(
-                                0f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.0f),
-                                0.4f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
-                                1f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                0f to androidx.compose.ui.graphics.Color.Transparent,
+                                0.4f to androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.4f),
+                                1f to androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.85f),
                             )
                         )
                         .padding(top = 30.dp, bottom = 8.dp)
                         .padding(horizontal = 8.dp),
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.ExtraBold,
-                        color = Grey800,
+                        color = androidx.compose.ui.graphics.Color.Black,
                         drawStyle = Stroke(
                             miter = 4f,
                             width = 4f,
@@ -106,6 +111,8 @@ fun BookImageButtonView(
                 Text(
                     text = title,
                     textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
@@ -113,7 +120,7 @@ fun BookImageButtonView(
                         .padding(horizontal = 8.dp),
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.ExtraBold,
-                        color = Grey25,
+                        color = androidx.compose.ui.graphics.Color.White,
                     )
                 )
             }
@@ -124,7 +131,7 @@ fun BookImageButtonView(
                 maxLines = 2,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .heightIn(min = 48.dp)
                     .padding(4.dp),
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.ExtraBold),
                 textAlign = TextAlign.Center,

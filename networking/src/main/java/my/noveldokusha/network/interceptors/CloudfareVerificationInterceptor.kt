@@ -113,7 +113,7 @@ class CloudfareVerificationInterceptor @Inject constructor(
             try {
                 latch.await(45, TimeUnit.SECONDS)
             } catch (e: InterruptedException) {
-                // Timed out
+                Thread.currentThread().interrupt()
             }
             
             if (currentResult != null) {

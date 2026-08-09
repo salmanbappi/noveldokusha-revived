@@ -10,9 +10,9 @@ class NovelBinCom(
 ) : BaseNovelFullScraper(networkClient) {
     override val id = "novelbin_com"
     override val nameStrId = R.string.source_name_novelbin_com
-    override val baseUrl = "https://novelbin.com/"
-    override val catalogUrl = "https://novelbin.com/latest-release-novel"
-    override val iconUrl = "https://novelbin.com/favicon.ico"
+    override val baseUrl = "https://novelarrow.com/"
+    override val catalogUrl = "https://novelarrow.com/latest-release-novel"
+    override val iconUrl = "https://novelarrow.com/favicon.ico"
     override val language = LanguageCode.ENGLISH
     
     override val novelIdSelector = "#rating[data-novel-id]"

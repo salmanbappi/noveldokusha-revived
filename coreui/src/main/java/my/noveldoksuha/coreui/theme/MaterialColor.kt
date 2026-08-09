@@ -61,27 +61,27 @@ private fun createColorScheme(
 )
 
 val light_colorScheme = createColorScheme(
-    primary = NDAccent,
-    onPrimary = NDLightTextDisplay,
-    background = NDLightBlack,
-    surface = NDLightSurface,
-    surfaceRaised = NDLightSurfaceRaised,
-    onSurface = NDLightTextPrimary,
-    border = NDLightBorder,
-    borderVisible = NDLightBorderVisible,
-    textSecondary = NDLightTextSecondary,
-    textDisabled = NDLightTextDisabled
+    primary = Color(0xFF000000),
+    onPrimary = Color(0xFFFFFFFF),
+    background = Color(0xFFF8F9FA),
+    surface = Color(0xFFFFFFFF),
+    surfaceRaised = Color(0xFFF0F0F0),
+    onSurface = Color(0xFF1C1B1F),
+    border = Color(0xFFE0E0E0),
+    borderVisible = Color(0xFFCCCCCC),
+    textSecondary = Color(0xFF666666),
+    textDisabled = Color(0xFF999999)
 )
 
 val dark_colorScheme = createColorScheme(
-    primary = NDAccent,
-    onPrimary = NDTextDisplay,
-    background = NDBlack,
-    surface = NDSurface,
-    surfaceRaised = NDSurfaceRaised,
-    onSurface = NDTextPrimary,
-    border = NDBorder,
-    borderVisible = NDBorderVisible,
-    textSecondary = NDTextSecondary,
-    textDisabled = NDTextDisabled
+    primary = Color(0xFFFFFFFF),
+    onPrimary = Color(0xFF000000),
+    background = Color(0xFF000000),
+    surface = Color(0xFF121212),
+    surfaceRaised = Color(0xFF1E1E1E),
+    onSurface = Color(0xFFFFFFFF),
+    border = Color(0xFF262626),
+    borderVisible = Color(0xFF383838),
+    textSecondary = Color(0xFFA0A0A0),
+    textDisabled = Color(0xFF555555)
 )

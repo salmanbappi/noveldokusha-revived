@@ -41,14 +41,18 @@ jobs:
 
       - name: Setup APK signing
         run: |
-          # Generate a temporary keystore for release if secrets are missing or invalid
-          keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempStorePass -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
-          rm app/storeFile.jsk
-          keytool -genkeypair -v -keystore app/storeFile.jsk -alias tempAlias -keyalg RSA -keysize 2048 -validity 10000 -storepass tempPassword -keypass tempPassword -dname "CN=Temp, OU=Temp, O=Temp, L=Temp, S=Temp, C=US" -storetype PKCS12
-          echo "storeFile=storeFile.jsk" > custom.properties
-          echo "storePassword=tempPassword" >> custom.properties
-          echo "keyAlias=tempAlias" >> custom.properties
-          echo "keyPassword=tempPassword" >> custom.properties
+          if [ -f "release.keystore" ]; then
+            echo "storeFile=../release.keystore" > custom.properties
+            echo "storePassword=noveldokusha" >> custom.properties
+            echo "keyAlias=noveldokusha" >> custom.properties
+            echo "keyPassword=noveldokusha" >> custom.properties
+          else
+            keytool -genkeypair -v -keystore app/storeFile.jsk -alias noveldokushaKey -keyalg RSA -keysize 2048 -validity 10000 -storepass noveldokusha -keypass noveldokusha -dname "CN=Noveldokusha, OU=App, O=Noveldokusha, L=App, S=App, C=US" -storetype PKCS12
+            echo "storeFile=storeFile.jsk" > custom.properties
+            echo "storePassword=noveldokusha" >> custom.properties
+            echo "keyAlias=noveldokushaKey" >> custom.properties
+            echo "keyPassword=noveldokusha" >> custom.properties
+          fi
 
       - name: Build app
         run: ./gradlew assembleFullRelease assembleFossRelease -PlocalPropertiesFilePath=custom.properties --parallel --stacktrace

@@ -36,7 +36,6 @@ class Scraper @Inject constructor(
         NovelFull(networkClient),
         ReadNovelFull(networkClient),
         MeioNovel(networkClient),
-        Novelku(networkClient),
         LightNovelsTranslations(networkClient),
         Wuxia(networkClient),
         IndoWebnovel(networkClient),
@@ -59,10 +58,7 @@ class Scraper @Inject constructor(
         Ddxss(networkClient),
         FanMTL(networkClient),
         FreeWebNovel(networkClient),
-        Saikai(networkClient),
         SonicMTL(networkClient),
-        MoreNovel(networkClient),
-        NewNovel(networkClient),
         NoBadNovel(networkClient),
         NovelBinCom(networkClient),
         LeYueDu(networkClient)

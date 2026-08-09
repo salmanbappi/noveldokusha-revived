@@ -108,7 +108,7 @@ internal fun DatabaseSearchScreen(
                         label = { Text(text = stringResource(R.string.filter_catalog)) },
                         leadingIcon = { Icon(Icons.AutoMirrored.Outlined.LibraryBooks, null) },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedLeadingIconColor = Grey25,
+                            selectedLeadingIconColor = Color.White,
                             disabledLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
                             iconColor = MaterialTheme.colorScheme.onPrimary,
                         )
@@ -122,7 +122,7 @@ internal fun DatabaseSearchScreen(
                         label = { Text(text = stringResource(R.string.filter_title)) },
                         leadingIcon = { Icon(Icons.Outlined.Title, null) },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedLeadingIconColor = Grey25,
+                            selectedLeadingIconColor = Color.White,
                             disabledLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
                             iconColor = MaterialTheme.colorScheme.onPrimary,
                         )
@@ -137,7 +137,7 @@ internal fun DatabaseSearchScreen(
                             Text(text = stringResource(R.string.filter_genres))
                         },
                         leadingIcon = {
-                            Icon(Icons.Outlined.FilterList, null, tint = ColorNotice)
+                            Icon(Icons.Outlined.FilterList, null, tint = Color(0xFFA0A0A0))
                         }
                     )
                 }

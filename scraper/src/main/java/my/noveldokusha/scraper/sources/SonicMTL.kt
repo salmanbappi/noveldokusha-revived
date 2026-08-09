@@ -22,13 +22,10 @@ class SonicMTL(
     override val catalogOrderBy = "latest"
     
     override suspend fun getChapterText(doc: Document): String = withContext(Dispatchers.Default) {
-        doc.selectFirst(".reading-content .text-left")?.let { element ->
-            element.select(".ad").remove()
-            element.select(".c-ads").remove()
-            element.select(".custom-code").remove()
-            element.select(".body-top-ads").remove()
-            element.select(".before-content-ad").remove()
-            element.select(".autors-widget").remove()
+        val container = doc.selectFirst(".reading-content .text-left")
+            ?: doc.selectFirst(".reading-content")
+        container?.let { element ->
+            element.select(".ad, .c-ads, .custom-code, .body-top-ads, .before-content-ad, .autors-widget, script, style").remove()
             TextExtractor.get(element)
         } ?: ""
     }
