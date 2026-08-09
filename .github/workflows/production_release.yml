@@ -55,7 +55,7 @@ jobs:
           fi
 
       - name: Build app
-        run: ./gradlew assembleFullRelease assembleFossRelease -PlocalPropertiesFilePath=custom.properties --parallel --stacktrace
+        run: ./gradlew assembleFullRelease assembleFossRelease --continue -PlocalPropertiesFilePath=custom.properties --parallel --stacktrace
 
       - name: Create apk env info entries, move APK
         run: python .github/build_scripts/extract_info.py

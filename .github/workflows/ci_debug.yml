@@ -28,7 +28,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Debug APKs
-      run: ./gradlew assembleFullDebug assembleFossDebug --parallel --stacktrace
+      run: ./gradlew assembleFullDebug assembleFossDebug --continue --parallel --stacktrace
 
     - name: Upload Full Debug APK
       uses: actions/upload-artifact@v4
