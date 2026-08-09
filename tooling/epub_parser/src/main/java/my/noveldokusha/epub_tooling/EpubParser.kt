@@ -83,7 +83,7 @@ suspend fun epubParser(
         val imgTag = doc.selectFirst("img")
 
         if (imgTag != null) {
-            var imgSrc = imgTag.attribute("src").value.hrefAbsolutePath()
+            var imgSrc = imgTag.attr("src").hrefAbsolutePath()
             if (!imgSrc.startsWith("$rootPath/")) {
                 imgSrc = "$rootPath/$imgSrc"
             }
