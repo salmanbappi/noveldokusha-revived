@@ -7,6 +7,7 @@ import my.noveldokusha.core.PagedList
 import my.noveldokusha.core.Response
 import my.noveldokusha.network.NetworkClient
 import my.noveldokusha.network.toDocument
+import my.noveldokusha.network.toUrlBuilderSafe
 import my.noveldokusha.network.tryConnect
 import my.noveldokusha.scraper.R
 import my.noveldokusha.scraper.SourceInterface

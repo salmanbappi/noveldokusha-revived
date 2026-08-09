@@ -1,5 +1,7 @@
 package my.noveldoksuha.coreui.components
 
+import my.noveldoksuha.coreui.modifiers.bounceOnPressed
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -145,7 +147,7 @@ private fun InternalButton(
     )
     Surface(
         modifier = modifier
-            .my.noveldoksuha.coreui.modifiers.bounceOnPressed(interactionSource)
+            .bounceOnPressed(interactionSource)
             .ifCase(animate) { animateContentSize() }
             .padding(outerPadding)
             .heightIn(min = minHeight)
